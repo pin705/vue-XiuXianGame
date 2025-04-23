@@ -1,10 +1,10 @@
 <template>
-  <el-scrollbar
-    always
-    ref="scrollbarRef"
-  >
-    <div class="storyText">
-      <div class="storyText-box">
+  <div class="storyText">
+    <div class="storyText-box">
+      <el-scrollbar
+        always
+        ref="scrollbarRef"
+      >
         <div
           v-for="(item, index) in texts"
           :key="index"
@@ -20,9 +20,9 @@
           <span v-html="item.message" />
         </div>
         <div ref="bottomRef" />
-      </div>
+      </el-scrollbar>
     </div>
-  </el-scrollbar>
+  </div>
 </template>
 
 <script setup>
