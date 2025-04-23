@@ -152,7 +152,25 @@
         <div class="tag equip-item">
           <span class="equip">
             <span>Thần binh: </span>
-            <el-popover
+            <tag
+              v-if="player.equipment.weapon?.name"
+              :type="player.equipment.weapon?.quality"
+              :closable="player.equipment.weapon?.name ? true : false"
+              @close="equipmentClose('weapon')"
+              @click="equipmentInfo(player.equipment[type].id, 'weapon')"
+              @mouseenter="
+                getEquipmentInfo(player.equipment['weapon']?.id, 'weapon')
+              "
+            >
+              {{ player.equipment.weapon?.name
+              }}{{
+                player.equipment.weapon?.strengthen
+                  ? "+" + player.equipment.weapon?.strengthen
+                  : ""
+              }}
+            </tag>
+            <span v-else>Không có</span>
+            <!-- <el-popover
               placement="top-start"
               :title="player.equipment.weapon?.name"
               :width="300"
@@ -187,11 +205,29 @@
                   />
                 </div>
               </template>
-            </el-popover>
+            </el-popover> -->
           </span>
           <span class="equip">
             <span>Hộ giáp: </span>
-            <el-popover
+            <tag
+              v-if="player.equipment.armor?.name"
+              :type="player.equipment.armor?.quality"
+              :closable="player.equipment.armor?.name ? true : false"
+              @close="equipmentClose('armor')"
+              @click="equipmentInfo(player.equipment['armor']?.id, 'armor')"
+              @mouseenter="
+                getEquipmentInfo(player.equipment['armor']?.id, 'armor')
+              "
+            >
+              {{ player.equipment.armor?.name
+              }}{{
+                player.equipment.armor?.strengthen
+                  ? "+" + player.equipment.armor?.strengthen
+                  : ""
+              }}
+            </tag>
+            <span v-else>Không có</span>
+            <!-- <el-popover
               placement="top-start"
               :title="player.equipment.armor?.name"
               :width="300"
@@ -226,13 +262,39 @@
                   />
                 </div>
               </template>
-            </el-popover>
+            </el-popover> -->
           </span>
         </div>
         <div class="tag equip-item">
           <span class="equip">
             <span>Linh bảo: </span>
-            <el-popover
+            <tag
+              v-if="player.equipment.accessory?.name"
+              :type="player.equipment.accessory?.quality"
+              :closable="!!player.equipment.accessory?.name"
+              @close="equipmentClose('accessory')"
+              @click="
+                equipmentInfo(
+                  player.equipment['accessory']?.id,
+                  'accessory'
+                )
+              "
+              @mouseenter="
+                getEquipmentInfo(
+                  player.equipment['accessory']?.id,
+                  'accessory'
+                )
+              "
+            >
+              {{ player.equipment.accessory?.name
+              }}{{
+                player.equipment.accessory?.strengthen
+                  ? "+" + player.equipment.accessory?.strengthen
+                  : ""
+              }}
+            </tag>
+            <span v-else>Không có</span>
+            <!-- <el-popover
               placement="top-start"
               :title="player.equipment.accessory?.name"
               :width="300"
@@ -275,11 +337,31 @@
                   />
                 </div>
               </template>
-            </el-popover>
+            </el-popover> -->
           </span>
           <span class="equip">
             <span>Pháp khí: </span>
-            <el-popover
+            <tag
+              v-if="player.equipment.sutra?.name"
+              :type="player.equipment.sutra?.quality"
+              :closable="!!player.equipment.sutra?.name"
+              @close="
+                equipmentClose(player.equipment['sutra']?.id, 'sutra')
+              "
+              @click="equipmentInfo(player.equipment['sutra']?.id, 'sutra')"
+              @mouseenter="
+                getEquipmentInfo(player.equipment['sutra']?.id, 'sutra')
+              "
+            >
+              {{ player.equipment.sutra?.name
+              }}{{
+                player.equipment.sutra?.strengthen
+                  ? "+" + player.equipment.sutra?.strengthen
+                  : ""
+              }}
+            </tag>
+            <span v-else>Không có</span>
+            <!-- <el-popover
               placement="top-start"
               :title="player.equipment.sutra?.name"
               :width="300"
@@ -316,7 +398,7 @@
                   />
                 </div>
               </template>
-            </el-popover>
+            </el-popover> -->
           </span>
         </div>
         <div class="tag equip-item">
@@ -415,6 +497,7 @@
                             item?.strengthen ? "+" + item?.strengthen : ""
                           }}
                         </tag>
+                        <span v-else>Không có</span>
                         <!-- <el-popover
                           placement="bottom-start"
                           :title="item.name"
