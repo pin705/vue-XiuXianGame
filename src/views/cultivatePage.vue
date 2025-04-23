@@ -17,7 +17,11 @@
         class="custom-progress"
       />
     </div>
-    <div class="storyText">
+    <LogPanel
+      ref="scrollbar"
+      :texts="texts"
+    />
+    <!-- <div class="storyText">
       <div class="storyText-box">
         <el-scrollbar
           ref="scrollbar"
@@ -34,7 +38,7 @@
           </div>
         </el-scrollbar>
       </div>
-    </div>
+    </div> -->
     <div class="actions">
       <div
         class="action"
@@ -53,9 +57,13 @@
 </template>
 
 <script>
+import LogPanel from "@/components/LogPanel.vue";
 import equip from "@/plugins/equip";
 
 export default {
+  components: {
+    LogPanel,
+  },
   data() {
     return {
       texts: [],
@@ -68,7 +76,7 @@ export default {
   },
   beforeUnmount() {
     this.stopCultivate();
-    this.stopObserving();
+    // this.stopObserving();
   },
   computed: {
     buttonsFor() {
@@ -98,7 +106,7 @@ export default {
   mounted() {
     this.player = this.$store.player;
     this.startCultivate();
-    this.setupObserver();
+    // this.setupObserver();
   },
   methods: {
     startCultivate() {
@@ -300,21 +308,21 @@ export default {
         });
       }
     },
-    setupObserver() {
-      const element = this.$refs.scrollbar.wrapRef;
-      if (element) {
-        this.observer = new MutationObserver(() =>
-          this.$smoothScrollToBottom(element)
-        );
-        this.observer.observe(element, { subtree: true, childList: true });
-      }
-    },
-    stopObserving() {
-      if (this.observer) {
-        this.observer.disconnect();
-        this.observer = null;
-      }
-    },
+    // setupObserver() {
+    //   const element = this.$refs.scrollbar.wrapRef;
+    //   if (element) {
+    //     this.observer = new MutationObserver(() =>
+    //       this.$smoothScrollToBottom(element)
+    //     );
+    //     this.observer.observe(element, { subtree: true, childList: true });
+    //   }
+    // },
+    // stopObserving() {
+    //   if (this.observer) {
+    //     this.observer.disconnect();
+    //     this.observer = null;
+    //   }
+    // },
   },
 };
 </script>

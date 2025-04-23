@@ -239,6 +239,8 @@
         --el-fill-color-blank: transparent;
         --el-mask-color: rgba(0, 0, 0, .8);
         --el-mask-color-extra-light: rgba(0, 0, 0, .3);
+
+        --el-font-size-large: 16px;
     }
 
     .dark .el-switch.is-checked .el-switch__core {

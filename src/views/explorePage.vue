@@ -4,31 +4,22 @@
       class="cultivate"
       v-if="$store.monster.name"
     >
-      Bạn đã gặp <span
-        class="el-tag el-tag--danger"
-        @click="openMonsterInfo"
-        v-text="monster.name"
-      />
-      <div class="storyText">
-        <div class="storyText-box">
-          <el-scrollbar
-            ref="scrollbar"
-            always
-          >
-            <p
-              class="fighting"
-              v-if="isFighting"
-              v-text="`${guashaRounds} hiệp / 10 hiệp`"
-            />
-            <p
-              v-for="(item, index) in texts"
-              :key="index"
-              v-html="item"
-              @click="openEquipmentInfo(openEquipItemInfo)"
-            />
-          </el-scrollbar>
-        </div>
+      <div class="mb-2">
+        Bạn đã gặp <span
+          class="el-tag el-tag--danger"
+          @click="openMonsterInfo"
+          v-text="monster.name"
+        />
       </div>
+      <p
+        class="fighting mb-2"
+        v-if="isFighting"
+        v-text="`${guashaRounds} hiệp / 10 hiệp`"
+      />
+      <LogPanel
+        @click="openEquipmentInfo(openEquipItemInfo)"
+        :texts="texts"
+      />
       <div class="actions">
         <div class="action">
           <el-button
@@ -103,9 +94,13 @@
 // Trang bị
 import equip from '@/plugins/equip';
 // Thành tựu
+import LogPanel from '@/components/LogPanel.vue';
 import achievement from '@/plugins/achievement';
 
 export default {
+    components: {
+        LogPanel
+    },
     data() {
         return {
             // Nhật ký
@@ -215,14 +210,14 @@ export default {
             const time = zs >= 200 ? 100 : 300 - zs;
             const timerId = setInterval(() => {
                 this.fightMonster();
-                const element = this.$refs.scrollbar.wrapRef;
-                const observer = new MutationObserver(() => {
-                    this.$smoothScrollToBottom(element);
-                });
-                observer.observe(element, {
-                    childList: true,
-                    subtree: true
-                });
+                // const element = this.$refs.scrollbar.wrapRef;
+                // const observer = new MutationObserver(() => {
+                //     this.$smoothScrollToBottom(element);
+                // });
+                // observer.observe(element, {
+                //     childList: true,
+                //     subtree: true
+                // });
             }, time);
             this.timerIds.push(timerId);
         },
@@ -293,21 +288,36 @@ export default {
                     const reincarnation = this.player.reincarnation ? 1 + 1 * this.player.reincarnation : 1;
                     this.player.props.cultivateDan += reincarnation;
                     // Gửi thông báo
-                    this.texts.push(`Sau khi đánh bại ${this.monster.name}, bạn nhận được ${reincarnation} đan bồi dưỡng`);
+                    this.texts.push({
+                        message: `Sau khi đánh bại ${this.monster.name}, bạn nhận được ${reincarnation} đan bồi dưỡng`,
+                        time: new Date().toLocaleTimeString()
+                    });
                     this.findTreasure(this.monster.name);
                     this.stopFight();
                 } else if (this.player.health <= 0) {
-                    this.texts.push('Bạn quá yếu và đã bị đánh bại.');
+                    this.texts.push({
+                        message: 'Bạn quá yếu và đã bị đánh bại.',
+                        time: new Date().toLocaleTimeString()
+                    });
                     this.stopFight();
                 } else {
                     // Người chơi
-                    this.texts.push(!isPHit ? `Bạn tấn công ${this.monster.name}, nhưng đối phương né tránh được, bạn không gây sát thương, còn lại ${this.monster.health} khí huyết.` : `Bạn tấn công ${this.monster.name}, ${isCritical ? 'kích hoạt bạo kích' : ''} gây ${playerHarm} sát thương, còn lại ${this.monster.health} khí huyết.`);
+                    this.texts.push({
+                        message: !isPHit ? `Bạn tấn công ${this.monster.name}, nhưng đối phương né tránh được, bạn không gây sát thương, còn lại ${this.monster.health} khí huyết.` : `Bạn tấn công ${this.monster.name}, ${isCritical ? 'kích hoạt bạo kích' : ''} gây ${playerHarm} sát thương, còn lại ${this.monster.health} khí huyết.`,
+                        time: new Date().toLocaleTimeString()
+                    });
                     // Quái vật
-                    this.texts.push(!isMHit ? `${this.monster.name} tấn công bạn, nhưng bạn né tránh được, đối phương không gây sát thương.` : `${this.monster.name} tấn công bạn, ${isMCritical ? 'kích hoạt bạo kích' : ''} gây ${monsterHarm} sát thương.`);
+                    this.texts.push({
+                        message: !isMHit ? `${this.monster.name} tấn công bạn, nhưng bạn né tránh được, đối phương không gây sát thương.` : `${this.monster.name} tấn công bạn, ${isMCritical ? 'kích hoạt bạo kích' : ''} gây ${monsterHarm} sát thương.`,
+                        time: new Date().toLocaleTimeString()
+                    });
                 }
             } else {
                 this.guashaRounds = 10;
-                this.texts.push(`Hiệp đấu kết thúc, bạn không thể đánh bại ${this.monster.name}, bạn đã thua.`);
+                this.texts.push({
+                    message: `Hiệp đấu kết thúc, bạn không thể đánh bại ${this.monster.name}, bạn đã thua.`,
+                    time: new Date().toLocaleTimeString()
+                });
                 this.stopFight();
             }
         },
@@ -316,7 +326,10 @@ export default {
             this.guashaRounds--;
             if (equip.getRandomInt(0, 1)) {
                 this.isFailedRetreat = true;
-                this.texts.push('Rút lui thất bại, tiếp tục chiến đấu.');
+                this.texts.push({
+                    message: 'Rút lui thất bại, tiếp tục chiến đấu.',
+                    time: new Date().toLocaleTimeString()
+                });
             } else {
                 this.guashaRounds = 10;
                 this.$router.push('/map');
@@ -339,11 +352,17 @@ export default {
             else if (randomInt == 3) equipItem = equip.equip_Accessorys(this.player.level);
             // Pháp khí
             else if (randomInt == 4) equipItem = equip.equip_Sutras(this.player.level);
-            this.texts.push(`Sau khi đánh bại ${this.monster.name}, bạn phát hiện một rương báu, mở ra nhận được <span class="el-tag el-tag--${equipItem.quality}">${this.$levels[equipItem.quality]}${equipItem.name}(${this.$genre[equipItem.type]})</span>`);
+            this.texts.push({
+                message: `Sau khi đánh bại ${this.monster.name}, bạn phát hiện một rương báu, mở ra nhận được <span class="el-tag el-tag--${equipItem.quality}">${this.$levels[equipItem.quality]} ${equipItem.name} (${this.$genre[equipItem.type]})</span>`,
+                time: new Date().toLocaleTimeString()
+            });
             this.openEquipItemInfo = equipItem;
             // Nếu dung lượng túi trang bị hiện tại vượt quá giới hạn
             if (this.player.inventory.length >= this.player.backpackCapacity) {
-                this.texts.push(`Dung lượng túi trang bị hiện tại đã đầy, đạo cụ này tự động bị bỏ, chuyển sinh có thể tăng dung lượng túi.`);
+                this.texts.push({
+                    message: `Dung lượng túi trang bị hiện tại đã đầy, đạo cụ này tự động bị bỏ, chuyển sinh có thể tăng dung lượng túi.`,
+                    time: new Date().toLocaleTimeString()
+                });
             } else {
                 // Người chơi nhận đạo cụ
                 this.player.inventory.push(equipItem);
@@ -356,7 +375,10 @@ export default {
                     if (this.player.cultivation >= this.player.maxCultivation) {
                         // Nếu cấp độ người chơi lớn hơn 10 và số lượng tiêu diệt nhỏ hơn cấp độ hiện tại
                         if (this.player.level > 10 && this.player.level > this.player.taskNum) {
-                            this.texts.push(`Tu vi cảnh giới hiện tại đã đầy, bạn cần đánh bại <span class="textColor">(${this.player.taskNum} / ${this.player.level})</span> kẻ địch để chứng đạo đột phá.`);
+                            this.texts.push({
+                                message: `Tu vi cảnh giới hiện tại đã đầy, bạn cần đánh bại <span class="textColor">(${this.player.taskNum} / ${this.player.level})</span> kẻ địch để chứng đạo đột phá.`,
+                                time: new Date().toLocaleTimeString()
+                            });
                             return;
                         }
                         // Xóa số kẻ địch đã tiêu diệt
@@ -369,7 +391,10 @@ export default {
                         this.player.health = this.player.maxHealth;
                         // Tăng tổng tu vi của người chơi
                         this.player.maxCultivation = Math.floor(100 * Math.pow(2, this.player.level));
-                        this.texts.push(`Chúc mừng bạn đã đột phá! Cảnh giới hiện tại: ${this.$levelNames(this.player.level)}`);
+                        this.texts.push({
+                            message: `Chúc mừng bạn đã đột phá! Cảnh giới hiện tại: ${this.$levelNames(this.player.level)}`,
+                            time: new Date().toLocaleTimeString()
+                        });
                     } else {
                         // Tu vi hiện tại
                         this.player.cultivation += exp;
@@ -379,7 +404,10 @@ export default {
                     this.isStart = false;
                     this.player.level = this.$maxLv;
                     this.player.maxCultivation = Math.floor(100 * Math.pow(2, this.$maxLv));
-                    this.texts.push('Cảnh giới hiện tại của bạn đã viên mãn, cần chuyển sinh để tiếp tục tu luyện.');
+                    this.texts.push({
+                        message: 'Cảnh giới hiện tại của bạn đã viên mãn, cần chuyển sinh để tiếp tục tu luyện.',
+                        time: new Date().toLocaleTimeString()
+                    });
                 }
             }
         },
@@ -481,16 +509,25 @@ export default {
                             this.notify({ title: 'Gợi ý nhận thành tựu', message: `Chúc mừng bạn đã hoàn thành thành tựu ${item.name}` });
                         }
                     });
-                    this.texts.push(`Thu phục ${item.name} thành công`);
+                    this.texts.push({
+                        message: `Thu phục ${item.name} thành công`,
+                        time: new Date().toLocaleTimeString()
+                    });
                 } else {
-                    this.texts.push(`Dung lượng túi linh sủng đã đầy, thu phục ${item.name} thất bại, chuyển sinh có thể tăng dung lượng túi.`);
+                    this.texts.push({
+                        message: `Dung lượng túi linh sủng đã đầy, thu phục ${item.name} thất bại, chuyển sinh có thể tăng dung lượng túi.`,
+                        time: new Date().toLocaleTimeString()
+                    });
                 }
                 // Khôi phục số hiệp
                 this.guashaRounds = 10;
                 this.stopFight();
             } else {
                 this.isCaptureFailed = true;
-                this.texts.push(`Thu phục ${item.name} thất bại`);
+                this.texts.push({
+                    message: `Thu phục ${item.name} thất bại`,
+                    time: new Date().toLocaleTimeString()
+                });
             }
         },
         // Tính tỷ lệ thu phục linh sủng

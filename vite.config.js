@@ -56,7 +56,7 @@ export default defineConfig({
                         type: 'image/png'
                     }
                 ],
-                short_name: 'Tu tiên gõ phím!',
+                short_name: 'Tu Tiên Gõ Phím',
                 description: 'Không thiên phú, không sư phụ, chỉ có cái bàn phím là bạn tu hành!',
                 theme_color: '#141414'
             },

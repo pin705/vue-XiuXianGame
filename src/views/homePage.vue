@@ -2390,8 +2390,8 @@ export default {
       this.$confirm(
         `Bạn có chắc muốn thả <span class="el-tag el-tag--${this.computePetsLevel(
           item.level
-        )}">${item.name}(${this.$levelNames(item.level)})</span> không?`,
-        "Thông báo thả linh sủng",
+        )}">${item.name} (${this.$levelNames(item.level)})</span> không?`,
+        "Thả linh sủng",
         {
           center: true,
           cancelButtonText: "Hủy thả",
@@ -3013,10 +3013,10 @@ export default {
       this.$confirm(
         `Bạn có chắc muốn phân giải <span class="el-tag el-tag--${
           item.quality
-        }">${this.$levels[item.quality]}${item.name}(${
+        }">${this.$levels[item.quality]} ${item.name}(${
           this.$genre[item.type]
         })</span> không?`,
-        "Thông báo phân giải trang bị",
+        "Phân giải trang bị",
         {
           center: true,
           cancelButtonText: "Hủy phân giải",
