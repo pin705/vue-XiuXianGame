@@ -394,7 +394,28 @@
                         v-for="item in player.inventory"
                         :key="item.id"
                       >
-                        <el-popover
+                        <tag
+                          class="inventory-item"
+                          v-if="item.type == i.type"
+                          :key="item.id"
+                          :type="item.quality"
+                          :closable="!item.lock"
+                          @close="inventoryClose(item)"
+                          @click="inventory(item.id, item.type)"
+                          @mouseenter="getEquipmentInfo(item.id, item.type)"
+                        >
+                          <el-icon v-if="item.lock">
+                            <Lock />
+                          </el-icon>
+                          <el-icon v-else>
+                            <Unlock />
+                          </el-icon>
+                          {{ item?.name
+                          }}{{
+                            item?.strengthen ? "+" + item?.strengthen : ""
+                          }}
+                        </tag>
+                        <!-- <el-popover
                           placement="bottom-start"
                           :title="item.name"
                           :width="300"
@@ -432,7 +453,7 @@
                               />
                             </div>
                           </template>
-                        </el-popover>
+                        </el-popover> -->
                       </template>
                     </div>
                     <tag
@@ -1694,19 +1715,23 @@
           </el-icon>
         </tag>
       </div>
-      <el-button
-        type="primary"
-        :loading="newBieLoading"
-        @click="refreshNewBie"
-      >
-        {{ newBieLoading ? "Đang làm mới..." : "Làm mới trang bị" }}
-      </el-button>
-      <el-button
-        type="primary"
-        @click="confirmCollectionNewBie"
-      >
-        Nhận trang bị
-      </el-button>
+      <div class="flex items-center justify-arround gap-2">
+        <el-button
+          size="small"
+          type="primary"
+          :loading="newBieLoading"
+          @click="refreshNewBie"
+        >
+          {{ newBieLoading ? "Đang làm mới..." : "Làm mới" }}
+        </el-button>
+        <el-button
+          size="small"
+          type="primary"
+          @click="confirmCollectionNewBie"
+        >
+          Nhận trang bị
+        </el-button>
+      </div>
     </el-drawer>
     <el-dialog
       v-model="newBieInfoBox"
@@ -3017,7 +3042,7 @@ export default {
         {
           center: true,
           cancelButtonText: "Hủy phân giải",
-          confirmButtonText: "Xác nhận phân giải",
+          confirmButtonText: "Phân giải",
           dangerouslyUseHTMLString: true,
         }
       )
@@ -3503,6 +3528,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 8px;
 }
 
 .dialog-upload {
