@@ -407,7 +407,7 @@ a {
 
 /* 按钮 */
 .actions {
-  margin: 1rem 0;
+  margin-top: 4px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
