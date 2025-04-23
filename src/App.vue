@@ -72,6 +72,7 @@
     }
 
     .game-container-wrapper {
+        max-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -170,7 +171,7 @@
         --el-color-pink-light-9: #3c2a2e;
         --el-color-purple-light-8: #473b5a;
         --el-color-purple-light-9: #2d2636;
-        --el-color-primary: #409eff;
+        --el-color-primary: #c6541f;
         --el-color-primary-light-3: #3375b9;
         --el-color-primary-light-5: #2a598a;
         --el-color-primary-light-7: #213d5b;
