@@ -1,13 +1,13 @@
-import path from 'path';
 import vue from '@vitejs/plugin-vue';
-import Icons from 'unplugin-icons/vite';
-import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
 import IconsResolver from 'unplugin-icons/resolver';
-import { defineConfig } from 'vite';
+import Icons from 'unplugin-icons/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import Components from 'unplugin-vue-components/vite';
+import { defineConfig } from 'vite';
 import vitePluginBundleObfuscator from 'vite-plugin-bundle-obfuscator';
+import { VitePWA } from 'vite-plugin-pwa';
 
 
 export default defineConfig({
@@ -41,7 +41,7 @@ export default defineConfig({
         }),
         VitePWA({
             manifest: {
-                name: '我的文字修仙全靠刷',
+                name: 'Tôi tu tiên bằng chữ nghĩa, toàn là nhờ spam thôi!',
                 icons: [
                     {
                         src: '/icons/icon-192x192.png',
@@ -54,8 +54,8 @@ export default defineConfig({
                         type: 'image/png'
                     }
                 ],
-                short_name: '文字修仙',
-                description: '文字游戏: 我的文字修仙全靠刷',
+                short_name: 'Tu tiên gõ phím!',
+                description: 'Không thiên phú, không sư phụ, chỉ có cái bàn phím là bạn tu hành!',
                 theme_color: '#4d4d4d'
             },
             devOptions: {
@@ -109,4 +109,3 @@ export default defineConfig({
     },
     logLevel: 'error'
 });
-
