@@ -1,31 +1,60 @@
 <template>
-    <div class="rps-game">
-        <div class="bet-amount">
-            <el-input-number v-model="betAmount" :min="100" :step="100" :max="100000" :disabled="!canPlay" />
-        </div>
-        <div class="options">
-            <el-button v-for="option in options" :key="option" @click="play(option)" :disabled="!canPlay" v-text="option" />
-        </div>
-        <div class="game-result" v-if="result">
-            <div class="player-choice">
-                <div :class="['choice-image', type[result.playerChoice]]" />
-                <p>你的选择</p>
-            </div>
-            <div class="vs">VS</div>
-            <div class="computer-choice">
-                <div :class="['choice-image', type[result.computerChoice]]" />
-                <p>天道的选择</p>
-            </div>
-        </div>
-        <div v-if="result" class="result">
-            <p>{{ result.message }}</p>
-        </div>
-        <div class="message">
-            <p v-if="canPlay">请选择</p>
-            <p v-else-if="!hasEnoughMoney">灵石不足</p>
-            <el-countdown v-else title="冷却中" :value="nextGameTime" @finish="updateCanPlay" />
-        </div>
+  <div class="rps-game">
+    <div class="bet-amount">
+      <el-input-number
+        v-model="betAmount"
+        :min="100"
+        :step="100"
+        :max="100000"
+        :disabled="!canPlay"
+      />
     </div>
+    <div class="options">
+      <el-button
+        v-for="option in options"
+        :key="option"
+        @click="play(option)"
+        :disabled="!canPlay"
+        v-text="option"
+      />
+    </div>
+    <div
+      class="game-result"
+      v-if="result"
+    >
+      <div class="player-choice">
+        <div :class="['choice-image', type[result.playerChoice]]" />
+        <p>你的选择</p>
+      </div>
+      <div class="vs">
+        VS
+      </div>
+      <div class="computer-choice">
+        <div :class="['choice-image', type[result.computerChoice]]" />
+        <p>天道的选择</p>
+      </div>
+    </div>
+    <div
+      v-if="result"
+      class="result"
+    >
+      <p>{{ result.message }}</p>
+    </div>
+    <div class="message">
+      <p v-if="canPlay">
+        请选择
+      </p>
+      <p v-else-if="!hasEnoughMoney">
+        灵石不足
+      </p>
+      <el-countdown
+        v-else
+        title="冷却中"
+        :value="nextGameTime"
+        @finish="updateCanPlay"
+      />
+    </div>
+  </div>
 </template>
 
 <script>

@@ -1,13 +1,13 @@
-import App from './App.vue';
-import { createApp } from 'vue';
-import { createPinia } from 'pinia';
-import 'element-plus/dist/index.css';
-import 'normalize.css/normalize.css';
 import router from '@/plugins/router';
 import { useMainStore } from '@/plugins/store';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import ElementPlus, { ElNotification } from 'element-plus';
+import 'element-plus/dist/index.css';
+import 'normalize.css/normalize.css';
+import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+import { createApp } from 'vue';
+import App from './App.vue';
 
 const app = createApp(App);
 
@@ -33,68 +33,66 @@ app.config.globalProperties.$levelNames = (level) => {
     const stageIndex = Math.floor((level - 1) / levelsPerStage);
     const stageLevel = (level - 1) % levelsPerStage + 1;
     const numberName = {
-        1: '一', 2: '二', 3: '三', 4: '四',
-        5: '五', 6: '六', 7: '七', 8: '八', 9: '九'
+        1: 'Một', 2: 'Hai', 3: 'Ba', 4: 'Bốn',
+        5: 'Năm', 6: 'Sáu', 7: 'Bảy', 8: 'Tám', 9: 'Chín'
     };
     const stageNames = [
-        '筑基', '开光', '胎息', '辟谷',
-        '金丹', '元婴', '出窍', '分神',
-        '合体', '大乘', '渡劫', '地仙',
-        '天仙', '金仙', '大罗金仙', '九天玄仙'
+        'Trúc Cơ', 'Khai Quang', 'Thai Tức', 'Tịch Cốc',
+        'Kim Đan', 'Nguyên Anh', 'Xuất Khiếu', 'Phân Thần',
+        'Hợp Thể', 'Đại Thừa', 'Độ Kiếp', 'Địa Tiên',
+        'Thiên Tiên', 'Kim Tiên', 'Đại La Kim Tiên', 'Cửu Thiên Huyền Tiên'
     ];
-    if (level === 0) return '凡人';
-    else if (level >= maxLv) return '九天玄仙九层';
-    else return `${stageNames[stageIndex]}${numberName[stageLevel]}层`;
+    if (level === 0) return 'Phàm Nhân';
+    else if (level >= maxLv) return 'Cửu Thiên Huyền Tiên Chín Tầng';
+    else return `${stageNames[stageIndex]} ${numberName[stageLevel]} Tầng`;
 }
 
 const dropdownTypeObject = {
-    id: '时间',
-    level: '境界',
-    score: '评分',
-    health: '气血',
-    attack: '攻击',
-    defense: '防御',
-    critical: '暴击',
-    dodge: '闪避'
+    id: 'Thời Gian',
+    level: 'Cảnh Giới',
+    score: 'Điểm Số',
+    health: 'Khí Huyết',
+    attack: 'Công Kích',
+    defense: 'Phòng Thủ',
+    critical: 'Bạo Kích',
+    dodge: 'Né Tránh'
 };
-
 
 app.config.globalProperties.$dropdownTypeObject = dropdownTypeObject;
 app.config.globalProperties.$dropdownType = Object.entries(dropdownTypeObject).map(([type, name]) => ({ type, name }));
 
 app.config.globalProperties.$genre = {
-    sutra: '法器',
-    armor: '护甲',
-    weapon: '神兵',
-    accessory: '灵宝'
+    sutra: 'Pháp Khí',
+    armor: 'Hộ Giáp',
+    weapon: 'Thần Binh',
+    accessory: 'Linh Bảo'
 };
 
 app.config.globalProperties.$isAPP = location.host == 'appassets.androidplatform.net';
 
-
 app.config.globalProperties.$levels = {
-    info: '黄阶',
-    pink: '仙阶',
-    danger: '神阶',
-    purple: '天阶',
-    primary: '地阶',
-    success: '玄阶',
-    warning: '帝阶',
+    info: 'Hoàng Giai',
+    pink: 'Tiên Giai',
+    danger: 'Thần Giai',
+    purple: 'Thiên Giai',
+    primary: 'Địa Giai',
+    success: 'Huyền Giai',
+    warning: 'Đế Giai',
 };
 
 app.config.globalProperties.$propItemNames = {
-    money: { name: '灵石', desc: '可以通过分解获得装备获得' },
-    flying: { name: '传送符', desc: '可以通过赠送礼物给NPC获得' },
-    rootBone: { name: '悟性丹', desc: '可以通过击败世界BOSS获得' },
-    qingyuan: { name: '情缘', desc: '可以通过赠送礼物给NPC获得' },
-    currency: { name: '鸿蒙石', desc: '可以通过击败世界BOSS获得' },
-    cultivateDan: { name: '培养丹', desc: '可以通过探索获得' },
-    strengtheningStone: { name: '炼器石', desc: '可以通过分解装备获得' }
+    money: { name: 'Linh Thạch', desc: 'Có thể thu được bằng cách phân giải trang bị' },
+    flying: { name: 'Truyền Tống Phù', desc: 'Có thể thu được bằng cách tặng quà cho NPC' },
+    rootBone: { name: 'Ngộ Tính Đan', desc: 'Có thể thu được bằng cách đánh bại BOSS thế giới' },
+    qingyuan: { name: 'Tình Duyên', desc: 'Có thể thu được bằng cách tặng quà cho NPC' },
+    currency: { name: 'Hồng Mông Thạch', desc: 'Có thể thu được bằng cách đánh bại BOSS thế giới' },
+    cultivateDan: { name: 'Bồi Dưỡng Đan', desc: 'Có thể thu được bằng cách thám hiểm' },
+    strengtheningStone: { name: 'Luyện Khí Thạch', desc: 'Có thể thu được bằng cách phân giải trang bị' }
 };
 
 app.config.globalProperties.$formatNumberToChineseUnit = (number) => {
     number = number > 0 ? Math.floor(number) : 0;
-    const units = ['', '万', '亿', '兆', '京', '垓', '秭', '穰', '沟', '涧', '正', '载', '极'];
+    const units = ['', 'Vạn', 'Ức', 'Triệu', 'Kinh', 'Hợi', 'Tử', 'Nhương', 'Câu', 'Giản', 'Chính', 'Tái', 'Cực'];
     const bigTenThousand = window.BigInt(10000);
     let num = window.BigInt(number);
     let unitIndex = 0;
@@ -103,7 +101,7 @@ app.config.globalProperties.$formatNumberToChineseUnit = (number) => {
         num /= bigTenThousand;
         unitIndex++;
         if (unitIndex >= units.length - 1) {
-            additionalUnits += '极';
+            additionalUnits += 'Cực';
             unitIndex = 0;
         }
     }

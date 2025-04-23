@@ -1,444 +1,497 @@
 <template>
-    <div class="endless-tower">
-        <div class="battle-info">
-            <div class="player-info">
-                <tag class="name" type="primary" @click="openInfo('player')" v-text="player.name" />
-                <el-progress :percentage="playerProgress" :status="playerStatus" :format="playerHealth" :stroke-width="20" text-inside />
-            </div>
-            <div class="vs">VS</div>
-            <div class="monster-info" v-if="monster">
-                <tag class="name" type="danger" @click="openInfo('monster')">{{ monster.name }}</tag>
-                <el-progress :percentage="monsterProgress" :status="monsterStatus" :format="monsterhealth" :stroke-width="20" text-inside />
-            </div>
-        </div>
-        <div class="actions">
-            <el-button v-for="(item, index) in buttonData" :key="index" @click="item.click" :disabled="item.disabled" v-text="item.text" />
-        </div>
-        <div class="sweep-info">
-            <el-row>
-                <el-col :span="6" v-for="(item, index) in sweepData" :key="index">
-                    <div class="el-statistic">
-                        <div class="el-statistic__head" v-text="item.name" />
-                        <div class="el-statistic__content">
-                            <span class="el-statistic__number" v-text="item.suffix" />
-                        </div>
-                    </div>
-                </el-col>
-            </el-row>
-        </div>
-        <el-scrollbar class="battle-log" height="300px" ref="scrollbar" always>
-            <p v-for="(log, index) in battleLogs" :key="index" v-html="log" />
-        </el-scrollbar>
+  <div class="endless-tower">
+    <div class="battle-info">
+      <div class="player-info">
+        <tag
+          class="name"
+          type="primary"
+          @click="openInfo('player')"
+          v-text="player.name"
+        />
+        <el-progress
+          :percentage="playerProgress"
+          :status="playerStatus"
+          :format="playerHealth"
+          :stroke-width="20"
+          text-inside
+        />
+      </div>
+      <div class="vs">
+        VS
+      </div>
+      <div
+        class="monster-info"
+        v-if="monster"
+      >
+        <tag
+          class="name"
+          type="danger"
+          @click="openInfo('monster')"
+        >
+          {{ monster.name }}
+        </tag>
+        <el-progress
+          :percentage="monsterProgress"
+          :status="monsterStatus"
+          :format="monsterhealth"
+          :stroke-width="20"
+          text-inside
+        />
+      </div>
     </div>
+    <div class="actions">
+      <el-button
+        v-for="(item, index) in buttonData"
+        :key="index"
+        @click="item.click"
+        :disabled="item.disabled"
+        v-text="item.text"
+      />
+    </div>
+    <div class="sweep-info">
+      <el-row>
+        <el-col
+          :span="6"
+          v-for="(item, index) in sweepData"
+          :key="index"
+        >
+          <div class="el-statistic">
+            <div
+              class="el-statistic__head"
+              v-text="item.name"
+            />
+            <div class="el-statistic__content">
+              <span
+                class="el-statistic__number"
+                v-text="item.suffix"
+              />
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <el-scrollbar
+      class="battle-log"
+      height="300px"
+      ref="scrollbar"
+      always
+    >
+      <p
+        v-for="(log, index) in battleLogs"
+        :key="index"
+        v-html="log"
+      />
+    </el-scrollbar>
+  </div>
 </template>
 
 <script>
-    // 标签组件
-    import tag from '@/components/tag.vue';
-    // boss
-    import boss from '@/plugins/boss';
-    // 装备
-    import equip from '@/plugins/equip';
-    // 怪物
-    import monsters from '@/plugins/monster';
+// Thành phần thẻ
+import tag from '@/components/tag.vue';
+// Boss
+import boss from '@/plugins/boss';
+// Trang bị
+import equip from '@/plugins/equip';
+// Quái vật
+import monsters from '@/plugins/monster';
 
-    import combatSystem from '@/plugins/combat';
+import combatSystem from '@/plugins/combat';
 
-    import { checkAchievements } from '@/plugins/achievementChecker';
+import { checkAchievements } from '@/plugins/achievementChecker';
 
-    export default {
-        data () {
-            return {
-                // 玩家数据
-                player: {},
-                // 怪物数据
-                monster: null,
-                observer: null,
-                // 扫荡时间
-                sweepTime: 0,
-                // 战斗日志
-                battleLogs: [],
-                // 当前层数
-                currentFloor: 1,
-                // 是否正在扫荡
-                isSweeping: false,
-                // 扫荡结果
-                sweepResults: {
-                    // 获得的修为
-                    expGain: 0,
-                    // 获得的灵石
-                    moneyGain: 0,
-                    // 获得的装备数量
-                    equipmentGained: 0
-                },
-                // 玩家气血状态
-                playerStatus: 'success',
-                // 怪物气血状态
-                monsterStatus: 'success',
-                // 扫荡时间间隔
-                sweepInterval: null,
-                // 是否自动战斗
-                isAutoFighting: false,
-                // 自动战斗时间间隔
-                autoFightInterval: null,
-                // 扫荡战斗时间间隔
-                sweepFightInterval: null
+export default {
+    data() {
+        return {
+            // Dữ liệu người chơi
+            player: {},
+            // Dữ liệu quái vật
+            monster: null,
+            observer: null,
+            // Thời gian càn quét
+            sweepTime: 0,
+            // Nhật ký chiến đấu
+            battleLogs: [],
+            // Tầng hiện tại
+            currentFloor: 1,
+            // Đang càn quét
+            isSweeping: false,
+            // Kết quả càn quét
+            sweepResults: {
+                // Tu vi nhận được
+                expGain: 0,
+                // Linh thạch nhận được
+                moneyGain: 0,
+                // Số lượng trang bị nhận được
+                equipmentGained: 0
+            },
+            // Trạng thái khí huyết người chơi
+            playerStatus: 'success',
+            // Trạng thái khí huyết quái vật
+            monsterStatus: 'success',
+            // Khoảng thời gian càn quét
+            sweepInterval: null,
+            // Đang chiến đấu tự động
+            isAutoFighting: false,
+            // Khoảng thời gian chiến đấu tự động
+            autoFightInterval: null,
+            // Khoảng thời gian chiến đấu càn quét
+            sweepFightInterval: null
+        }
+    },
+    created() {
+        // Dữ liệu người chơi
+        this.player = this.$store.player;
+        // Kiểm tra thành tựu
+        const newAchievements = checkAchievements(this.player, 'monster');
+        newAchievements.forEach(achievement => {
+            this.$notifys({
+                title: 'Gợi ý nhận thành tựu',
+                message: `Chúc mừng bạn đã hoàn thành thành tựu ${achievement.name}`
+            });
+        });
+        // Tầng hiện tại
+        this.currentFloor = this.player.highestTowerFloor > 1 ? this.player.highestTowerFloor - 1 : 1
+    },
+    mounted() {
+        // Tạo nhật ký
+        this.battleLogs.push(`Chào mừng đến với Vô Tận Tháp, đây là tầng ${this.currentFloor} của Vô Tận Tháp, kỷ lục leo tháp cao nhất của bạn là ${this.player.highestTowerFloor} tầng`);
+        // Tạo quái vật
+        this.generateMonster();
+    },
+    beforeUnmount() {
+        // Dừng chiến đấu tự động
+        this.stopAutoFight();
+        // Dừng càn quét
+        this.stopSweep();
+        this.stopObserving();
+    },
+    watch: {
+        battleLogs: {
+            deep: true,
+            handler() {
+                this.setupObserver();
             }
         },
-        created () {
-            // 玩家数据
-            this.player = this.$store.player;
-            //检查成就
-            const newAchievements = checkAchievements(this.player, 'monster');
-            newAchievements.forEach(achievement => {
-                this.$notifys({
-                    title: '获得成就提示',
-                    message: `恭喜你完成了${achievement.name}成就`
-                });
-            });
-            // 当前层数
-            this.currentFloor = this.player.highestTowerFloor > 1 ? this.player.highestTowerFloor - 1 : 1
+        'player.health': function(val) {
+            const { health, maxHealth } = this.player;
+            this.playerStatus = this.getStatus(health, maxHealth);
         },
-        mounted () {
-            // 生成日志
-            this.battleLogs.push(`欢迎来到无尽塔, 这里是无尽塔的第${this.currentFloor}层, 你的爬塔最高记录为${this.player.highestTowerFloor}层`);
-            // 生成怪物
+        'monster.health': function(val) {
+            const { health, maxHealth } = this.monster;
+            this.monsterStatus = this.getStatus(health, maxHealth);
+        }
+    },
+    components: {
+        tag
+    },
+    computed: {
+        // Thông tin liên quan đến càn quét
+        sweepData() {
+            return [
+                { name: 'Thời gian càn quét', suffix: this.formatTime(this.sweepTime) },
+                { name: 'Tu vi nhận được', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.expGain)} điểm` },
+                { name: 'Linh thạch nhận được', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.moneyGain)} khối` },
+                { name: 'Trang bị nhận được', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.equipmentGained)} món` },
+            ];
+        },
+        // Nút
+        buttonData() {
+            return [
+                { text: this.isAutoFighting ? 'Dừng đối chiến' : 'Chiến đấu tự động', click: () => this.toggleAutoFight(), disabled: this.isSweeping || this.player.health <= 0 },
+                { text: 'Tiến hành đối chiến', click: () => this.fight(), disabled: this.isSweeping || this.isAutoFighting || !this.monster || this.player.health <= 0 },
+                { text: this.isSweeping ? 'Dừng càn quét' : 'Bắt đầu càn quét', click: () => this.toggleSweep(), disabled: this.isAutoFighting || this.player.health <= 0 },
+                { text: 'Rút lui về nhà', click: () => this.retreat(), disabled: false }
+            ];
+        },
+        // Thanh tiến độ khí huyết người chơi
+        playerProgress() {
+            return (this.player.health / this.player.maxHealth) * 100;
+        },
+        // Thanh tiến độ khí huyết quái vật
+        monsterProgress() {
+            return (this.monster.health / this.monster.maxHealth) * 100;
+        }
+    },
+    methods: {
+        // Khí huyết người chơi
+        playerHealth() {
+            const { health, maxHealth } = this.player;
+            return `${Math.max(0, health)} / ${Math.max(0, maxHealth)}`;
+        },
+        // Khí huyết quái vật
+        monsterhealth() {
+            const { health, maxHealth } = this.monster;
+            return `${Math.max(0, health)} / ${Math.max(0, maxHealth)}`;
+        },
+        // Thay đổi trạng thái khí huyết động
+        getStatus(health, maxHealth) {
+            const num = (health / maxHealth) * 100;
+            return num >= 70 ? 'success' : (num >= 30 ? 'warning' : 'exception');
+        },
+        // Tạo quái vật của tầng hiện tại
+        generateMonster() {
+            // Tính cấp độ quái vật dựa trên tầng hiện tại
+            const level = this.currentFloor * 2;
+            const health = monsters.monster_Health(level);
+            this.monster = {
+                // Tên
+                name: monsters.monster_Names(level),
+                // Cấp độ
+                level,
+                // Tỷ lệ né tránh
+                dodge: monsters.monster_Criticalhitrate(level),
+                // Công kích
+                attack: monsters.monster_Attack(level),
+                // Khí huyết
+                health: health,
+                // Phòng thủ
+                defense: monsters.monster_Defense(level),
+                // Khí huyết tối đa
+                maxHealth: health,
+                // Tỷ lệ bạo kích
+                critical: monsters.monster_Criticalhitrate(level)
+            };
+            // Nhật ký
+            this.battleLogs.push(`Bạn đã gặp người thủ hộ tầng này: ${this.monster.name}`);
+        },
+        // Mở cửa sổ thông tin của cả hai bên
+        openInfo(type) {
+            const isPlayer = type == 'player';
+            const info = isPlayer ? this.player : this.monster;
+            this.$confirm('', isPlayer ? this.player.name : info.name, {
+                center: true,
+                message: `<div class="monsterinfo">
+                    <div class="monsterinfo-box">
+                        <p>Khí huyết: ${this.$formatNumberToChineseUnit(info.health)}</p>
+                        <p>Công kích: ${this.$formatNumberToChineseUnit(info.attack)}</p>
+                        <p>Phòng thủ: ${this.$formatNumberToChineseUnit(info.defense)}</p>
+                        <p>Tỷ lệ né tránh: ${info.dodge > 0 ? (info.dodge * 100 > 100 ? 100 : (info.dodge * 100).toFixed(2)) : 0}%</p>
+                        <p>Tỷ lệ bạo kích: ${info.critical > 0 ? (info.critical * 100 > 100 ? 100 : (info.critical * 100).toFixed(2)) : 0}%</p>
+                    </div>
+                </div>`,
+                showCancelButton: false,
+                confirmButtonText: 'Đã hiểu',
+                dangerouslyUseHTMLString: true
+            }).catch(() => {});
+        },
+        // Tiến hành chiến đấu
+        fight() {
+            // Bị đánh bại
+            if (this.player.health <= 0) {
+                this.handlePlayerDefeat();
+                return;
+            }
+            // Tạo quái vật mới
+            if (!this.monster || this.monster.health <= 0) {
+                this.generateMonster();
+                return;
+            }
+            // Người chơi tấn công quái vật
+            const playerAttackResult = combatSystem.executeCombatRound(this.player, this.monster);
+            this.generateCombatLog(this.player.name, this.monster.name, playerAttackResult);
+            // Kiểm tra quái vật có bị đánh bại không
+            if (this.monster.health <= 0) {
+                this.handleMonsterDefeat();
+                return;
+            }
+            // Quái vật tấn công người chơi
+            const monsterAttackResult = combatSystem.executeCombatRound(this.monster, this.player);
+            this.generateCombatLog(this.monster.name, this.player.name, monsterAttackResult);
+            // Kiểm tra người chơi có bị đánh bại không
+            if (this.player.health <= 0) {
+                this.handlePlayerDefeat();
+            }
+        },
+        generateCombatLog(attackerName, defenderName, result) {
+            if (!result.isHit) {
+                this.battleLogs.push(`Tấn công của ${attackerName} bị ${defenderName} né tránh.`);
+            } else {
+                let logMessage = `${attackerName} gây ${result.damage} sát thương cho ${defenderName}`;
+                if (result.isCritical) logMessage += ' (bạo kích!)';
+                logMessage += `, ${defenderName} còn ${result.remainingHealth} khí huyết.`;
+                this.battleLogs.push(logMessage);
+            }
+        },
+        // Xử lý khi quái vật bị đánh bại
+        handleMonsterDefeat() {
+            // Tu vi
+            const expGain = Math.floor(this.monster.level * 100);
+            // Linh thạch
+            const moneyGain = Math.floor(this.monster.level * 2);
+            // Tăng tu vi
+            this.player.cultivation += expGain;
+            // Tăng linh thạch
+            this.player.props.money += moneyGain;
+            // Nhật ký
+            this.battleLogs.push(`Bạn đã đánh bại ${this.monster.name}!`);
+            this.battleLogs.push(`Nhận được ${expGain} điểm tu vi và ${moneyGain} linh thạch`);
+            // Nhận trang bị ngẫu nhiên
+            this.getRandomEquipment();
+            // Tăng tầng
+            this.currentFloor++;
+            // Kiểm tra tầng chia hết cho 5 và chưa nhận thưởng tầng đó
+            if (this.currentFloor % 5 === 0 && !this.player.rewardedTowerFloors.includes(this.currentFloor)) {
+                this.player.props.cultivateDan += 500;
+                this.player.rewardedTowerFloors.push(this.currentFloor);
+                this.battleLogs.push(`Chúc mừng bạn đã vượt qua tầng ${this.currentFloor}, nhận thêm phần thưởng: 500 đan bồi dưỡng!`);
+            }
+            // Nếu tầng hiện tại vượt kỷ lục cao nhất
+            if (this.currentFloor > this.player.highestTowerFloor) this.player.highestTowerFloor = this.currentFloor;
+            // Nhật ký
+            this.battleLogs.push(`Vượt qua tầng ${this.currentFloor - 1} thành công, tự động tiến đến tầng ${this.currentFloor}`);
+            // Tạo quái vật mới (tầng tiếp theo)
             this.generateMonster();
         },
-        beforeUnmount () {
-            // 停止自动战斗
+        // Xử lý khi người chơi bị đánh bại
+        handlePlayerDefeat() {
+            // Nhật ký
+            this.battleLogs.push('Bạn đã bị đánh bại! Thử thách kết thúc.');
+            this.battleLogs.push(`${this.monster.name}: ${boss.drawPrize(this.monster.level).text}`);
+            // Tắt chiến đấu tự động
+            this.isAutoFighting = false;
+            // Tắt càn quét
+            this.isSweeping = false;
+            // Dừng chiến đấu tự động
             this.stopAutoFight();
-            // 停止扫荡
+            // Dừng càn quét
             this.stopSweep();
-            this.stopObserving();
         },
-        watch: {
-            battleLogs: {
-                deep: true,
-                handler () {
-                    this.setupObserver();
-                }
-            },
-            'player.health': function (val) {
-                const { health, maxHealth } = this.player;
-                this.playerStatus = this.getStatus(health, maxHealth);
-            },
-            'monster.health': function (val) {
-                const { health, maxHealth } = this.monster;
-                this.monsterStatus = this.getStatus(health, maxHealth);
+        // Chuyển đổi trạng thái chiến đấu tự động
+        toggleAutoFight() {
+            // Chuyển đổi trạng thái chiến đấu tự động
+            this.isAutoFighting = !this.isAutoFighting;
+            // Bắt đầu chiến đấu tự động
+            if (this.isAutoFighting) this.autoFightInterval = setInterval(this.fight, 1000);
+            // Dừng chiến đấu tự động
+            else this.stopAutoFight();
+        },
+        // Dừng chiến đấu tự động
+        stopAutoFight() {
+            clearInterval(this.autoFightInterval);
+            this.autoFightInterval = null;
+        },
+        // Rút lui
+        retreat() {
+            // Tắt chiến đấu tự động
+            this.isAutoFighting = false;
+            // Tắt càn quét
+            this.isSweeping = false;
+            // Dừng chiến đấu tự động
+            this.stopAutoFight();
+            // Dừng càn quét
+            this.stopSweep();
+            this.$router.push('/home');
+        },
+        // Nhận trang bị ngẫu nhiên
+        getRandomEquipment() {
+            let equipItem = {};
+            let exp = Math.floor(this.player.maxCultivation / 100);
+            exp = exp ? exp : 1;
+            // Chiến thắng
+            this.victory = true;
+            const randomInt = equip.getRandomInt(1, 4);
+            // Thần binh
+            if (randomInt == 1) equipItem = equip.equip_Weapons(this.player.level);
+            // Hộ giáp
+            else if (randomInt == 2) equipItem = equip.equip_Armors(this.player.level);
+            // Linh bảo
+            else if (randomInt == 3) equipItem = equip.equip_Accessorys(this.player.level);
+            // Pháp khí
+            else if (randomInt == 4) equipItem = equip.equip_Sutras(this.player.level);
+            this.battleLogs.push(`Bạn phát hiện một rương báu, mở ra nhận được ${this.$levels[equipItem.quality]}${equipItem.name}(${this.$genre[equipItem.type]})`);
+            // Thông tin trang bị
+            this.openEquipItemInfo = equipItem;
+            // Nếu túi đầy thì không thêm trang bị
+            if (this.player.inventory.length >= this.player.backpackCapacity) this.battleLogs.push(`Dung lượng túi trang bị hiện tại đã đầy, trang bị này tự động bị bỏ, chuyển sinh có thể tăng dung lượng túi`);
+            else this.player.inventory.push(equipItem);
+        },
+        // Chuyển đổi trạng thái càn quét
+        toggleSweep() {
+            // Trạng thái càn quét
+            this.isSweeping = !this.isSweeping;
+            if (this.isSweeping) {
+                // Đặt lại thời gian càn quét
+                this.sweepTime = 0;
+                // Đặt lại kết quả càn quét
+                this.sweepResults = { expGain: 0, moneyGain: 0, equipmentGained: 0 };
+                // Cập nhật thời gian càn quét mỗi giây
+                this.sweepInterval = setInterval(this.sweep, 1000);
+                // Tiến hành chiến đấu càn quét mỗi 30 giây
+                this.sweepFightInterval = setInterval(this.sweepFight, 30000);
+            } else {
+                // Dừng càn quét
+                this.stopSweep();
             }
         },
-        components: {
-            tag
+        // Dừng càn quét
+        stopSweep() {
+            clearInterval(this.sweepInterval);
+            clearInterval(this.sweepFightInterval);
+            this.sweepInterval = null;
+            this.sweepFightInterval = null;
         },
-        computed: {
-            // 扫荡相关信息
-            sweepData () {
-                return [
-                    { name: '扫荡时间', suffix: this.formatTime(this.sweepTime) },
-                    { name: '获得修为', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.expGain)}点` },
-                    { name: '获得灵石', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.moneyGain)}块` },
-                    { name: '获得装备', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.equipmentGained)}件` },
-                ];
-            },
-            // 按钮
-            buttonData () {
-                return [
-                    { text: this.isAutoFighting ? '停止对战' : '自动对战', click: () => this.toggleAutoFight(), disabled: this.isSweeping || this.player.health <= 0 },
-                    { text: '进行对战', click: () => this.fight(), disabled: this.isSweeping || this.isAutoFighting || !this.monster || this.player.health <= 0 },
-                    { text: this.isSweeping ? '停止扫荡' : '开始扫荡', click: () => this.toggleSweep(), disabled: this.isAutoFighting || this.player.health <= 0 },
-                    { text: '撤退回家', click: () => this.retreat(), disabled: false }
-                ];
-            },
-            // 玩家血量进度条
-            playerProgress () {
-                return (this.player.health / this.player.maxHealth) * 100;
-            },
-            // 怪物血量进度条
-            monsterProgress () {
-                return (this.monster.health / this.monster.maxHealth) * 100;
-            }
+        // Tiến hành càn quét
+        sweep() {
+            // Tăng thời gian càn quét
+            this.sweepTime++;
+            // Cập nhật nhật ký mỗi 60 giây
+            if (this.sweepTime % 60 === 0) this.battleLogs.push(`Kết quả càn quét: Hiện đã càn quét ${this.formatTime(this.sweepTime)}, chúc mừng bạn nhận được ${this.sweepResults.expGain} điểm tu vi, ${this.sweepResults.moneyGain} linh thạch và ${this.sweepResults.equipmentGained} món trang bị.`);
         },
-        methods: {
-            // 玩家气血
-            playerHealth () {
-                const { health, maxHealth } = this.player;
-                return `${Math.max(0, health)} / ${Math.max(0, maxHealth)}`;
-            },
-            // 怪物气血
-            monsterhealth () {
-                const { health, maxHealth } = this.monster;
-                return `${Math.max(0, health)} / ${Math.max(0, maxHealth)}`;
-            },
-            // 动态修改血量状态
-            getStatus (health, maxHealth) {
-                const num = (health / maxHealth) * 100;
-                return num >= 70 ? 'success' : (num >= 30 ? 'warning' : 'exception');
-            },
-            // 生成当前层的怪物
-            generateMonster () {
-                // 根据当前层数计算怪物等级
-                const level = this.currentFloor * 2;
-                const health = monsters.monster_Health(level);
-                this.monster = {
-                    // 名称
-                    name: monsters.monster_Names(level),
-                    // 等级
-                    level,
-                    // 闪避率
-                    dodge: monsters.monster_Criticalhitrate(level),
-                    // 攻击
-                    attack: monsters.monster_Attack(level),
-                    // 气血
-                    health: health,
-                    // 防御
-                    defense: monsters.monster_Defense(level),
-                    // 最大气血
-                    maxHealth: health,
-                    // 暴击率
-                    critical: monsters.monster_Criticalhitrate(level)
-                };
-                // 日志
-                this.battleLogs.push(`你遇到了本层的守护者: ${this.monster.name}`);
-            },
-            // 打开双方信息弹窗
-            openInfo (type) {
-                const isPlayer = type == 'player';
-                const info = isPlayer ? this.player : this.monster;
-                this.$confirm('', isPlayer ? this.player.name : info.name, {
-                    center: true,
-                    message: `<div class="monsterinfo">
-                        <div class="monsterinfo-box">
-                            <p>气血: ${this.$formatNumberToChineseUnit(info.health)}</p>
-                            <p>攻击: ${this.$formatNumberToChineseUnit(info.attack)}</p>
-                            <p>防御: ${this.$formatNumberToChineseUnit(info.defense)}</p>
-                            <p>闪避率: ${info.dodge > 0 ? (info.dodge * 100 > 100 ? 100 : (info.dodge * 100).toFixed(2)) : 0}%</p>
-                            <p>暴击率: ${info.critical > 0 ? (info.critical * 100 > 100 ? 100 : (info.critical * 100).toFixed(2)) : 0}%</p>
-                        </div>
-                    </div>`,
-                    showCancelButton: false,
-                    confirmButtonText: '知道了',
-                    dangerouslyUseHTMLString: true
-                }).catch(() => { });
-            },
-            // 进行战斗
-            fight () {
-                // 被击败
-                if (this.player.health <= 0) {
-                    this.handlePlayerDefeat();
-                    return;
-                }
-                // 重新生成新怪物
-                if (!this.monster || this.monster.health <= 0) {
-                    this.generateMonster();
-                    return;
-                }
-                // 玩家攻击怪物
-                const playerAttackResult = combatSystem.executeCombatRound(this.player, this.monster);
-                this.generateCombatLog(this.player.name, this.monster.name, playerAttackResult);
-                // 检查怪物是否被击败
-                if (this.monster.health <= 0) {
-                    this.handleMonsterDefeat();
-                    return;
-                }
-                // 怪物攻击玩家
-                const monsterAttackResult = combatSystem.executeCombatRound(this.monster, this.player);
-                this.generateCombatLog(this.monster.name, this.player.name, monsterAttackResult);
-                // 玩家是否被击败
-                if (this.player.health <= 0) {
-                    this.handlePlayerDefeat();
-                }
-            },
-            generateCombatLog (attackerName, defenderName, result) {
-                if (!result.isHit) {
-                    this.battleLogs.push(`${attackerName}的攻击被${defenderName}闪避了。`);
-                } else {
-                    let logMessage = `${attackerName}对${defenderName}造成了${result.damage}点伤害`;
-                    if (result.isCritical) logMessage += '（暴击！）';
-                    logMessage += `，${defenderName}剩余${result.remainingHealth}气血。`;
-                    this.battleLogs.push(logMessage);
-                }
-            },
-            // 处理怪物被击败的情况
-            handleMonsterDefeat () {
-                // 修为
-                const expGain = Math.floor(this.monster.level * 100);
-                // 灵石
-                const moneyGain = Math.floor(this.monster.level * 2);
-                // 增加修为 
-                this.player.cultivation += expGain;
-                // 增加灵石
-                this.player.props.money += moneyGain;
-                // 日志
-                this.battleLogs.push(`你击败了 ${this.monster.name}！`);
-                this.battleLogs.push(`获得了 ${expGain}点修为和 ${moneyGain}灵石`);
-                // 随机获得装备
+        // Chiến đấu càn quét
+        sweepFight() {
+            // Tính tu vi nhận được dựa trên tầng hiện tại
+            const expGain = Math.floor(this.currentFloor * 10);
+            // Tính linh thạch nhận được dựa trên tầng hiện tại
+            const moneyGain = Math.floor(this.currentFloor * 10);
+            // Tăng tu vi người chơi
+            this.player.cultivation += expGain;
+            // Tăng linh thạch người chơi
+            this.player.props.money += moneyGain;
+            // Tăng số lượng tiêu diệt
+            this.player.jishaNum++;
+            // Cập nhật tu vi trong kết quả càn quét
+            this.sweepResults.expGain += expGain;
+            // Cập nhật linh thạch trong kết quả càn quét
+            this.sweepResults.moneyGain += moneyGain;
+            // 10% xác suất nhận trang bị
+            const equipmentGained = Math.random() < 0.1;
+            if (equipmentGained) {
                 this.getRandomEquipment();
-                // 增加层数
-                this.currentFloor++;
-                // 检查是否是10的倍数层，且之前没有获得过该层的奖励
-                if (this.currentFloor % 5 === 0 && !this.player.rewardedTowerFloors.includes(this.currentFloor)) {
-                    this.player.props.cultivateDan += 500;
-                    this.player.rewardedTowerFloors.push(this.currentFloor);
-                    this.battleLogs.push(`恭喜你通过第 ${this.currentFloor} 层，获得额外奖励：500培养丹！`);
-                }
-                // 如果当前层数大于最高层数
-                if (this.currentFloor > this.player.highestTowerFloor) this.player.highestTowerFloor = this.currentFloor;
-                // 日志
-                this.battleLogs.push(`成功通过第 ${this.currentFloor - 1} 层，自动前往第 ${this.currentFloor} 层`);
-                // 生成新的怪物（下一层）
-                this.generateMonster();
-            },
-            // 处理玩家被击败的情况
-            handlePlayerDefeat () {
-                // 日志
-                this.battleLogs.push('你被击败了！挑战结束。');
-                this.battleLogs.push(`${this.monster.name}: ${boss.drawPrize(this.monster.level).text}`);
-                // 关闭自动战斗
-                this.isAutoFighting = false;
-                // 关闭扫荡
-                this.isSweeping = false;
-                // 停止自动战斗
-                this.stopAutoFight();
-                // 停止扫荡
-                this.stopSweep();
-            },
-            // 切换自动战斗状态
-            toggleAutoFight () {
-                // 切换自动战斗状态
-                this.isAutoFighting = !this.isAutoFighting;
-                // 启动自动战斗
-                if (this.isAutoFighting) this.autoFightInterval = setInterval(this.fight, 1000);
-                // 停止自动战斗
-                else this.stopAutoFight();
-            },
-            // 停止自动战斗
-            stopAutoFight () {
-                clearInterval(this.autoFightInterval);
-                this.autoFightInterval = null;
-            },
-            // 撤退
-            retreat () {
-                // 关闭自动战斗
-                this.isAutoFighting = false;
-                // 关闭扫荡
-                this.isSweeping = false;
-                // 停止自动战斗
-                this.stopAutoFight();
-                // 停止扫荡
-                this.stopSweep();
-                this.$router.push('/home');
-            },
-            // 随机获得装备
-            getRandomEquipment () {
-                let equipItem = {};
-                let exp = Math.floor(this.player.maxCultivation / 100)
-                exp = exp ? exp : 1;
-                // 是否胜利
-                this.victory = true;
-                const randomInt = equip.getRandomInt(1, 4);
-                // 神兵
-                if (randomInt == 1) equipItem = equip.equip_Weapons(this.player.level);
-                // 护甲
-                else if (randomInt == 2) equipItem = equip.equip_Armors(this.player.level);
-                // 灵宝
-                else if (randomInt == 3) equipItem = equip.equip_Accessorys(this.player.level);
-                // 法器
-                else if (randomInt == 4) equipItem = equip.equip_Sutras(this.player.level);
-                this.battleLogs.push(`你发现了一个宝箱，打开后获得${this.$levels[equipItem.quality]}${equipItem.name}(${this.$genre[equipItem.type]})`);
-                // 装备信息
-                this.openEquipItemInfo = equipItem;
-                // 如果背包满了就不增加装备
-                if (this.player.inventory.length >= this.player.backpackCapacity) this.battleLogs.push(`当前装备背包容量已满, 该装备自动丢弃, 转生可增加背包容量`);
-                else this.player.inventory.push(equipItem);
-            },
-            // 切换扫荡状态
-            toggleSweep () {
-                // 扫荡状态
-                this.isSweeping = !this.isSweeping;
-                if (this.isSweeping) {
-                    // 重置扫荡时间
-                    this.sweepTime = 0;
-                    // 重置扫荡结果
-                    this.sweepResults = { expGain: 0, moneyGain: 0, equipmentGained: 0 };
-                    // 设定每秒更新扫荡时间
-                    this.sweepInterval = setInterval(this.sweep, 1000);
-                    // 每30秒进行一次战斗
-                    this.sweepFightInterval = setInterval(this.sweepFight, 30000);
-                } else {
-                    // 停止扫荡
-                    this.stopSweep();
-                }
-            },
-            // 停止扫荡
-            stopSweep () {
-                clearInterval(this.sweepInterval);
-                clearInterval(this.sweepFightInterval);
-                this.sweepInterval = null;
-                this.sweepFightInterval = null;
-            },
-            // 进行扫荡
-            sweep () {
-                // 增加扫荡时间
-                this.sweepTime++;
-                // 60秒更新一次日志
-                if (this.sweepTime % 60 === 0) this.battleLogs.push(`扫荡结果：目前已扫荡${this.formatTime(this.sweepTime)}，恭喜你获得了${this.sweepResults.expGain}点修为，${this.sweepResults.moneyGain}灵石和${this.sweepResults.equipmentGained}件装备。`);
-            },
-            // 扫荡战斗
-            sweepFight () {
-                // 根据当前层数计算获得经验值
-                const expGain = Math.floor(this.currentFloor * 10);
-                // 根据当前层数计算获得灵石
-                const moneyGain = Math.floor(this.currentFloor * 10);
-                // 增加玩家修为
-                this.player.cultivation += expGain;
-                // 增加玩家灵石
-                this.player.props.money += moneyGain;
-                // 增加击杀数
-                this.player.jishaNum++;
-                // 更新扫荡结果中的经验值
-                this.sweepResults.expGain += expGain;
-                // 更新扫荡结果中的灵石
-                this.sweepResults.moneyGain += moneyGain;
-                // 10% 概率获得装备
-                const equipmentGained = Math.random() < 0.1;
-                if (equipmentGained) {
-                    this.getRandomEquipment();
-                    this.sweepResults.equipmentGained++;
-                }
-                // 日志
-                this.battleLogs.push(`扫荡结果：恭喜你获得了${expGain}点修为，${moneyGain}块灵石${equipmentGained ? '和1件装备' : '。'}`);
-            },
-            setupObserver () {
-                const element = this.$refs.scrollbar.wrapRef;
-                if (element) {
-                    this.observer = new MutationObserver(() => this.$smoothScrollToBottom(element));
-                    this.observer.observe(element, { subtree: true, childList: true });
-                }
-            },
-            stopObserving () {
-                if (this.observer) {
-                    this.observer.disconnect();
-                    this.observer = null;
-                }
-            },
-            formatTime (seconds) {
-                if (seconds < 60) {
-                    return `${seconds}秒`;
-                } else if (seconds < 3600) {
-                    const minutes = Math.floor(seconds / 60);
-                    const remainingSeconds = seconds % 60;
-                    return `${minutes}分钟${remainingSeconds}秒`;
-                } else {
-                    const hours = Math.floor(seconds / 3600);
-                    seconds %= 3600;
-                    const minutes = Math.floor(seconds / 60);
-                    const remainingSeconds = seconds % 60;
-                    return `${hours}小时${minutes}分钟${remainingSeconds}秒`;
-                }
+                this.sweepResults.equipmentGained++;
+            }
+            // Nhật ký
+            this.battleLogs.push(`Kết quả càn quét: Chúc mừng bạn nhận được ${expGain} điểm tu vi, ${moneyGain} khối linh thạch${equipmentGained ? ' và 1 món trang bị' : '.'}`);
+        },
+        setupObserver() {
+            const element = this.$refs.scrollbar.wrapRef;
+            if (element) {
+                this.observer = new MutationObserver(() => this.$smoothScrollToBottom(element));
+                this.observer.observe(element, { subtree: true, childList: true });
+            }
+        },
+        stopObserving() {
+            if (this.observer) {
+                this.observer.disconnect();
+                this.observer = null;
+            }
+        },
+        formatTime(seconds) {
+            if (seconds < 60) {
+                return `${seconds} giây`;
+            } else if (seconds < 3600) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes} phút ${remainingSeconds} giây`;
+            } else {
+                const hours = Math.floor(seconds / 3600);
+                seconds %= 3600;
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${hours} giờ ${minutes} phút ${remainingSeconds} giây`;
             }
         }
     }
+}
 </script>
 
 

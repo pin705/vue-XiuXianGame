@@ -1,14 +1,38 @@
 <template>
-    <div class="tic-tac-toe">
-        <div class="game-board">
-            <div v-for="(row, rowIndex) in board" :key="rowIndex" class="row">
-                <el-button v-for="(cell, colIndex) in row" :key="colIndex" @click="makeMove(rowIndex, colIndex)" :disabled="cell !== ' ' || !canPlay" class="cell" v-text="cell" />
-            </div>
-        </div>
-        <p v-if="canPlay" class="game-status" v-text="gameStatus" />
-        <el-button @click="resetGame" v-text="'重新开始'" v-if="canPlay && !gameEnded" />
-        <el-countdown :title="hasEnoughMoney ? '冷却中' : '灵石不足'" :value="nextGameTime" @finish="finish" v-else />
+  <div class="tic-tac-toe">
+    <div class="game-board">
+      <div
+        v-for="(row, rowIndex) in board"
+        :key="rowIndex"
+        class="row"
+      >
+        <el-button
+          v-for="(cell, colIndex) in row"
+          :key="colIndex"
+          @click="makeMove(rowIndex, colIndex)"
+          :disabled="cell !== ' ' || !canPlay"
+          class="cell"
+          v-text="cell"
+        />
+      </div>
     </div>
+    <p
+      v-if="canPlay"
+      class="game-status"
+      v-text="gameStatus"
+    />
+    <el-button
+      @click="resetGame"
+      v-text="'重新开始'"
+      v-if="canPlay && !gameEnded"
+    />
+    <el-countdown
+      :title="hasEnoughMoney ? '冷却中' : '灵石不足'"
+      :value="nextGameTime"
+      @finish="finish"
+      v-else
+    />
+  </div>
 </template>
 
 <script>

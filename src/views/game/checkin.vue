@@ -1,15 +1,35 @@
 <template>
-    <div class="check-in">
-        <div class="check-in-calendar">
-            <div v-for="day in 7" :key="day" class="day-box" :class="{ checked: isCheckedIn(day), current: isCurrentDay(day) }">
-                <span class="day-number" v-text="day" />
-                <span class="reward" v-text="getReward(day)" />
-            </div>
-        </div>
-        <el-button @click="checkIn" :disabled="!canCheckIn" class="check-in-button" v-text="canCheckIn ? '签到' : '今日已签到'" />
-        <p class="streak-info">当前连续签到: {{ player.checkinStreak }}天</p>
-        <p class="next-bonus">距离下次额外奖励: {{ daysUntilNextBonus }}天</p>
+  <div class="check-in">
+    <div class="check-in-calendar">
+      <div
+        v-for="day in 7"
+        :key="day"
+        class="day-box"
+        :class="{ checked: isCheckedIn(day), current: isCurrentDay(day) }"
+      >
+        <span
+          class="day-number"
+          v-text="day"
+        />
+        <span
+          class="reward"
+          v-text="getReward(day)"
+        />
+      </div>
     </div>
+    <el-button
+      @click="checkIn"
+      :disabled="!canCheckIn"
+      class="check-in-button"
+      v-text="canCheckIn ? '签到' : '今日已签到'"
+    />
+    <p class="streak-info">
+      当前连续签到: {{ player.checkinStreak }}天
+    </p>
+    <p class="next-bonus">
+      距离下次额外奖励: {{ daysUntilNextBonus }}天
+    </p>
+  </div>
 </template>
 
 <script>

@@ -1,36 +1,55 @@
 <template>
-    <div class="games">
-        <el-tabs v-model="tabs">
-            <el-tab-pane v-for="(item, index) in gameList" :label="item.label" :name="item.name">
-                <component :is="item.component" @game-result="processGameResult" />
-            </el-tab-pane>
-        </el-tabs>
-        <div class="stats">
-            <div class="attribute-box">
-                <el-row>
-                    <el-col :span="12" class="attribute-col" v-for="(item, index) in attributeList" :key="index">
-                        <div class="el-statistic">
-                            <div class="el-statistic__head">{{ item.name }}</div>
-                            <div class="el-statistic__content">
-                                <span class="el-statistic__number">{{ $formatNumberToChineseUnit(item.value) }}{{ item.unit }}</span>
-                            </div>
-                        </div>
-                    </el-col>
-                </el-row>
+  <div class="games">
+    <el-tabs v-model="tabs">
+      <el-tab-pane
+        v-for="(item, index) in gameList"
+        :label="item.label"
+        :name="item.name"
+      >
+        <component
+          :is="item.component"
+          @game-result="processGameResult"
+        />
+      </el-tab-pane>
+    </el-tabs>
+    <div class="stats">
+      <div class="attribute-box">
+        <el-row>
+          <el-col
+            :span="12"
+            class="attribute-col"
+            v-for="(item, index) in attributeList"
+            :key="index"
+          >
+            <div class="el-statistic">
+              <div class="el-statistic__head">
+                {{ item.name }}
+              </div>
+              <div class="el-statistic__content">
+                <span class="el-statistic__number">{{ $formatNumberToChineseUnit(item.value) }}{{ item.unit }}</span>
+              </div>
             </div>
-            <el-button class="attribute-label" @click="$router.push('/home')">返回家中</el-button>
-        </div>
+          </el-col>
+        </el-row>
+      </div>
+      <el-button
+        class="attribute-label"
+        @click="$router.push('/home')"
+      >
+        返回家中
+      </el-button>
     </div>
+  </div>
 </template>
 
 <script>
     import tag from '@/components/tag.vue';
-    import Toe from './toe.vue';
-    import CheckIn from './checkin.vue';
-    import DiceGame from './Dicegame.vue';
-    import SecretRealm from './SecretRealm.vue';
-    import FortuneTelling from './fortunetelling.vue';
-    import RockPaperScissors from './rock.vue';
+import CheckIn from './checkin.vue';
+import DiceGame from './Dicegame.vue';
+import FortuneTelling from './fortunetelling.vue';
+import RockPaperScissors from './rock.vue';
+import SecretRealm from './SecretRealm.vue';
+import Toe from './toe.vue';
 
     export default {
         components: {

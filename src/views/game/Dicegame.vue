@@ -1,18 +1,51 @@
 <template>
-    <div class="dice-game">
-        <div class="options">
-            <el-radio-group v-model="betType">
-                <el-radio value="big" :disabled="!canBet" label="大" />
-                <el-radio value="small" :disabled="!canBet" label="小" />
-                <el-radio value="odd" :disabled="!canBet" label="单" />
-                <el-radio value="even" :disabled="!canBet" label="双" />
-            </el-radio-group>
-        </div>
-        <el-input-number class="bet-amount" v-model="betAmount" :min="100" :step="100" :max="1000000" :disabled="!canBet" />
-        <el-button @click="placeBet" :disabled="!canBet" v-text="'下注灵石'" v-if="canBet" />
-        <el-countdown :title="hasEnoughMoney ? '冷却中' : '灵石不足'" :value="nextGameTime" @finish="updateCanBet" v-else />
-        <div :class="['dice', 'dice-' + diceNumber, { 'rolling': isRolling }]" />
+  <div class="dice-game">
+    <div class="options">
+      <el-radio-group v-model="betType">
+        <el-radio
+          value="big"
+          :disabled="!canBet"
+          label="大"
+        />
+        <el-radio
+          value="small"
+          :disabled="!canBet"
+          label="小"
+        />
+        <el-radio
+          value="odd"
+          :disabled="!canBet"
+          label="单"
+        />
+        <el-radio
+          value="even"
+          :disabled="!canBet"
+          label="双"
+        />
+      </el-radio-group>
     </div>
+    <el-input-number
+      class="bet-amount"
+      v-model="betAmount"
+      :min="100"
+      :step="100"
+      :max="1000000"
+      :disabled="!canBet"
+    />
+    <el-button
+      @click="placeBet"
+      :disabled="!canBet"
+      v-text="'下注灵石'"
+      v-if="canBet"
+    />
+    <el-countdown
+      :title="hasEnoughMoney ? '冷却中' : '灵石不足'"
+      :value="nextGameTime"
+      @finish="updateCanBet"
+      v-else
+    />
+    <div :class="['dice', 'dice-' + diceNumber, { 'rolling': isRolling }]" />
+  </div>
 </template>
 
 <script>

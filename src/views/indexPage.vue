@@ -1,57 +1,86 @@
 <template>
-    <div class="index">
-        <div class="index2">
-            <el-button class="button" @click="goHome">
-                开始游戏
-            </el-button>
-            <el-button class="button" @click="dialogVisible = true">
-                隐私政策
-            </el-button>
-        </div>
-        <el-dialog v-model="dialogVisible" title="隐私政策" width="420px">
-            <div class="custom-html md-stream-desktop">
-                <p>我们非常重视您的隐私，并致力于保护您的个人信息。鉴于我的文字修仙全靠刷是一款完全离线的单机游戏，我们特此明确声明：</p>
-                <el-collapse v-model="activeName" accordion>
-                    <el-collapse-item name="1">
-                        <template #title>
-                            <div class="custom-title">无数据收集</div>
-                        </template>
-                        <p>游戏设计为无需网络连接即可运行的单机游戏。因此，我们不会通过任何方式收集、存储、传输或使用您的个人信息，包括但不限于您的姓名、联系方式、地理位置、设备信息或游戏内行为数据。</p>
-                    </el-collapse-item>
-                    <el-collapse-item name="2">
-                        <template #title>
-                            <div class="custom-title">无第三方数据共享</div>
-                        </template>
-                        <p>由于游戏不收集任何个人信息，我们自然也不会将任何数据分享给第三方机构或个人。我们承诺尊重并保护您的隐私权益，确保您的游戏体验不受任何不必要的干扰。</p>
-                    </el-collapse-item>
-                    <el-collapse-item name="3">
-                        <template #title>
-                            <div class="custom-title">本地存储</div>
-                        </template>
-                        <p>虽然游戏可能需要在您的设备上存储一些必要的游戏文件（如存档、设置等），但这些数据仅用于游戏的正常运行，且完全存储在您的本地设备上。我们不会将这些数据上传至服务器或用于除游戏运行以外的任何目的。</p>
-                    </el-collapse-item>
-                    <el-collapse-item name="4">
-                        <template #title>
-                            <div class="custom-title">隐私权保护</div>
-                        </template>
-                        <p>我们理解隐私权对于每位玩家都至关重要。因此，我们承诺将持续关注并遵守所有适用的隐私保护法律法规，不断改进和优化我们的隐私保护措施。</p>
-                    </el-collapse-item>
-                    <el-collapse-item name="5">
-                        <template #title>
-                            <div class="custom-title">政策更新</div>
-                        </template>
-                        <p>虽然游戏的离线特性意味着我们的隐私政策不太可能发生重大变化，但我们仍保留根据法律法规变化或游戏技术更新对隐私政策进行修订的权利。任何政策更新都将在此页面上公布，并注明生效日期。</p>
-                    </el-collapse-item>
-                    <el-divider>结语</el-divider>
-                    <p>感谢您游玩本游戏！我们承诺将继续努力，为您带来安全、愉快的游戏体验。</p>
-                </el-collapse>
-            </div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="zhengce(false)">拒 绝</el-button>
-                <el-button type="primary" @click="zhengce(true)">同 意</el-button>
-            </span>
-        </el-dialog>
+  <div class="index">
+    <div class="index2">
+      <el-button
+        class="button"
+        @click="goHome"
+      >
+        Bắt đầu trò chơi
+      </el-button>
+      <el-button
+        class="button"
+        @click="dialogVisible = true"
+      >
+        Chính sách bảo mật
+      </el-button>
     </div>
+    <el-dialog
+      v-model="dialogVisible"
+      title="Chính sách bảo mật"
+      width="420px"
+    >
+      <div class="custom-html md-stream-desktop">
+        <p>Chúng tôi rất coi trọng quyền riêng tư của bạn và cam kết bảo vệ thông tin cá nhân của bạn. Vì trò chơi tu tiên dạng văn bản này là một trò chơi đơn máy hoàn toàn không cần kết nối mạng, chúng tôi xin tuyên bố rõ ràng như sau:</p>
+        <el-collapse
+          v-model="activeName"
+          accordion
+        >
+          <el-collapse-item name="1">
+            <template #title>
+              <div class="custom-title">
+                Không thu thập dữ liệu
+              </div>
+            </template>
+            <p>Trò chơi được thiết kế để chạy mà không cần kết nối mạng. Do đó, chúng tôi không thu thập, lưu trữ, truyền tải hoặc sử dụng bất kỳ thông tin cá nhân nào của bạn, bao gồm nhưng không giới hạn ở tên, thông tin liên lạc, vị trí địa lý, thông tin thiết bị hoặc dữ liệu hành vi trong trò chơi.</p>
+          </el-collapse-item>
+          <el-collapse-item name="2">
+            <template #title>
+              <div class="custom-title">
+                Không chia sẻ dữ liệu với bên thứ ba
+              </div>
+            </template>
+            <p>Do trò chơi không thu thập bất kỳ thông tin cá nhân nào, chúng tôi cũng không chia sẻ bất kỳ dữ liệu nào với các tổ chức hoặc cá nhân bên thứ ba. Chúng tôi cam kết tôn trọng và bảo vệ quyền lợi riêng tư của bạn, đảm bảo trải nghiệm chơi game của bạn không bị gián đoạn bởi bất kỳ yếu tố không cần thiết nào.</p>
+          </el-collapse-item>
+          <el-collapse-item name="3">
+            <template #title>
+              <div class="custom-title">
+                Lưu trữ cục bộ
+              </div>
+            </template>
+            <p>Mặc dù trò chơi có thể cần lưu trữ một số tệp cần thiết trên thiết bị của bạn (như lưu trữ tiến độ, cài đặt, v.v.), nhưng các dữ liệu này chỉ được sử dụng để trò chơi hoạt động bình thường và được lưu trữ hoàn toàn trên thiết bị cục bộ của bạn. Chúng tôi không tải dữ liệu này lên máy chủ hoặc sử dụng cho bất kỳ mục đích nào ngoài việc chạy trò chơi.</p>
+          </el-collapse-item>
+          <el-collapse-item name="4">
+            <template #title>
+              <div class="custom-title">
+                Bảo vệ quyền riêng tư
+              </div>
+            </template>
+            <p>Chúng tôi hiểu rằng quyền riêng tư rất quan trọng đối với mỗi người chơi. Vì vậy, chúng tôi cam kết sẽ tiếp tục chú trọng và tuân thủ tất cả các quy định pháp luật bảo vệ quyền riêng tư hiện hành, đồng thời không ngừng cải thiện và tối ưu hóa các biện pháp bảo vệ quyền riêng tư của mình.</p>
+          </el-collapse-item>
+          <el-collapse-item name="5">
+            <template #title>
+              <div class="custom-title">
+                Cập nhật chính sách
+              </div>
+            </template>
+            <p>Mặc dù đặc tính không cần kết nối mạng của trò chơi khiến chính sách bảo mật của chúng tôi khó có khả năng thay đổi lớn, chúng tôi vẫn bảo lưu quyền sửa đổi chính sách bảo mật dựa trên sự thay đổi của luật pháp hoặc cập nhật kỹ thuật của trò chơi. Mọi cập nhật chính sách sẽ được công bố trên trang này và ghi rõ ngày có hiệu lực.</p>
+          </el-collapse-item>
+          <el-divider>Kết luận</el-divider>
+          <p>Cảm ơn bạn đã chơi trò chơi này! Chúng tôi cam kết sẽ tiếp tục nỗ lực để mang đến cho bạn một trải nghiệm chơi game an toàn và thú vị.</p>
+        </el-collapse>
+      </div>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="zhengce(false)">Từ chối</el-button>
+        <el-button
+          type="primary"
+          @click="zhengce(true)"
+        >Đồng ý</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -75,13 +104,13 @@
         methods: {
             zhengce (bool) {
                 if (bool) this.$router.push('/home');
-                else this.$notifys({ title: '提示', message: '未同意隐私政策无法进入游戏' });
+                else this.$notifys({ title: 'Gợi ý', message: 'Chưa đồng ý với chính sách bảo mật, không thể vào trò chơi' });
                 this.player.zc = bool;
                 this.dialogVisible = false;
             },
             goHome () {
                 if (!this.player.zc) {
-                    this.$notifys({ title: '提示', message: '未同意隐私政策无法进入游戏' });
+                    this.$notifys({ title: 'Gợi ý', message: 'Chưa đồng ý với chính sách bảo mật, không thể vào trò chơi' });
                     return;
                 }
                 this.$router.push('/home');

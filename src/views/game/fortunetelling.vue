@@ -1,10 +1,18 @@
 <template>
-    <div class="fortune-telling">
-        <el-button @click="tellFortune" :disabled="!canTellFortune" class="fortune-button" v-text="canTellFortune ? '开始算卦' : '今日已算卦'" />
-        <div v-if="result" class="result">
-            <p v-text="result.message" />
-        </div>
+  <div class="fortune-telling">
+    <el-button
+      @click="tellFortune"
+      :disabled="!canTellFortune"
+      class="fortune-button"
+      v-text="canTellFortune ? '开始算卦' : '今日已算卦'"
+    />
+    <div
+      v-if="result"
+      class="result"
+    >
+      <p v-text="result.message" />
     </div>
+  </div>
 </template>
 
 <script>

@@ -1,25 +1,51 @@
 <template>
-    <div class="secret-realm">
-        <div class="game-info">
-            <div class="info-item">
-                <span class="info-label">探索次数</span>
-                <span class="info-value" v-text="movesLeft" />
-            </div>
-            <div class="info-item">
-                <span class="info-label">获得灵石</span>
-                <span class="info-value" v-text="rewardMoney" />
-            </div>
-        </div>
-        <div class="game-board">
-            <template v-for="(row, rowIndex) in board" :key="rowIndex">
-                <div v-for="(cell, colIndex) in row" :key="colIndex" class="board-cell" :class="{ 'revealed': cell.revealed, [cell.type]: cell.revealed }" @click="revealCell(rowIndex, colIndex)" v-text="cell.revealed ? getCellContent(cell) : ''" />
-            </template>
-        </div>
-        <div class="new-game-button">
-            <el-button @click="startNewGame" :disabled="!gameOver" v-text="'探索中'" v-if="!gameOver && canExplore" />
-            <el-countdown title="下次探索时间" :value="nextExploreTime" @finish="startNewGame" v-else />
-        </div>
+  <div class="secret-realm">
+    <div class="game-info">
+      <div class="info-item">
+        <span class="info-label">探索次数</span>
+        <span
+          class="info-value"
+          v-text="movesLeft"
+        />
+      </div>
+      <div class="info-item">
+        <span class="info-label">获得灵石</span>
+        <span
+          class="info-value"
+          v-text="rewardMoney"
+        />
+      </div>
     </div>
+    <div class="game-board">
+      <template
+        v-for="(row, rowIndex) in board"
+        :key="rowIndex"
+      >
+        <div
+          v-for="(cell, colIndex) in row"
+          :key="colIndex"
+          class="board-cell"
+          :class="{ 'revealed': cell.revealed, [cell.type]: cell.revealed }"
+          @click="revealCell(rowIndex, colIndex)"
+          v-text="cell.revealed ? getCellContent(cell) : ''"
+        />
+      </template>
+    </div>
+    <div class="new-game-button">
+      <el-button
+        @click="startNewGame"
+        :disabled="!gameOver"
+        v-text="'探索中'"
+        v-if="!gameOver && canExplore"
+      />
+      <el-countdown
+        title="下次探索时间"
+        :value="nextExploreTime"
+        @finish="startNewGame"
+        v-else
+      />
+    </div>
+  </div>
 </template>
 
 <script>
