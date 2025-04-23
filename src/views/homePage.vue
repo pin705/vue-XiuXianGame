@@ -1510,7 +1510,7 @@
           class="dialog-footer-button"
           @click="sellingEquipmentBox"
         >
-          Xử lý hàng loạt
+          Phân giả hàng loạt
         </el-button>
         <el-button
           type="primary"
