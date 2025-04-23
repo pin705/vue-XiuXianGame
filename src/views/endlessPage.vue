@@ -210,7 +210,7 @@ export default {
                 { text: this.isAutoFighting ? 'Dừng đối chiến' : 'Chiến đấu tự động', click: () => this.toggleAutoFight(), disabled: this.isSweeping || this.player.health <= 0 },
                 { text: 'Tiến hành đối chiến', click: () => this.fight(), disabled: this.isSweeping || this.isAutoFighting || !this.monster || this.player.health <= 0 },
                 { text: this.isSweeping ? 'Dừng càn quét' : 'Bắt đầu càn quét', click: () => this.toggleSweep(), disabled: this.isAutoFighting || this.player.health <= 0 },
-                { text: 'Rút lui về nhà', click: () => this.retreat(), disabled: false }
+                { text: 'Rút lui động phủ', click: () => this.retreat(), disabled: false }
             ];
         },
         // Thanh tiến độ khí huyết người chơi
@@ -242,6 +242,7 @@ export default {
         generateMonster() {
             // Tính cấp độ quái vật dựa trên tầng hiện tại
             const level = this.currentFloor * 2;
+            console.log('level', level)
             const health = monsters.monster_Health(level);
             this.monster = {
                 // Tên
@@ -261,6 +262,7 @@ export default {
                 // Tỷ lệ bạo kích
                 critical: monsters.monster_Criticalhitrate(level)
             };
+            console.log(this.monster);
             // Nhật ký
             this.battleLogs.push({
                 message: `Bạn đã gặp người thủ hộ tầng này <span class="text-red-400">${this.monster.name}</span>`,

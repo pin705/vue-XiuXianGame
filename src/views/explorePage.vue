@@ -63,7 +63,7 @@
             @click="operate('goHome')"
             v-if="isEnd"
           >
-            Về nhà dưỡng thương <span class="shortcutKeys">(G)</span>
+            Động phủ dưỡng thương <span class="shortcutKeys">(G)</span>
           </el-button>
         </div>
       </div>

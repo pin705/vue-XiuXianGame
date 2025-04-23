@@ -6,28 +6,17 @@
       </div>
       <div class="attributes">
         <div class="attribute-box">
-          <div
-            class="tag attribute"
-            @click="editUserName"
-          >
+          <div class="tag attribute" @click="editUserName">
             Tên: {{ player.name }}
-            <el-text
-              v-if="player.currentTitle"
-              type="danger"
-            >
+            <el-text v-if="player.currentTitle" type="danger">
               [{{ player.currentTitle }}]
             </el-text>
             <el-icon>
               <EditPen />
             </el-icon>
           </div>
-          <div class="tag attribute">
-            Tuổi: {{ player.age }} tuổi
-          </div>
-          <div
-            class="tag attribute"
-            @click="isLevel = true"
-          >
+          <div class="tag attribute">Tuổi: {{ player.age }} tuổi</div>
+          <div class="tag attribute" @click="isLevel = true">
             Cảnh giới: {{ $levelNames(player.level) }} ({{
               player.reincarnation || 0
             }}
@@ -36,10 +25,7 @@
               <Warning />
             </el-icon>
           </div>
-          <div
-            class="tag attribute"
-            v-if="player.level >= this.$maxLv"
-          >
+          <div class="tag attribute" v-if="player.level >= this.$maxLv">
             Tu vi: Đỉnh cao tột bậc
           </div>
           <div
@@ -163,9 +149,7 @@
                 getEquipmentInfo(player.equipment['weapon']?.id, 'weapon')
               "
             >
-              <el-text size="small">
-                [Thần binh]
-              </el-text>
+              <el-text size="small"> [Thần binh] </el-text>
               {{ player.equipment.weapon?.name
               }}{{
                 player.equipment.weapon?.strengthen
@@ -174,9 +158,7 @@
               }}
             </tag>
             <span v-else>
-              <el-text size="small">
-                [Thần binh]
-              </el-text> Chưa trang bị
+              <el-text size="small"> [Thần binh] </el-text> Chưa trang bị
             </span>
           </span>
           <span class="w-1/2 flex flex-col items-start justify-center">
@@ -192,9 +174,7 @@
                 getEquipmentInfo(player.equipment['armor']?.id, 'armor')
               "
             >
-              <el-text size="small">
-                [Hộ giáp]
-              </el-text>
+              <el-text size="small"> [Hộ giáp] </el-text>
               {{ player.equipment.armor?.name
               }}{{
                 player.equipment.armor?.strengthen
@@ -203,13 +183,13 @@
               }}
             </tag>
             <span v-else>
-              <el-text size="small">
-                [Hộ giáp]
-              </el-text> Chưa trang bị
+              <el-text size="small"> [Hộ giáp] </el-text> Chưa trang bị
             </span>
           </span>
         </div>
-        <div class="tag !h-12 !flex  flex-auto items-center justify-center gap-2 mt-2">
+        <div
+          class="tag !h-12 !flex flex-auto items-center justify-center gap-2 mt-2"
+        >
           <span class="w-1/2 flex flex-col items-start justify-center">
             <tag
               size="large"
@@ -225,9 +205,7 @@
                 getEquipmentInfo(player.equipment['accessory']?.id, 'accessory')
               "
             >
-              <el-text size="small">
-                [Pháp khí]
-              </el-text>
+              <el-text size="small"> [Pháp khí] </el-text>
               {{ player.equipment.accessory?.name
               }}{{
                 player.equipment.accessory?.strengthen
@@ -236,9 +214,7 @@
               }}
             </tag>
             <span v-else>
-              <el-text size="small">
-                [Pháp khí]
-              </el-text> Chưa trang bị
+              <el-text size="small"> [Pháp khí] </el-text> Chưa trang bị
             </span>
           </span>
           <span class="w-1/2 flex flex-col items-start justify-center">
@@ -254,9 +230,7 @@
                 getEquipmentInfo(player.equipment['sutra']?.id, 'sutra')
               "
             >
-              <el-text size="small">
-                [Pháp khi]
-              </el-text>
+              <el-text size="small"> [Pháp khi] </el-text>
               {{ player.equipment.sutra?.name
               }}{{
                 player.equipment.sutra?.strengthen
@@ -265,11 +239,8 @@
               }}
             </tag>
             <span v-else>
-              <el-text size="small">
-                [Pháp khi]
-              </el-text> Chưa trang bị
+              <el-text size="small"> [Pháp khi] </el-text> Chưa trang bị
             </span>
-        
           </span>
         </div>
         <div class="tag !h-12 !flex items-center justify-center gap-2 my-2">
@@ -282,15 +253,11 @@
               @click="wifeItemShow = true"
               size="large"
             >
-              <el-text size="small">
-                [Đạo lữ]
-              </el-text>
+              <el-text size="small"> [Đạo lữ] </el-text>
               {{ player.wife?.name }}
             </tag>
             <span v-else>
-              <el-text size="small">
-                [Đạo lữ]
-              </el-text> Chưa trang bị
+              <el-text size="small"> [Đạo lữ] </el-text> Chưa trang bị
             </span>
           </span>
           <span class="w-1/2 flex flex-col items-start justify-center">
@@ -303,27 +270,17 @@
               @close="petRetract"
               @click="petItemShow = true"
             >
-              <el-text size="small">
-                [Linh sủng]
-              </el-text>
+              <el-text size="small"> [Linh sủng] </el-text>
               {{ player.pet?.name }}({{ $levelNames(player.pet.level) }})
             </tag>
             <span v-else>
-              <el-text size="small">
-                [Linh sủng]
-              </el-text> Chưa trang bị
+              <el-text size="small"> [Linh sủng] </el-text> Chưa trang bị
             </span>
           </span>
         </div>
         <div class="tag inventory-box">
-          <el-tabs
-            v-model="inventoryActive"
-            :stretch="true"
-          >
-            <el-tab-pane
-              label="Trang bị"
-              name="equipment"
-            >
+          <el-tabs v-model="inventoryActive" :stretch="true">
+            <el-tab-pane label="Trang bị" name="equipment">
               <el-dropdown
                 trigger="click"
                 @command="equipmentDropdown"
@@ -357,10 +314,7 @@
                 >
                   <div class="inventory-content">
                     <div v-if="player.inventory.length">
-                      <template
-                        v-for="item in player.inventory"
-                        :key="item.id"
-                      >
+                      <template v-for="item in player.inventory" :key="item.id">
                         <tag
                           class="inventory-item"
                           v-if="item.type == i.type"
@@ -433,15 +387,9 @@
                 </el-tab-pane>
               </el-tabs>
             </el-tab-pane>
-            <el-tab-pane
-              label="Đạo cụ"
-              name="props"
-            >
+            <el-tab-pane label="Đạo cụ" name="props">
               <div class="inventory-content">
-                <template
-                  v-for="(item, index) in sortedProps"
-                  :key="index"
-                >
+                <template v-for="(item, index) in sortedProps" :key="index">
                   <tag
                     type="primary"
                     class="inventory-item"
@@ -457,10 +405,7 @@
                 </template>
               </div>
             </el-tab-pane>
-            <el-tab-pane
-              label="Linh sủng"
-              name="pet"
-            >
+            <el-tab-pane label="Linh sủng" name="pet">
               <el-dropdown
                 trigger="click"
                 @command="petDropdown"
@@ -486,10 +431,7 @@
                 </template>
               </el-dropdown>
               <div class="inventory-content">
-                <template
-                  v-for="(item, index) in player.pets"
-                  :key="index"
-                >
+                <template v-for="(item, index) in player.pets" :key="index">
                   <tag
                     class="inventory-item"
                     :type="computePetsLevel(item.level)"
@@ -508,28 +450,16 @@
                 </template>
               </div>
             </el-tab-pane>
-            <el-tab-pane
-              label="Đạo lữ"
-              name="wife"
-            >
+            <el-tab-pane label="Đạo lữ" name="wife">
               <div class="inventory-content">
-                <template
-                  v-for="(item, index) in player.wifes"
-                  :key="index"
-                >
-                  <tag
-                    class="inventory-item"
-                    @click="wifeItemInfo(item)"
-                  >
+                <template v-for="(item, index) in player.wifes" :key="index">
+                  <tag class="inventory-item" @click="wifeItemInfo(item)">
                     {{ item.name }}
                   </tag>
                 </template>
               </div>
             </el-tab-pane>
-            <el-tab-pane
-              label="Cửa hàng Hồng Mông"
-              name="shop"
-            >
+            <el-tab-pane label="Cửa hàng Hồng Mông" name="shop">
               <div class="el-dropdown">
                 <span
                   class="el-dropdown-link el-dropdown-selfdefine"
@@ -541,10 +471,7 @@
                   </el-icon>
                 </span>
               </div>
-              <el-tabs
-                v-model="shopActive"
-                :stretch="true"
-              >
+              <el-tabs v-model="shopActive" :stretch="true">
                 <el-tab-pane
                   :label="i.name"
                   :name="i.type"
@@ -571,11 +498,7 @@
         </div>
       </div>
       <div class="actions">
-        <div
-          class="action"
-          v-for="(action, index) in actions"
-          :key="index"
-        >
+        <div class="action" v-for="(action, index) in actions" :key="index">
           <el-button
             class="item"
             :type="action.type ? action.type : ''"
@@ -585,10 +508,7 @@
           </el-button>
         </div>
         <div class="action">
-          <el-button
-            class="item"
-            @click="show = true"
-          >
+          <el-button class="item" @click="show = true">
             Cài đặt trò chơi
           </el-button>
         </div>
@@ -606,8 +526,8 @@
           player.level == index
             ? 'primary'
             : index > player.level
-              ? 'danger'
-              : 'success'
+            ? 'danger'
+            : 'success'
         "
         :key="index"
         v-for="(item, index) in $maxLv"
@@ -684,9 +604,7 @@
               }}
               chuyển)
             </div>
-            <div class="tag attribute">
-              Ngộ tính: {{ player.pet.rootBone }}
-            </div>
+            <div class="tag attribute">Ngộ tính: {{ player.pet.rootBone }}</div>
             <div class="tag attribute">
               Khí huyết: {{ $formatNumberToChineseUnit(player.pet.health) }}
             </div>
@@ -739,14 +657,8 @@
             v-model="petReincarnation"
             label="Linh sủng chuyển sinh"
           />
-          <el-checkbox
-            v-model="petRootBone"
-            label="Nâng cao ngộ tính"
-          />
-          <el-button
-            type="primary"
-            @click="petUpgrade(player.pet)"
-          >
+          <el-checkbox v-model="petRootBone" label="Nâng cao ngộ tính" />
+          <el-button type="primary" @click="petUpgrade(player.pet)">
             Bồi dưỡng speranza
           </el-button>
         </div>
@@ -758,10 +670,7 @@
       direction="rtl"
       class="strengthen"
     >
-      <div
-        class="strengthen-box"
-        v-if="strengthenShow"
-      >
+      <div class="strengthen-box" v-if="strengthenShow">
         <equip-tooltip
           :calculate-cost="calculateCost(strengthenInfo)"
           :calculate-enhance-success-rate="
@@ -771,33 +680,21 @@
           :strengthen-info="strengthenInfo"
         />
         <div class="click-box">
-          <el-checkbox
-            v-model="protect"
-            label="Bảo vệ luyện khí"
-          />
-          <el-checkbox
-            v-model="increase"
-            label="Tăng cường luyện khí"
-          />
-          <el-button
-            type="primary"
-            @click="enhance(strengthenInfo)"
-          >
+          <el-checkbox v-model="protect" label="Bảo vệ luyện khí" />
+          <el-checkbox v-model="increase" label="Tăng cường luyện khí" />
+          <el-button type="primary" @click="enhance(strengthenInfo)">
             Luyện khí
           </el-button>
         </div>
       </div>
     </el-drawer>
-    <el-dialog
-      :title="petInfo.name"
-      v-model="petShow"
-      center
-      width="420px"
-    >
+    <el-dialog :title="petInfo.name" v-model="petShow" center width="420px">
       <div class="monsterinfo">
         <div class="monsterinfo-box">
           <p>
-            <span class="description">Cảnh giới: {{ $levelNames(petInfo?.level) }}</span>
+            <span class="description"
+              >Cảnh giới: {{ $levelNames(petInfo?.level) }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -814,7 +711,9 @@
             </span>
           </p>
           <p>
-            <span class="description">Chuyển sinh: {{ petInfo?.reincarnation || 0 }}</span>
+            <span class="description"
+              >Chuyển sinh: {{ petInfo?.reincarnation || 0 }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -873,14 +772,16 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Tỷ lệ né tránh:
+            <span class="description"
+              >Tỷ lệ né tránh:
               {{
                 petInfo?.dodge > 0
                   ? petInfo?.dodge * 100 > 100
                     ? 100
                     : (petInfo?.dodge * 100).toFixed(2)
                   : 0
-              }}%</span>
+              }}%</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -893,14 +794,16 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Tỷ lệ bạo kích:
+            <span class="description"
+              >Tỷ lệ bạo kích:
               {{
                 petInfo?.critical > 0
                   ? petInfo?.critical * 100 > 100
                     ? 100
                     : (petInfo?.critical * 100).toFixed(2)
                   : 0
-              }}%</span>
+              }}%</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -914,7 +817,9 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Điểm linh sủng: {{ petInfo?.score }}</span>
+            <span class="description"
+              >Điểm linh sủng: {{ petInfo?.score }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -928,19 +833,16 @@
           </p>
         </div>
       </div>
-      <el-collapse
-        v-model="petCollapse"
-        class="collapse"
-      >
+      <el-collapse v-model="petCollapse" class="collapse">
         <el-collapse-item name="1">
           <template #title>
-            <div class="custom-title">
-              So sánh thuộc tính cơ bản
-            </div>
+            <div class="custom-title">So sánh thuộc tính cơ bản</div>
           </template>
           <div class="monsterinfo-box">
             <p>
-              <span class="description">Khí huyết: {{ petInfo?.initial?.health }}</span>
+              <span class="description"
+                >Khí huyết: {{ petInfo?.initial?.health }}</span
+              >
               <span bracing="icon">
                 <i
                   :class="
@@ -959,7 +861,9 @@
               }}</span>
             </p>
             <p>
-              <span class="description">Công kích: {{ petInfo?.initial?.attack }}</span>
+              <span class="description"
+                >Công kích: {{ petInfo?.initial?.attack }}</span
+              >
               <span class="icon">
                 <i
                   :class="
@@ -978,7 +882,9 @@
               }}</span>
             </p>
             <p>
-              <span class="description">Phòng thủ: {{ petInfo?.initial?.defense }}</span>
+              <span class="description"
+                >Phòng thủ: {{ petInfo?.initial?.defense }}</span
+              >
               <span class="icon">
                 <i
                   :class="
@@ -1056,11 +962,7 @@
         </el-collapse-item>
       </el-collapse>
       <div class="dialog-footer">
-        <el-button
-          plain
-          class="dialog-footer-button"
-          @click="petLock(petInfo)"
-        >
+        <el-button plain class="dialog-footer-button" @click="petLock(petInfo)">
           Linh sủng {{ petInfo.lock ? "mở khóa" : "khóa" }}
         </el-button>
         <el-button
@@ -1085,18 +987,19 @@
       center
       width="420px"
     >
-      <div
-        class="monsterinfo"
-        v-if="inventoryShow"
-      >
+      <div class="monsterinfo" v-if="inventoryShow">
         <div class="monsterinfo-box">
           <p>
-            <span class="description">Loại: {{ $genre[inventoryInfo.type] }}</span>
+            <span class="description"
+              >Loại: {{ $genre[inventoryInfo.type] }}</span
+            >
             <span class="icon" />
             <span class="value" />
           </p>
           <p>
-            <span class="description">Luyện khí: {{ inventoryInfo.strengthen || 0 }}</span>
+            <span class="description"
+              >Luyện khí: {{ inventoryInfo.strengthen || 0 }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1115,7 +1018,9 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Cảnh giới: {{ $levelNames(inventoryInfo.level) }}</span>
+            <span class="description"
+              >Cảnh giới: {{ $levelNames(inventoryInfo.level) }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1129,14 +1034,16 @@
             <span class="value">
               {{
                 inventoryInfo.level >
-                  parseInt(player.equipment[inventoryInfo.type]?.level || 1)
+                parseInt(player.equipment[inventoryInfo.type]?.level || 1)
                   ? $levelNames(inventoryInfo.level)
                   : $levelNames(player.equipment[inventoryInfo.type]?.level)
               }}
             </span>
           </p>
           <p>
-            <span class="description">Phẩm chất: {{ $levels[inventoryInfo.quality] }}</span>
+            <span class="description"
+              >Phẩm chất: {{ $levels[inventoryInfo.quality] }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1159,7 +1066,9 @@
             </span>
           </p>
           <p>
-            <span class="description">Khí huyết: {{ inventoryInfo?.health }}</span>
+            <span class="description"
+              >Khí huyết: {{ inventoryInfo?.health }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1178,7 +1087,9 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Công kích: {{ inventoryInfo?.attack }}</span>
+            <span class="description"
+              >Công kích: {{ inventoryInfo?.attack }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1197,7 +1108,9 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Phòng thủ: {{ inventoryInfo?.defense }}</span>
+            <span class="description"
+              >Phòng thủ: {{ inventoryInfo?.defense }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1216,14 +1129,16 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Tỷ lệ né tránh:
+            <span class="description"
+              >Tỷ lệ né tránh:
               {{
                 inventoryInfo?.dodge > 0
                   ? inventoryInfo?.dodge * 100 > 100
                     ? 100
                     : (inventoryInfo?.dodge * 100).toFixed(2)
                   : 0
-              }}%</span>
+              }}%</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1242,14 +1157,16 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Tỷ lệ bạo kích:
+            <span class="description"
+              >Tỷ lệ bạo kích:
               {{
                 inventoryInfo?.critical > 0
                   ? inventoryInfo?.critical * 100 > 100
                     ? 100
                     : (inventoryInfo?.critical * 100).toFixed(2)
                   : 0
-              }}%</span>
+              }}%</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1268,7 +1185,9 @@
             }}</span>
           </p>
           <p>
-            <span class="description">Điểm trang bị: {{ inventoryInfo?.score }}</span>
+            <span class="description"
+              >Điểm trang bị: {{ inventoryInfo?.score }}</span
+            >
             <span class="icon">
               <i
                 :class="
@@ -1288,19 +1207,16 @@
           </p>
         </div>
       </div>
-      <el-collapse
-        v-model="inventoryCollapse"
-        class="collapse"
-      >
+      <el-collapse v-model="inventoryCollapse" class="collapse">
         <el-collapse-item name="1">
           <template #title>
-            <div class="custom-title">
-              So sánh thuộc tính cơ bản
-            </div>
+            <div class="custom-title">So sánh thuộc tính cơ bản</div>
           </template>
           <div class="monsterinfo-box">
             <p>
-              <span class="description">Khí huyết: {{ inventoryInfo?.initial?.health }}</span>
+              <span class="description"
+                >Khí huyết: {{ inventoryInfo?.initial?.health }}</span
+              >
               <span class="icon">
                 <i
                   :class="
@@ -1319,7 +1235,9 @@
               }}</span>
             </p>
             <p>
-              <span class="description">Công kích: {{ inventoryInfo?.initial?.attack }}</span>
+              <span class="description"
+                >Công kích: {{ inventoryInfo?.initial?.attack }}</span
+              >
               <span class="icon">
                 <i
                   :class="
@@ -1338,7 +1256,9 @@
               }}</span>
             </p>
             <p>
-              <span class="description">Phòng thủ: {{ inventoryInfo?.initial?.defense }}</span>
+              <span class="description"
+                >Phòng thủ: {{ inventoryInfo?.initial?.defense }}</span
+              >
               <span class="icon">
                 <i
                   :class="
@@ -1456,41 +1376,22 @@
           :label="$levels[item]"
         />
       </el-checkbox-group>
-      <div
-        class="dialog-footer"
-        style="margin-top: 20px"
-      >
-        <el-button
-          class="dialog-footer-button"
-          @click="sellingEquipment"
-        >
+      <div class="dialog-footer" style="margin-top: 20px">
+        <el-button class="dialog-footer-button" @click="sellingEquipment">
           Phân giải trang bị
         </el-button>
       </div>
       <el-divider>Linh sủng</el-divider>
-      <div
-        class="dialog-footer"
-        style="margin-top: 20px"
-      >
-        <el-button
-          class="dialog-footer-button"
-          @click="sellingPet"
-        >
+      <div class="dialog-footer" style="margin-top: 20px">
+        <el-button class="dialog-footer-button" @click="sellingPet">
           Thả linh sủng
         </el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      v-model="show"
-      title="Cài đặt trò chơi"
-      width="350px"
-    >
+    <el-dialog v-model="show" title="Cài đặt trò chơi" width="350px">
       <div class="dialog-footer">
         <el-divider>Liên quan đến lưu trữ</el-divider>
-        <el-button
-          class="dialog-footer-button"
-          @click="exportData"
-        >
+        <el-button class="dialog-footer-button" @click="exportData">
           Lưu dữ liệu
         </el-button>
         <el-upload
@@ -1500,11 +1401,7 @@
           :show-file-list="false"
           accept="application/json"
         >
-          <el-button
-            class="dialog-footer-button"
-          >
-            Nhập lưu trữ
-          </el-button>
+          <el-button class="dialog-footer-button"> Nhập lưu trữ </el-button>
         </el-upload>
         <el-button
           type="danger"
@@ -1536,10 +1433,7 @@
           Xóa script
         </el-button> -->
         <el-divider>Liên quan khác</el-divider>
-        <el-button
-          class="dialog-footer-button"
-          @click="sellingEquipmentBox"
-        >
+        <el-button class="dialog-footer-button" @click="sellingEquipmentBox">
           Phân giả hàng loạt
         </el-button>
         <el-button
@@ -1550,16 +1444,10 @@
           Nhóm chat chính thức
         </el-button>
         <div class="footer">
-          <el-switch
-            size="large"
-            v-model="player.dark"
-          >
+          <el-switch size="large" v-model="player.dark">
             <template #active-action>
               <i class="el-icon">
-                <svg
-                  viewBox="0 0 24 24"
-                  class="dark-icon"
-                >
+                <svg viewBox="0 0 24 24" class="dark-icon">
                   <path
                     d="M11.01 3.05C6.51 3.54 3 7.36 3 12a9 9 0 0 0 9 9c4.63 0 8.45-3.5 8.95-8c.09-.79-.78-1.42-1.54-.95A5.403 5.403 0 0 1 11.1 7.5c0-1.06.31-2.06.84-2.89c.45-.67-.04-1.63-.93-1.56z"
                     fill="currentColor"
@@ -1569,10 +1457,7 @@
             </template>
             <template #inactive-action>
               <i class="el-icon">
-                <svg
-                  viewBox="0 0 24 24"
-                  class="light-icon"
-                >
+                <svg viewBox="0 0 24 24" class="light-icon">
                   <path
                     d="M6.05 4.14l-.39-.39a.993.993 0 0 0-1.4 0l-.01.01a.984.984 0 0 0 0 1.4l.39.39c.39.39 1.01.39 1.4 0l.01-.01a.984.984 0 0 0 0-1.4zM3.01 10.5H1.99c-.55 0-.99.44-.99.99v.01c0 .55.44.99.99.99H3c.56.01 1-.43 1-.98v-.01c0-.56-.44-1-.99-1zm9-9.95H12c-.56 0-1 .44-1 .99v.96c0 .55.44.99.99.99H12c.56.01 1-.43 1-.98v-.97c0-.55-.44-.99-.99-.99zm7.74 3.21c-.39-.39-1.02-.39-1.41-.01l-.39.39a.984.984 0 0 0 0 1.4l.01.01c.39.39 1.02.39 1.4 0l.39-.39a.984.984 0 0 0 0-1.4zm-1.81 15.1l.39.39a.996.996 0 1 0 1.41-1.41l-.39-.39a.993.993 0 0 0-1.4 0c-.4.4-.4 1.02-.01 1.41zM20 11.49v.01c0 .55.44.99.99.99H22c.55 0 .99-.44.99-.99v-.01c0-.55-.44-.99-.99-.99h-1.01c-.55 0-.99.44-.99.99zM12 5.5c-3.31 0-6 2.69-6 6s2.69 6 6 6s6-2.69 6-6s-2.69-6-6-6zm-.01 16.95H12c.55 0 .99-.44.99-.99v-.96c0-.55-.44-.99-.99-.99h-.01c-.55 0-.99.44-.99.99v.96c0 .55.44.99.99.99zm-7.74-3.21c.39.39 1.02.39 1.41 0l.39-.39a.993.993 0 0 0 0-1.4l-.01-.01a.996.996 0 0 0-1.41 0l-.39.39c-.38.4-.38 1.02.01 1.41z"
                     fill="currentColor"
@@ -1591,19 +1476,10 @@
       direction="rtl"
       class="equipAll"
     >
-      <el-tabs
-        v-model="activeName"
-        type="border-card"
-      >
-        <el-tab-pane
-          label="Sổ tay trang bị"
-          name="illustrations"
-        >
+      <el-tabs v-model="activeName" type="border-card">
+        <el-tab-pane label="Sổ tay trang bị" name="illustrations">
           <div class="equipAll-box">
-            <el-tabs
-              v-model="illustrationsActive"
-              :stretch="true"
-            >
+            <el-tabs v-model="illustrationsActive" :stretch="true">
               <el-tab-pane
                 :label="i.name"
                 :name="i.type"
@@ -1628,24 +1504,15 @@
             </el-tabs>
           </div>
         </el-tab-pane>
-        <el-tab-pane
-          label="Thành tựu của tôi"
-          name="achievement"
-        >
-          <el-tabs
-            v-model="achievementActive"
-            :stretch="true"
-          >
+        <el-tab-pane label="Thành tựu của tôi" name="achievement">
+          <el-tabs v-model="achievementActive" :stretch="true">
             <el-tab-pane
               :label="i.name"
               :name="i.type"
               v-for="(i, k) in achievementAll"
               :key="k"
             >
-              <div
-                class="achievement-content"
-                v-if="i.data.length > 0"
-              >
+              <div class="achievement-content" v-if="i.data.length > 0">
                 <div
                   class="achievement-item"
                   v-for="(item, index) in i.data"
@@ -1664,20 +1531,14 @@
                   </tag>
                 </div>
               </div>
-              <div
-                class="achievement-content"
-                v-else
-              >
+              <div class="achievement-content" v-else>
                 Loại thành tựu này chưa được phát hành
               </div>
             </el-tab-pane>
           </el-tabs>
         </el-tab-pane>
       </el-tabs>
-      <div
-        class="backtop"
-        @click="equipAllShow = false"
-      >
+      <div class="backtop" @click="equipAllShow = false">
         <el-icon>
           <Close />
         </el-icon>
@@ -1713,20 +1574,12 @@
         >
           {{ newBieLoading ? "Đang làm mới..." : "Làm mới" }}
         </el-button>
-        <el-button
-          size="small"
-          type="primary"
-          @click="confirmCollectionNewBie"
-        >
+        <el-button size="small" type="primary" @click="confirmCollectionNewBie">
           Nhận trang bị
         </el-button>
       </div>
     </el-drawer>
-    <el-dialog
-      v-model="newBieInfoBox"
-      :title="newBieItem.name"
-      width="420px"
-    >
+    <el-dialog v-model="newBieInfoBox" :title="newBieItem.name" width="420px">
       <div class="monsterinfo">
         <div class="newbieinfo-box">
           <p>Loại: {{ $genre[newBieItem.type] }}</p>
@@ -1768,16 +1621,8 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      v-model="errBox"
-      title="Thông tin lỗi"
-      width="420px"
-    >
-      <el-input
-        v-model="err"
-        :rows="10"
-        type="textarea"
-      />
+    <el-dialog v-model="errBox" title="Thông tin lỗi" width="420px">
+      <el-input v-model="err" :rows="10" type="textarea" />
       <div class="dialog-footer">
         <el-button
           type="primary"

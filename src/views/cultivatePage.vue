@@ -95,7 +95,7 @@ export default {
           text: "Chuyển sinh đột phá",
           click: () => this.reincarnationBreakthrough(),
         },
-        { text: "Quay về nhà", click: () => this.$router.push("/home") },
+        { text: "Quay động phủ", click: () => this.$router.push("/home") },
       ];
     },
     cultivationPercentage() {

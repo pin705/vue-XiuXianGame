@@ -2,6 +2,7 @@
   <div class="games">
     <el-tabs v-model="tabs">
       <el-tab-pane
+        :key="index"
         v-for="(item, index) in gameList"
         :label="item.label"
         :name="item.name"
@@ -45,13 +46,13 @@
 </template>
 
 <script>
-import tag from '@/components/tag.vue';
-import CheckIn from './checkin.vue';
-import DiceGame from './Dicegame.vue';
-import FortuneTelling from './fortunetelling.vue';
-import RockPaperScissors from './rock.vue';
-import SecretRealm from './SecretRealm.vue';
-import Toe from './toe.vue';
+import tag from "@/components/tag.vue";
+import CheckIn from "./checkin.vue";
+import DiceGame from "./Dicegame.vue";
+import FortuneTelling from "./fortunetelling.vue";
+import RockPaperScissors from "./rock.vue";
+import SecretRealm from "./SecretRealm.vue";
+import Toe from "./toe.vue";
 
 export default {
   components: {
@@ -65,23 +66,23 @@ export default {
   },
   data() {
     return {
-      tabs: 'checkin',
+      tabs: "checkin",
       player: {},
       selectedGame: null,
       gameList: [
-        { name: 'checkin', label: 'Điểm danh', component: 'CheckIn' },
-        { name: 'dice', label: 'Xúc xắc', component: 'DiceGame' },
-        { name: 'rps', label: 'Kéo búa bao', component: 'RockPaperScissors' },
-        { name: 'fortune', label: 'Bói toán', component: 'FortuneTelling' },
-        { name: 'toe', label: 'Caro', component: 'Toe' },
-        { name: 'secret-realm', label: 'Bí cảnh', component: 'SecretRealm' }
-      ]
+        { name: "checkin", label: "Điểm danh", component: "CheckIn" },
+        { name: "dice", label: "Xúc xắc", component: "DiceGame" },
+        { name: "rps", label: "Kéo búa bao", component: "RockPaperScissors" },
+        { name: "fortune", label: "Bói toán", component: "FortuneTelling" },
+        { name: "toe", label: "Caro", component: "Toe" },
+        { name: "secret-realm", label: "Bí cảnh", component: "SecretRealm" },
+      ],
     };
   },
   watch: {
     tabs(type) {
       this.selectedGame = type;
-    }
+    },
   },
   created() {
     this.player = this.$store.player;
@@ -92,12 +93,16 @@ export default {
   computed: {
     attributeList() {
       return [
-        { name: 'Số ngày điểm danh', unit: ' ngày', value: this.player.checkinDays },
-        { name: 'Linh thạch sở hữu', unit: '', value: this.player.props.money },
-        { name: 'Số lần thắng', unit: ' lần', value: this.player.gameWins },
-        { name: 'Số lần thua', unit: ' lần', value: this.player.gameLosses }
+        {
+          name: "Số ngày điểm danh",
+          unit: " ngày",
+          value: this.player.checkinDays,
+        },
+        { name: "Linh thạch sở hữu", unit: "", value: this.player.props.money },
+        { name: "Số lần thắng", unit: " lần", value: this.player.gameWins },
+        { name: "Số lần thua", unit: " lần", value: this.player.gameLosses },
       ];
-    }
+    },
   },
   methods: {
     processGameResult(result) {
@@ -108,7 +113,7 @@ export default {
       this.player.gameWins++;
       const reward = result.reward;
       if (reward) {
-        if (typeof reward === 'object') {
+        if (typeof reward === "object") {
           Object.entries(reward).forEach(([key, value]) => {
             this.player.props[key] += value;
           });
@@ -127,27 +132,27 @@ export default {
       if (now.toDateString() !== lastCheckinDate.toDateString()) {
         this.player.checkedInToday = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-    .game-container {
-        border-radius: 12px;
-        margin-bottom: 20px;
-    }
+.game-container {
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
 
-    .attribute-box {
-        margin-bottom: 10px;
-    }
+.attribute-box {
+  margin-bottom: 10px;
+}
 
-    .attribute-col {
-        margin-top: 10px;
-    }
+.attribute-col {
+  margin-top: 10px;
+}
 
-    .attribute-label {
-        margin: 15px 0;
-        width: 40%;
-    }
+.attribute-label {
+  margin: 15px 0;
+  width: 40%;
+}
 </style>

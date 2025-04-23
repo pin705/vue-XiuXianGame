@@ -44,7 +44,7 @@
         class="home-button"
         @click="move('q')"
       >
-        Về nhà<span class="shortcutKeys">(Q)</span>
+        Động phủ <span class="shortcutKeys">(Q)</span>
       </el-button>
       <el-button
         class="up-button"

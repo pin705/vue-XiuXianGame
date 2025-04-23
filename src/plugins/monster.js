@@ -61,9 +61,10 @@ const monsters = {
   // Tính công kích của quái vật
   monster_Attack(lv) {
     if (lv <= 144) {
+      console.log('this.getRandomInt(50, 150) * lv', this.getRandomInt(50, 150) * lv)
       return this.getRandomInt(50, 150) * lv;
     } else {
-      return this.getRandomInt(10000, 50000) * lv;
+      return this.getRandomInt(100, 300) * lv;
     }
   },
   // Tính khí huyết của quái vật
@@ -71,7 +72,7 @@ const monsters = {
     if (lv <= 144) {
       return this.getRandomInt(100, 500) * lv;
     } else {
-      return this.getRandomInt(10000, 50000) * lv;
+      return this.getRandomInt(200, 1000) * lv;
     }
   },
   // Tính phòng thủ của quái vật
@@ -79,7 +80,7 @@ const monsters = {
     if (lv <= 144) {
       return this.getRandomInt(1, 15) * lv;
     } else {
-      return this.getRandomInt(500, 1000) * lv;
+      return this.getRandomInt(15, 100) * lv;
     }
   },
   // Tính tỷ lệ bạo kích của quái vật

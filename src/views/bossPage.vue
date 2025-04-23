@@ -42,7 +42,7 @@
         Phát động chiến đấu
       </el-button>
       <el-button @click="$router.push('/home')">
-        Về nhà dưỡng thương
+        Động phủ dưỡng thương
       </el-button>
     </div>
   </div>
