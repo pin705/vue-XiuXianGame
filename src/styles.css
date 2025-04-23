@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  /* zoom: 0.9; */
+  zoom: 0.9;
   overflow: hidden;
 }
 
