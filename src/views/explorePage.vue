@@ -32,6 +32,7 @@
       <div class="actions">
         <div class="action">
           <el-button
+            size="small"
             class="item"
             @click="operate('startFight')"
             :disabled="isEnd"
@@ -41,6 +42,7 @@
         </div>
         <div class="action">
           <el-button
+            size="small"
             class="item"
             @click="operate('harvestPet')"
             :disabled="isCaptureFailed"
@@ -50,7 +52,7 @@
         </div>
         <div class="action">
           <el-button
-            class="item"
+            size="small"
             @click="operate('runAway')"
             :disabled="isFailedRetreat"
           >
@@ -59,6 +61,7 @@
         </div>
         <div class="action">
           <el-button
+            size="small"
             class="item"
             @click="operate('explore')"
             :disabled="player.health <= 0"
@@ -70,6 +73,7 @@
         <div class="action">
           <el-button
             class="item"
+            size="small"
             @click="operate('goHome')"
             v-if="isEnd"
           >

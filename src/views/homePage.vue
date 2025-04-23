@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <div class="index-box">
-      <div class="story">
+      <div class="story mb-2">
         <p v-html="storyText" />
       </div>
       <div class="attributes">
@@ -169,7 +169,6 @@
                   : ""
               }}
             </tag>
-            <span v-else>Không có</span>
             <!-- <el-popover
               placement="top-start"
               :title="player.equipment.weapon?.name"
@@ -226,7 +225,6 @@
                   : ""
               }}
             </tag>
-            <span v-else>Không có</span>
             <!-- <el-popover
               placement="top-start"
               :title="player.equipment.armor?.name"
@@ -274,16 +272,10 @@
               :closable="!!player.equipment.accessory?.name"
               @close="equipmentClose('accessory')"
               @click="
-                equipmentInfo(
-                  player.equipment['accessory']?.id,
-                  'accessory'
-                )
+                equipmentInfo(player.equipment['accessory']?.id, 'accessory')
               "
               @mouseenter="
-                getEquipmentInfo(
-                  player.equipment['accessory']?.id,
-                  'accessory'
-                )
+                getEquipmentInfo(player.equipment['accessory']?.id, 'accessory')
               "
             >
               {{ player.equipment.accessory?.name
@@ -293,7 +285,6 @@
                   : ""
               }}
             </tag>
-            <span v-else>Không có</span>
             <!-- <el-popover
               placement="top-start"
               :title="player.equipment.accessory?.name"
@@ -345,9 +336,7 @@
               v-if="player.equipment.sutra?.name"
               :type="player.equipment.sutra?.quality"
               :closable="!!player.equipment.sutra?.name"
-              @close="
-                equipmentClose(player.equipment['sutra']?.id, 'sutra')
-              "
+              @close="equipmentClose(player.equipment['sutra']?.id, 'sutra')"
               @click="equipmentInfo(player.equipment['sutra']?.id, 'sutra')"
               @mouseenter="
                 getEquipmentInfo(player.equipment['sutra']?.id, 'sutra')
@@ -360,7 +349,6 @@
                   : ""
               }}
             </tag>
-            <span v-else>Không có</span>
             <!-- <el-popover
               placement="top-start"
               :title="player.equipment.sutra?.name"
@@ -413,7 +401,6 @@
             >
               {{ player.wife?.name }}
             </tag>
-            <span v-else>Không có</span>
           </span>
           <span class="equip">
             <span>Linh sủng: </span>
@@ -427,7 +414,6 @@
             >
               {{ player.pet?.name }}({{ $levelNames(player.pet.level) }})
             </tag>
-            <span v-else>Không có</span>
           </span>
         </div>
         <div class="tag inventory-box">
@@ -493,11 +479,8 @@
                             <Unlock />
                           </el-icon>
                           {{ item?.name
-                          }}{{
-                            item?.strengthen ? "+" + item?.strengthen : ""
-                          }}
+                          }}{{ item?.strengthen ? "+" + item?.strengthen : "" }}
                         </tag>
-                        <span v-else>Không có</span>
                         <!-- <el-popover
                           placement="bottom-start"
                           :title="item.name"
@@ -1633,7 +1616,7 @@
         >
           Xóa lưu trữ
         </el-button>
-        <el-divider>Liên quan đến script</el-divider>
+        <!-- <el-divider>Liên quan đến script</el-divider>
         <el-upload
           action="#"
           class="dialog-upload"
@@ -1654,7 +1637,7 @@
           @click="deleteScriptData"
         >
           Xóa script
-        </el-button>
+        </el-button> -->
         <el-divider>Liên quan khác</el-divider>
         <el-button
           class="dialog-footer-button"
@@ -1665,17 +1648,43 @@
         <el-button
           type="primary"
           class="dialog-footer-button"
-          @click="copyContent('qq')"
+          @click="handleOpenGroup"
         >
           Nhóm chat chính thức
         </el-button>
-        <el-button
-          type="success"
-          class="dialog-footer-button"
-          @click="copyContent('url')"
-        >
-          Địa chỉ mã nguồn mở
-        </el-button>
+        <div class="footer">
+          <el-switch
+            size="large"
+            v-model="player.dark"
+          >
+            <template #active-action>
+              <i class="el-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  class="dark-icon"
+                >
+                  <path
+                    d="M11.01 3.05C6.51 3.54 3 7.36 3 12a9 9 0 0 0 9 9c4.63 0 8.45-3.5 8.95-8c.09-.79-.78-1.42-1.54-.95A5.403 5.403 0 0 1 11.1 7.5c0-1.06.31-2.06.84-2.89c.45-.67-.04-1.63-.93-1.56z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </i>
+            </template>
+            <template #inactive-action>
+              <i class="el-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  class="light-icon"
+                >
+                  <path
+                    d="M6.05 4.14l-.39-.39a.993.993 0 0 0-1.4 0l-.01.01a.984.984 0 0 0 0 1.4l.39.39c.39.39 1.01.39 1.4 0l.01-.01a.984.984 0 0 0 0-1.4zM3.01 10.5H1.99c-.55 0-.99.44-.99.99v.01c0 .55.44.99.99.99H3c.56.01 1-.43 1-.98v-.01c0-.56-.44-1-.99-1zm9-9.95H12c-.56 0-1 .44-1 .99v.96c0 .55.44.99.99.99H12c.56.01 1-.43 1-.98v-.97c0-.55-.44-.99-.99-.99zm7.74 3.21c-.39-.39-1.02-.39-1.41-.01l-.39.39a.984.984 0 0 0 0 1.4l.01.01c.39.39 1.02.39 1.4 0l.39-.39a.984.984 0 0 0 0-1.4zm-1.81 15.1l.39.39a.996.996 0 1 0 1.41-1.41l-.39-.39a.993.993 0 0 0-1.4 0c-.4.4-.4 1.02-.01 1.41zM20 11.49v.01c0 .55.44.99.99.99H22c.55 0 .99-.44.99-.99v-.01c0-.55-.44-.99-.99-.99h-1.01c-.55 0-.99.44-.99.99zM12 5.5c-3.31 0-6 2.69-6 6s2.69 6 6 6s6-2.69 6-6s-2.69-6-6-6zm-.01 16.95H12c.55 0 .99-.44.99-.99v-.96c0-.55-.44-.99-.99-.99h-.01c-.55 0-.99.44-.99.99v.96c0 .55.44.99.99.99zm-7.74-3.21c.39.39 1.02.39 1.41 0l.39-.39a.993.993 0 0 0 0-1.4l-.01-.01a.996.996 0 0 0-1.41 0l-.39.39c-.38.4-.38 1.02.01 1.41z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </i>
+            </template>
+          </el-switch>
+        </div>
         <el-divider>Phiên bản hiện tại: {{ ver }}</el-divider>
       </div>
     </el-dialog>
@@ -2020,6 +2029,20 @@ export default {
           message: "Nhấn vào đạo cụ để xem thông tin liên quan",
         });
     },
+    "player.dark": function (val) {
+      console.log("val", val);
+      const setThemeColor = (color) => {
+        let meta = document.querySelector('meta[name="theme-color"]');
+        if (!meta) {
+          meta = document.createElement("meta");
+          meta.name = "theme-color";
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute("content", color);
+      };
+
+      setThemeColor(val ? "#18181c" : "#ffffff");
+    },
     "player.attack": function (val) {
       if (isNaN(val)) this.reset();
       else return val;
@@ -2132,6 +2155,9 @@ export default {
       this.uploadScript();
       // Ngăn tải lên
       return false;
+    },
+    handleOpenGroup() {
+      window.open("https://zalo.me/g/cltcgr815", "_blank");
     },
     // Nhập script
     uploadScript() {
@@ -3553,10 +3579,6 @@ export default {
 </script>
 
 <style scoped>
-.index-box {
-  margin-top: 15px;
-}
-
 .attribute {
   width: calc(50% - 8px);
   margin: 4px;
