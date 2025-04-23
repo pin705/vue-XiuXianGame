@@ -153,12 +153,12 @@
           <span class="equip">
             <span>Thần binh: </span>
             <tag
-              class="w-[30%] !whitespace-break-spaces"
+              class="w-[32%] overflow-auto"
               v-if="player.equipment.weapon?.name"
               :type="player.equipment.weapon?.quality"
               :closable="player.equipment.weapon?.name ? true : false"
               @close="equipmentClose('weapon')"
-              @click="equipmentInfo(player.equipment[type].id, 'weapon')"
+              @click="equipmentInfo(player.equipment['weapon']?.id, 'weapon')"
               @mouseenter="
                 getEquipmentInfo(player.equipment['weapon']?.id, 'weapon')
               "
@@ -177,7 +177,7 @@
           <span class="equip">
             <span>Hộ giáp: </span>
             <tag
-              class="w-[30%] !whitespace-break-spaces"
+              class="w-[32%] overflow-auto"
               v-if="player.equipment.armor?.name"
               :type="player.equipment.armor?.quality"
               :closable="player.equipment.armor?.name ? true : false"
@@ -203,7 +203,7 @@
           <span class="equip">
             <span>Linh bảo: </span>
             <tag
-              class="w-[30%] !whitespace-break-spaces"
+              class="w-[32%] overflow-auto"
               v-if="player.equipment.accessory?.name"
               :type="player.equipment.accessory?.quality"
               :closable="!!player.equipment.accessory?.name"
@@ -229,7 +229,7 @@
           <span class="equip">
             <span>Pháp khí: </span>
             <tag
-              class="w-[30%] !whitespace-break-spaces"
+              class="w-[32%] overflow-auto"
               v-if="player.equipment.sutra?.name"
               :type="player.equipment.sutra?.quality"
               :closable="!!player.equipment.sutra?.name"
@@ -256,7 +256,7 @@
           <span class="equip">
             <span>Đạo lữ: </span>
             <tag
-              class="pet"
+              class="pet w-[32%] overflow-auto"
               v-if="player.wife?.name"
               closable
               @close="wifeRevoke"
@@ -271,7 +271,7 @@
           <span class="equip">
             <span>Linh sủng: </span>
             <tag
-              class="pet"
+              class="pet w-[32%] overflow-auto"
               v-if="player.pet?.name"
               :type="computePetsLevel(player.pet?.level)"
               closable

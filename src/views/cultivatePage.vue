@@ -116,9 +116,12 @@ export default {
                 )
               : Math.floor(this.player.maxCultivation / 100);
           this.texts.push(
-            this.player.level < this.$maxLv
+            {
+              message: this.player.level < this.$maxLv
               ? "Bạn bắt đầu thiền định, hấp thụ linh khí xung quanh. Tu vi đã tăng!"
-              : "Cảnh giới hiện tại của bạn đã viên mãn, cần chuyển sinh để tiếp tục tu luyện"
+              : "Cảnh giới hiện tại của bạn đã viên mãn, cần chuyển sinh để tiếp tục tu luyện",
+              time: new Date().toLocaleTimeString(),
+            }
           );
           this.breakThrough(exp);
           // 10% xác suất kích hoạt sự kiện ngẫu nhiên
@@ -165,7 +168,10 @@ export default {
       const event =
         randomEvents[Math.floor(Math.random() * randomEvents.length)];
       this.texts.push(
-        `<span style="color: #E6A23C;">${event.description}</span>`
+        {
+          message: `<span style="color: #E6A23C;">${event.description}</span>`,
+          time: new Date().toLocaleTimeString(),
+        }
       );
       switch (event.type) {
         case "resource":

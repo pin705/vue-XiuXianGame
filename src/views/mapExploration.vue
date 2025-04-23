@@ -41,14 +41,12 @@
     </div>
     <div class="controls">
       <el-button
-        size="small"
         class="home-button"
         @click="move('q')"
       >
         Về nhà<span class="shortcutKeys">(Q)</span>
       </el-button>
       <el-button
-        size="small"
         class="up-button"
         @click="move('up')"
         :disabled="isTopObstacle || playerY == 0"
@@ -56,7 +54,6 @@
         Đi hướng Bắc<span class="shortcutKeys">(W)</span>
       </el-button>
       <el-button
-        size="small"
         class="dialogue-button"
         @click="move('e')"
         :disabled="!isNpc && !isFishing"
@@ -65,7 +62,6 @@
         }}<span class="shortcutKeys">(E)</span>
       </el-button>
       <el-button
-        size="small"
         class="left-button"
         @click="move('left')"
         :disabled="isLeftObstacle || playerX === 0"
@@ -73,7 +69,6 @@
         Đi hướng Tây<span class="shortcutKeys">(A)</span>
       </el-button>
       <el-button
-        size="small"
         class="down-button"
         @click="move('down')"
         :disabled="isDownObstacle || playerY === gridSize - 1"
@@ -81,7 +76,6 @@
         Đi hướng Nam<span class="shortcutKeys">(S)</span>
       </el-button>
       <el-button
-        size="small"
         class="right-button"
         @click="move('right')"
         :disabled="isRightObstacle || playerX === gridSize - 1"
