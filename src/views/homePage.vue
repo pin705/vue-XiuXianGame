@@ -723,7 +723,7 @@
       </div>
     </el-drawer>
     <el-drawer
-      title="Luyện khí"
+      :title="strengthenInfo.name"
       v-model="strengthenShow"
       direction="rtl"
       class="strengthen"
