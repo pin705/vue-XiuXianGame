@@ -24,14 +24,14 @@
     >
       <div class="player-choice">
         <div :class="['choice-image', type[result.playerChoice]]" />
-        <p>你的选择</p>
+        <p>Lựa chọn của bạn</p>
       </div>
       <div class="vs">
         VS
       </div>
       <div class="computer-choice">
         <div :class="['choice-image', type[result.computerChoice]]" />
-        <p>天道的选择</p>
+        <p>Lựa chọn của Thiên Đạo</p>
       </div>
     </div>
     <div
@@ -42,14 +42,14 @@
     </div>
     <div class="message">
       <p v-if="canPlay">
-        请选择
+        Vui lòng chọn một lựa chọn
       </p>
       <p v-else-if="!hasEnoughMoney">
-        灵石不足
+        Không đủ linh thạch
       </p>
       <el-countdown
         v-else
-        title="冷却中"
+        title="Đang hồi chiêu"
         :value="nextGameTime"
         @finish="updateCanPlay"
       />
@@ -58,69 +58,73 @@
 </template>
 
 <script>
-    export default {
-        name: 'RockPaperScissors',
-        data () {
-            return {
-                type: {
-                    '布': 'cloth',
-                    '剪刀': 'scissors',
-                    '石头': 'fist'
-                },
-                result: null,
-                options: ['石头', '剪刀', '布'],
-                betAmount: 100,
-                canPlay: false
-            }
-        },
-        computed: {
-            player () {
-                return this.$store.player;
-            },
-            nextGameTime () {
-                return this.player.nextGameTimes?.rps || 0;
-            },
-            hasEnoughMoney () {
-                return this.player.props.money >= this.betAmount;
-            },
-        },
-        created() {
-            this.updateCanPlay();
-        },
-        methods: {
-            updateCanPlay() {
-                this.canPlay = Date.now() >= this.nextGameTime && this.hasEnoughMoney;
-            },
-            play (playerChoice) {
-                if (!this.canPlay) return;
-                const computerChoice = this.options[Math.floor(Math.random() * 3)];
-                const won = (playerChoice === '石头' && computerChoice === '剪刀') || (playerChoice === '剪刀' && computerChoice === '布') || (playerChoice === '布' && computerChoice === '石头');
-                const draw = (playerChoice === computerChoice); 
-
-                const reward = won ? this.betAmount * 2 :(draw?0 :this.betAmount);
-                this.result = {
-                    message: won ? `恭喜您赢得了${reward}灵石！` : (draw?'很遗憾，五五开!':'很遗憾，您输了。'),
-                    playerChoice,
-                    computerChoice
-                };
-                if (won) {
-                    this.player.props.money += reward - this.betAmount;
-                } else {
-                    this.player.props.money -= reward;
-                }
-                this.$emit('game-result', { success: won, reward });
-                const newNextGameTime = Date.now() + 10 * 60 * 1000;
-                this.player.nextGameTimes.rps = newNextGameTime;
-                this.$emit('update-next-game-time', { game: 'rps', time: newNextGameTime });
-                this.canPlay = false;
-            }
-        },
-        watch: {
-            betAmount() {
-                this.updateCanPlay();
-            }
-        }
+export default {
+  name: 'RockPaperScissors',
+  data () {
+    return {
+      type: {
+        'Bao': 'cloth',
+        'Kéo': 'scissors',
+        'Đá': 'fist'
+      },
+      result: null,
+      options: ['Đá', 'Kéo', 'Bao'],
+      betAmount: 100,
+      canPlay: false
     }
+  },
+  computed: {
+    player () {
+      return this.$store.player;
+    },
+    nextGameTime () {
+      return this.player.nextGameTimes?.rps || 0;
+    },
+    hasEnoughMoney () {
+      return this.player.props.money >= this.betAmount;
+    },
+  },
+  created() {
+    this.updateCanPlay();
+  },
+  methods: {
+    updateCanPlay() {
+      this.canPlay = Date.now() >= this.nextGameTime && this.hasEnoughMoney;
+    },
+    play (playerChoice) {
+      if (!this.canPlay) return;
+      const computerChoice = this.options[Math.floor(Math.random() * 3)];
+      const won = (playerChoice === 'Đá' && computerChoice === 'Kéo') || 
+                  (playerChoice === 'Kéo' && computerChoice === 'Bao') || 
+                  (playerChoice === 'Bao' && computerChoice === 'Đá');
+      const draw = (playerChoice === computerChoice); 
+
+      const reward = won ? this.betAmount * 2 : (draw ? 0 : this.betAmount);
+      this.result = {
+        message: won 
+          ? `Chúc mừng bạn đã thắng ${reward} linh thạch!` 
+          : (draw ? 'Hoà rồi!' : 'Rất tiếc, bạn đã thua.'),
+        playerChoice,
+        computerChoice
+      };
+      if (won) {
+        this.player.props.money += reward - this.betAmount;
+      } else {
+        this.player.props.money -= reward;
+      }
+      this.$emit('game-result', { success: won, reward });
+      const newNextGameTime = Date.now() + 10 * 60 * 1000;
+      this.player.nextGameTimes.rps = newNextGameTime;
+      this.$emit('update-next-game-time', { game: 'rps', time: newNextGameTime });
+      this.canPlay = false;
+    }
+  },
+  watch: {
+    betAmount() {
+      this.updateCanPlay();
+    }
+  }
+}
 </script>
 
 

@@ -2,14 +2,14 @@
   <div class="secret-realm">
     <div class="game-info">
       <div class="info-item">
-        <span class="info-label">探索次数</span>
+        <span class="info-label">Lượt khám phá</span>
         <span
           class="info-value"
           v-text="movesLeft"
         />
       </div>
       <div class="info-item">
-        <span class="info-label">获得灵石</span>
+        <span class="info-label">Linh thạch nhận được</span>
         <span
           class="info-value"
           v-text="rewardMoney"
@@ -35,11 +35,11 @@
       <el-button
         @click="startNewGame"
         :disabled="!gameOver"
-        v-text="'探索中'"
+        v-text="'Đang khám phá...'"
         v-if="!gameOver && canExplore"
       />
       <el-countdown
-        title="下次探索时间"
+        title="Thời gian khám phá tiếp theo"
         :value="nextExploreTime"
         @finish="startNewGame"
         v-else
@@ -47,135 +47,135 @@
     </div>
   </div>
 </template>
-
-<script>
-    export default {
-        name: 'SecretRealm',
-        data () {
-            return {
-                board: [],
-                gameOver: false,
-                boardSize: 8,
-                movesLeft: 20,
-                cellTypes: {
-                    TRAP: 'trap',
-                    EMPTY: 'empty',
-                    EVENT: 'event',
-                    REWARD: 'reward',
-                    MONSTER: 'monster'
-                },
-                rewardMoney: 0
-            }
+  
+  <script>
+  export default {
+    name: 'SecretRealm',
+    data () {
+      return {
+        board: [],
+        gameOver: false,
+        boardSize: 8,
+        movesLeft: 20,
+        cellTypes: {
+          TRAP: 'trap',
+          EMPTY: 'empty',
+          EVENT: 'event',
+          REWARD: 'reward',
+          MONSTER: 'monster'
         },
-        computed: {
-            player () {
-                return this.$store.player;
-            },
-            canExplore () {
-                return Date.now() >= this.nextExploreTime;
-            },
-            nextExploreTime () {
-                return this.player.nextGameTimes.secretrealm;
-            }
-        },
-        mounted () {
-            this.startNewGame();
-        },
-        methods: {
-            initializeBoard () {
-                this.board = Array(this.boardSize).fill().map(() =>
-                    Array(this.boardSize).fill().map(() => ({
-                        type: this.cellTypes.EMPTY,
-                        revealed: false
-                    }))
-                );
-                this.placeRandomCells(this.cellTypes.REWARD, 10);
-                this.placeRandomCells(this.cellTypes.MONSTER, 5);
-                this.placeRandomCells(this.cellTypes.TRAP, 3);
-                this.placeRandomCells(this.cellTypes.EVENT, 5);
-            },
-            placeRandomCells (type, count) {
-                for (let i = 0; i < count; i++) {
-                    let row, col;
-                    do {
-                        row = Math.floor(Math.random() * this.boardSize);
-                        col = Math.floor(Math.random() * this.boardSize);
-                    } while (this.board[row][col].type !== this.cellTypes.EMPTY);
-                    this.board[row][col].type = type;
-                }
-            },
-            revealCell (row, col) {
-                if (this.gameOver || this.board[row][col].revealed || !this.canExplore || this.movesLeft <= 0) return;
-                const cell = this.board[row][col];
-                cell.revealed = true;
-                this.movesLeft--;
-                switch (cell.type) {
-                    case this.cellTypes.REWARD:
-                        const reward = Math.floor(Math.random() * 5000) + 500;
-                        this.$notifys({ title: '找到灵石啦', message: `获得${reward}灵石` });
-                        this.rewardMoney += reward;
-                        this.player.props.money += reward;
-                        break;
-                    case this.cellTypes.MONSTER:
-                        this.$notifys({ title: '你真倒霉', message: '遇到了一只怪物' });
-                        this.startBattle();
-                        break;
-                    case this.cellTypes.TRAP:
-                        const damage = Math.floor(Math.random() * 2000) + 500;
-                        this.player.health = Math.max(0, this.player.health - damage);
-                        this.$notifys({ title: '真晦气', message: `生命值减少${damage}` });
-                        break;
-                    case this.cellTypes.EVENT:
-                        this.triggerRandomEvent();
-                        break;
-                }
-                if (this.movesLeft <= 0) {
-                    this.gameOver = true;
-                    this.player.nextGameTimes.secretrealm = Date.now() + 120 * 60 * 1000;
-                }
-            },
-            getCellContent (cell) {
-                const { TRAP, EVENT, REWARD, MONSTER } = this.cellTypes;
-                const contents = {
-                    [TRAP]: '💥',
-                    [EVENT]: '❓',
-                    [REWARD]: '💰',
-                    [MONSTER]: '👹'
-                };
-                return contents[cell.type] || '';
-            },
-            startBattle () {
-                const playerWon = Math.random() > 0.5;
-                if (playerWon) {
-                    const battleReward = Math.floor(Math.random() * 200) + 100;
-                    this.rewardMoney += battleReward;
-                    this.player.props.money += battleReward;
-                } else {
-                    const damage = Math.floor(Math.random() * 30) + 20;
-                    this.player.health = Math.max(0, this.player.health - damage);
-                }
-            },
-            triggerRandomEvent () {
-                const events = [
-                    { name: '幸运符', effect: () => { this.rewardMoney *= 2; } },
-                    { name: '遭雷劈', effect: () => { this.player.health = Math.max(0, this.player.health - 50); } },
-                    { name: '灵感顿悟', effect: () => { this.player.cultivation += 100; } },
-                    { name: '迷失方向', effect: () => { this.movesLeft = Math.max(1, this.movesLeft - 5); } },
-                    { name: '宝藏地图', effect: () => { this.movesLeft += 5; } }
-                ];
-                const event = events[Math.floor(Math.random() * events.length)];
-                this.$notifys({ title: '随机事件', message: event.name });
-                event.effect();
-            },
-            startNewGame () {
-                this.gameOver = false;
-                this.movesLeft = 20;
-                this.rewardMoney = 0;
-                this.initializeBoard();
-            }
+        rewardMoney: 0
+      }
+    },
+    computed: {
+      player () {
+        return this.$store.player;
+      },
+      canExplore () {
+        return Date.now() >= this.nextExploreTime;
+      },
+      nextExploreTime () {
+        return this.player.nextGameTimes.secretrealm;
+      }
+    },
+    mounted () {
+      this.startNewGame();
+    },
+    methods: {
+      initializeBoard () {
+        this.board = Array(this.boardSize).fill().map(() =>
+          Array(this.boardSize).fill().map(() => ({
+            type: this.cellTypes.EMPTY,
+            revealed: false
+          }))
+        );
+        this.placeRandomCells(this.cellTypes.REWARD, 10);
+        this.placeRandomCells(this.cellTypes.MONSTER, 5);
+        this.placeRandomCells(this.cellTypes.TRAP, 3);
+        this.placeRandomCells(this.cellTypes.EVENT, 5);
+      },
+      placeRandomCells (type, count) {
+        for (let i = 0; i < count; i++) {
+          let row, col;
+          do {
+            row = Math.floor(Math.random() * this.boardSize);
+            col = Math.floor(Math.random() * this.boardSize);
+          } while (this.board[row][col].type !== this.cellTypes.EMPTY);
+          this.board[row][col].type = type;
         }
+      },
+      revealCell (row, col) {
+        if (this.gameOver || this.board[row][col].revealed || !this.canExplore || this.movesLeft <= 0) return;
+        const cell = this.board[row][col];
+        cell.revealed = true;
+        this.movesLeft--;
+        switch (cell.type) {
+          case this.cellTypes.REWARD:
+            const reward = Math.floor(Math.random() * 5000) + 500;
+            this.$notifys({ title: 'Tìm được linh thạch!', message: `Nhận được ${reward} linh thạch` });
+            this.rewardMoney += reward;
+            this.player.props.money += reward;
+            break;
+          case this.cellTypes.MONSTER:
+            this.$notifys({ title: 'Xui thật đấy', message: 'Gặp phải một con quái vật!' });
+            this.startBattle();
+            break;
+          case this.cellTypes.TRAP:
+            const damage = Math.floor(Math.random() * 2000) + 500;
+            this.player.health = Math.max(0, this.player.health - damage);
+            this.$notifys({ title: 'Xui xẻo', message: `Mất ${damage} máu` });
+            break;
+          case this.cellTypes.EVENT:
+            this.triggerRandomEvent();
+            break;
+        }
+        if (this.movesLeft <= 0) {
+          this.gameOver = true;
+          this.player.nextGameTimes.secretrealm = Date.now() + 120 * 60 * 1000;
+        }
+      },
+      getCellContent (cell) {
+        const { TRAP, EVENT, REWARD, MONSTER } = this.cellTypes;
+        const contents = {
+          [TRAP]: '💥',
+          [EVENT]: '❓',
+          [REWARD]: '💰',
+          [MONSTER]: '👹'
+        };
+        return contents[cell.type] || '';
+      },
+      startBattle () {
+        const playerWon = Math.random() > 0.5;
+        if (playerWon) {
+          const battleReward = Math.floor(Math.random() * 200) + 100;
+          this.rewardMoney += battleReward;
+          this.player.props.money += battleReward;
+        } else {
+          const damage = Math.floor(Math.random() * 30) + 20;
+          this.player.health = Math.max(0, this.player.health - damage);
+        }
+      },
+      triggerRandomEvent () {
+        const events = [
+          { name: 'Bùa may mắn', effect: () => { this.rewardMoney *= 2; } },
+          { name: 'Bị sét đánh', effect: () => { this.player.health = Math.max(0, this.player.health - 50); } },
+          { name: 'Linh cảm ngộ đạo', effect: () => { this.player.cultivation += 100; } },
+          { name: 'Lạc phương hướng', effect: () => { this.movesLeft = Math.max(1, this.movesLeft - 5); } },
+          { name: 'Bản đồ kho báu', effect: () => { this.movesLeft += 5; } }
+        ];
+        const event = events[Math.floor(Math.random() * events.length)];
+        this.$notifys({ title: 'Sự kiện ngẫu nhiên', message: event.name });
+        event.effect();
+      },
+      startNewGame () {
+        this.gameOver = false;
+        this.movesLeft = 20;
+        this.rewardMoney = 0;
+        this.initializeBoard();
+      }
     }
-</script>
+  }
+  </script>
 
 <style scoped>
     .secret-realm {

@@ -1,212 +1,487 @@
 const equips = {
-    drawPrize (lv, type, names_a, names_b, names_c, names_d, names_e, names_f, isNewbie) {
-        // 如果玩家等级为0 生成的装备等级最低为1, 如果玩家等级低于40级的话就随机生成当前等级和低于当前等级的装备
-        lv = lv == 0 ? 1 : lv;
-        // 如果已领取新手礼包
-        if (isNewbie) lv = this.getRandomInt(1, lv);
-        // 装备的抽中概率
-        const weaponTypes = {
-            info: { names: names_a, probability: 50 }, // 白装
-            success: { names: names_b, probability: 20 }, // 绿装
-            primary: { names: names_c, probability: 15 }, // 蓝装
-            purple: { names: names_d, probability: 9 }, // 紫装
-            warning: { names: names_e, probability: 5 }, // 金装
-            danger: { names: names_f, probability: 1 } // 红装
+  drawPrize(
+    lv,
+    type,
+    names_a,
+    names_b,
+    names_c,
+    names_d,
+    names_e,
+    names_f,
+    isNewbie
+  ) {
+    // Nếu cấp độ người chơi là 0, cấp độ trang bị tối thiểu là 1; nếu cấp độ dưới 40, tạo ngẫu nhiên trang bị ở cấp độ hiện tại hoặc thấp hơn
+    lv = lv == 0 ? 1 : lv;
+    // Nếu đã nhận gói quà tân thủ
+    if (isNewbie) lv = this.getRandomInt(1, lv);
+    // Xác suất nhận được các phẩm chất trang bị
+    const weaponTypes = {
+      info: { names: names_a, probability: 50 }, // Trang bị trắng
+      success: { names: names_b, probability: 20 }, // Trang bị xanh lá
+      primary: { names: names_c, probability: 15 }, // Trang bị xanh dương
+      purple: { names: names_d, probability: 9 }, // Trang bị tím
+      warning: { names: names_e, probability: 5 }, // Trang bị vàng
+      danger: { names: names_f, probability: 1 }, // Trang bị đỏ
+    };
+    const totalProbability = Object.values(weaponTypes).reduce(
+      (acc, { probability }) => acc + probability,
+      0
+    );
+    const random = Math.floor(Math.random() * totalProbability);
+    let cumulativeProbability = 0;
+    for (const [quality, { names, probability }] of Object.entries(
+      weaponTypes
+    )) {
+      cumulativeProbability += probability;
+      if (random < cumulativeProbability) {
+        // Điều chỉnh giá trị thuộc tính trang bị dựa trên phẩm chất
+        const qualityMultiplier = {
+          info: 1.2,
+          success: 2,
+          primary: 3,
+          purple: 5,
+          warning: 7,
+          danger: 10,
         };
-        const totalProbability = Object.values(weaponTypes).reduce((acc, { probability }) => acc + probability, 0);
-        const random = Math.floor(Math.random() * totalProbability);
-        let cumulativeProbability = 0;
-        for (const [quality, { names, probability }] of Object.entries(weaponTypes)) {
-            cumulativeProbability += probability;
-            if (random < cumulativeProbability) {
-                // 根据装备品质调整装备属性值
-                const qualityMultiplier = { info: 1.2, success: 2, primary: 3, purple: 5, warning: 7, danger: 10 };
-                const multiplier = qualityMultiplier[quality];
-                const dodge = ['accessory', 'sutra'].includes(type) ? this.equip_Criticalhitrate(lv) : 0;
-                const attack = ['weapon', 'accessory', 'sutra'].includes(type) ? Math.floor(this.equip_Attack(lv) * multiplier) : 0;
-                const health = ['armor', 'accessory', 'sutra'].includes(type) ? Math.floor(this.equip_Health(lv) * multiplier) : 0;
-                const defense = ['armor', 'accessory', 'sutra'].includes(type) ? Math.floor(this.equip_Attack(lv) * multiplier) : 0;
-                const critical = ['weapon', 'accessory', 'sutra'].includes(type) ? this.equip_Criticalhitrate(lv) : 0;
-                const baseEquip = {
-                    id: Date.now(), // 装备ID
-                    name: names[Math.floor(Math.random() * names.length)], //装备名字
-                    type, // 装备类型
-                    lock: false,
-                    level: lv, // 装备等级
-                    score: this.calculateEquipmentScore(dodge, attack, health, critical, defense), // 装备评分
-                    dodge, // 闪避率
-                    attack, // 攻击力
-                    health, // 血量
-                    defense, // 防御
-                    critical, // 暴击率
-                    // 初始数据
-                    initial: {
-                        dodge, // 闪避率
-                        attack, // 攻击力
-                        health, // 血量
-                        defense, // 装备防御
-                        critical // 暴击率
-                    },
-                    quality,
-                    strengthen: 0 // 炼器等级
-                };
-                return baseEquip;
-            }
-        }
-    },
-    equip_Weapons (lv, isNewbie = false) {
-        const names_a = [
-            '白玉净尘剑', '雪魄寒冰枪', '白龙吟风弓', '月华流光扇', '白玉玄灵笛',
-            '霜雪无痕鞭', '云隐白凰刃', '净世白莲杖', '冰魄寒光轮', '白玉玲珑塔'
-        ];
-        const names_b = [
-            '翠玉青藤剑', '碧影灵蛇鞭', '绿叶风暴弓', '青木长生杖', '翡翠灵犀刃',
-            '藤蔓缠绕索', '翠竹清风扇', '生命之泉壶', '绿野仙踪笛', '森罗万象轮'
-        ];
-        const names_c = [
-            '寒冰破晓剑', '碧海潮生笛', '蓝玉冰魄弓', '苍穹蓝龙枪', '冰魄寒光剑',
-            '鲛人织梦扇', '深海之怒戟', '碧波凌霄杖', '幽蓝蝶舞鞭', '银河落霜刃'
-        ];
-        const names_d = [
-            '紫霄龙吟剑', '幽冥紫蝶刃', '星河紫电枪', '紫玉寒冰弓', '紫焰凤凰琴',
-            '苍穹紫雷锤', '紫莲幽光扇', '紫晶破晓戟', '幽冥紫影鞭', '紫霄凌虚杖'
-        ];
-        const names_e = [
-            '金煌剑', '炽焰长枪', '琥珀流光弓', '龙鳞金斧', '破晓黄玉锤',
-            '炎阳鞭', '流光扇', '战神金戟', '黄芒闪电刃', '日曜乾坤轮'
-        ];
-        const names_f = [
-            '赤焰凤凰剑', '血玉红莲枪', '烈焰焚天弓', '赤霄神火戟', '火舞流云扇',
-            '朱雀炎翼鞭', '赤龙焚世刃', '炎狱魔瞳镰', '炽血星辰杖', '红莲业火轮'
-        ];
-        return this.drawPrize(lv, 'weapon', names_a, names_b, names_c, names_d, names_e, names_f, isNewbie);
-    },
-    equip_Armors (lv, isNewbie = false) {
-        const names_a = [
-            '瑶池仙绡羽衣', '广寒玉兔霜甲', '昆仑玉璧战袍', '白龙吐珠云裳', '九天玄女素绫',
-            '瑶光星辰织锦', '冰魄银丝战衣', '凌霄琼华宝衣', '雪域神女雪绒', '云隐龙鳞轻铠'
-        ];
-        const names_b = [
-            '翠竹幽兰轻衫', '碧落青藤云裳', '碧眼麒麟战衣', '青鸾翔翼织锦', '苍梧古木灵袍',
-            '绿野仙踪羽衣', '灵蛇翠蔓软甲', '翡翠琉璃长裙', '松风竹影轻裘', '春水碧于天衣'
-        ];
-        const names_c = [
-            '寒冰护甲衣', '碧波守护铠', '蓝玉冰心链甲', '苍穹蓝灵披风', '深海蛟龙鳞甲',
-            '冰魄幽光战铠', '蓝蝶轻舞护腕', '银河之盾胸甲', '鲛人织梦护腿', '碧波凌波靴'
-        ];
-        const names_d = [
-            '紫云织锦袍', '幽冥紫霜甲', '星河紫霞衣', '紫玉冰心链甲', '紫焰凤凰披风',
-            '苍穹紫雷战铠', '紫莲幽光护腕', '紫晶凌霄战裙', '幽冥紫影护腿', '紫霄逐风靴'
-        ];
-        const names_e = [
-            '金辉流光锦袍', '琥珀流光战衣', '黄土龙纹长袍', '日炎金鳞铠甲', '秋菊金缎华服',
-            '蜜蜡黄绸云裳', '凤凰涅槃黄衫', '黄沙漫天披风', '金穗流光纱裙', '辉煌金羽战袍'
-        ];
-        const names_f = [
-            '烈焰红莲战甲', '赤霄火凤云裳', '朱雀焚天织锦', '赤焰龙鳞宝衣', '血色蔷薇华服',
-            '丹霞流光长袍', '炎阳炽烈战袍', '炽火红莲披风', '火舞凤凰羽衣', '红莲业火锦衣'
-        ];
-        return this.drawPrize(lv, 'armor', names_a, names_b, names_c, names_d, names_e, names_f, isNewbie);
-    },
-    equip_Accessorys (lv, isNewbie = false) {
-        const names_a = [
-            '瑶池白玉簪', '月华流光坠', '寒霜凝露链', '九天玄女玉佩', '云锦织梦镯',
-            '龙涎润雪环', '白鹤衔珠珮', '仙山雪莲花链', '瑶台仙露耳环', '银河织梦项链'
-        ];
-        const names_b = [
-            '翠竹凝露簪', '碧泉幽兰链', '青藤绕梦镯', '翡翠灵叶耳环', '灵山仙草玉佩',
-            '松柏长青戒', '翠影轻舞项链', '绿野仙踪手环', '碧波荡漾珠链', '春回大地玉珮'
-        ];
-        const names_c = [
-            '碧海珊瑚簪', '冰魄幽蓝链', '深海珍珠耳环', '蓝田玉髓镯', '苍穹蓝宝坠',
-            '鲛人泪滴珠', '碧波荡漾戒', '银河之心项链', '蓝蝶飞舞手环', '深海龙鳞珮'
-        ];
-        const names_d = [
-            '紫霄流光戒', '幽冥紫蝶项链', '星河紫玉耳环', '紫玉冰心手链', '紫焰凤凰簪',
-            '苍穹紫雷吊坠', '紫莲幽光发带', '紫晶破晓护符', '幽冥紫影指环', '紫霄凌虚玉佩'
-        ];
-        const names_e = [
-            '金辉日冕簪', '琥珀流光链', '黄粱一梦镯', '皇天后土玉佩', '蜜蜡福瑞戒',
-            '秋收万颗项链', '暖阳照耀耳环', '炎黄子孙玉珮', '金色麦田手环', '盛世繁华珠链'
-        ];
-        const names_f = [
-            '赤焰凤凰翎', '血珀琉璃坠', '烈焰红宝石链', '朱雀之翼耳环', '红莲业火镯',
-            '丹霄火凤戒', '玛瑙赤焰项链', '炽天使之泪珮', '绯红织锦手环', '火凤涅槃珠链'
-        ];
-        return this.drawPrize(lv, 'accessory', names_a, names_b, names_c, names_d, names_e, names_f, isNewbie);
-    },
-    equip_Sutras (lv, isNewbie = false) {
-        const names_a = [
-            '白玉净瓶', '寒霜琉璃镜', '瑶池雪莲珠', '九天玄冰尺', '月华宝莲灯',
-            '白云隐龙笛', '玉清昆仑扇', '净世白莲座', '银河落雪琴', '碧落瑶光盘'
-        ];
-        const names_b = [
-            '翠玉葫芦', '青木长生杖', '碧落灵珠', '幽冥鬼藤鞭', '万木回春图',
-            '绿绮琴音笛', '青鸾火凤羽扇', '翠影追魂剑', '草木皆兵符', '碧泉灵泉壶'
-        ];
-        const names_c = [
-            '碧波神珠', '冰魄寒玉葫', '深海龙息珠', '苍穹蓝灵珠', '鲛人织梦灯',
-            '银河落霜瓶', '蓝玉冰心镜', '寒冰净世莲', '碧波幽兰笛', '深海龙吟佩'
-        ];
-        const names_d = [
-            '紫霄神雷珠', '幽冥紫蝶翼', '星河紫玉壶', '紫玉冰心镜', '紫焰凤凰翎',
-            '苍穹紫雷鼎', '紫莲幽光轮', '紫晶破晓琴', '幽冥紫影幡', '紫霄凌虚印'
-        ];
-        const names_e = [
-            '金蛟剪', '乾坤圈', '黄金玲珑塔', '戊己杏黄旗', '轩辕黄帝鼎',
-            '镇妖伏魔镜', '落日熔金轮', '万寿无疆葫芦', '金翅大鹏羽扇', '地黄玄玉珠'
-        ];
-        const names_f = [
-            '炽焰灵珠阵图', '火凤涅槃炉鼎', '红莲业火净世碑', '血玉轮回盘', '朱雀翔天翼',
-            '烈焰焚天炉', '丹霄火域图', '赤龙炼魂珠', '火灵炽心镜', '九转炎灵祭坛'
-        ];
-        return this.drawPrize(lv, 'sutra', names_a, names_b, names_c, names_d, names_e, names_f, isNewbie);
-    },
-    equip_Attack (lv) {
-        return this.getRandomInt(10, 50) * lv;
-    },
-    equip_Health (lv) {
-        return this.getRandomInt(100, 500) * lv;
-    },
-    equip_Criticalhitrate () {
-        return this.getRandomFloatInRange(0.01, 0.05);
-    },
-    // equip_Defense (lv, isNewbie = true) {
-    //     if (lv >= 1 && lv <= 5) {
-    //         return this.getRandomInt(15, 150) * lv;
-    //     } else if (lv >= 6 && lv <= 10) {
-    //         return this.getRandomInt(150, 300) * lv;
-    //     } else {
-    //         return this.getRandomInt(300, 500) * lv;
-    //     }
-    // },
-    getRandomInt (min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-    getRandomFloatInRange (min, max) {
-        return Math.random() * (max - min) + min;
-    },
-    // 计算装备评分
-    calculateEquipmentScore (dodge = 0, attack = 0, health = 0, critical = 0, defense = 0) {
-        // 评分权重
-        const weights = {
-            attack: 1.5, // 攻击
-            health: 1.0, // 气血
-            defense: 1.2, // 防御
-            critRate: 1.8, // 暴击
-            dodgeRate: 1.6 //闪避
+        const multiplier = qualityMultiplier[quality];
+        const dodge = ["accessory", "sutra"].includes(type)
+          ? this.equip_Criticalhitrate(lv)
+          : 0;
+        const attack = ["weapon", "accessory", "sutra"].includes(type)
+          ? Math.floor(this.equip_Attack(lv) * multiplier)
+          : 0;
+        const health = ["armor", "accessory", "sutra"].includes(type)
+          ? Math.floor(this.equip_Health(lv) * multiplier)
+          : 0;
+        const defense = ["armor", "accessory", "sutra"].includes(type)
+          ? Math.floor(this.equip_Attack(lv) * multiplier)
+          : 0;
+        const critical = ["weapon", "accessory", "sutra"].includes(type)
+          ? this.equip_Criticalhitrate(lv)
+          : 0;
+        const baseEquip = {
+          id: Date.now(), // ID trang bị
+          name: names[Math.floor(Math.random() * names.length)], // Tên trang bị
+          type, // Loại trang bị
+          lock: false,
+          level: lv, // Cấp độ trang bị
+          score: this.calculateEquipmentScore(
+            dodge,
+            attack,
+            health,
+            critical,
+            defense
+          ), // Điểm số trang bị
+          dodge, // Tỷ lệ né tránh
+          attack, // Công kích
+          health, // Khí huyết
+          defense, // Phòng thủ
+          critical, // Tỷ lệ bạo kích
+          // Dữ liệu ban đầu
+          initial: {
+            dodge, // Tỷ lệ né tránh
+            attack, // Công kích
+            health, // Khí huyết
+            defense, // Phòng thủ trang bị
+            critical, // Tỷ lệ bạo kích
+          },
+          quality,
+          strengthen: 0, // Cấp độ luyện khí
         };
-        // 计算评分
-        const score = (
-            dodge * weights.dodgeRate * 100 +
-            attack * weights.attack +
-            (health / 100) * weights.health +
-            defense * weights.defense +
-            critical * weights.critRate * 100
-        );
-        return Math.floor(score);
+        return baseEquip;
+      }
     }
+  },
+  equip_Weapons(lv, isNewbie = false) {
+    const names_a = [
+      "Bạch Ngọc Tịnh Trần Kiếm",
+      "Tuyết Phách Hàn Băng Thương",
+      "Bạch Long Ngâm Phong Cung",
+      "Nguyệt Hoa Lưu Quang Phiến",
+      "Bạch Ngọc Huyền Linh Địch",
+      "Sương Tuyết Vô Ngân Tiên",
+      "Vân Ẩn Bạch Hoàng Nhẫn",
+      "Tịnh Thế Bạch Liên Trượng",
+      "Băng Phách Hàn Quang Luân",
+      "Bạch Ngọc Linh Lung Tháp",
+    ];
+    const names_b = [
+      "Thúy Ngọc Thanh Đằng Kiếm",
+      "Bích Ảnh Linh Xà Tiên",
+      "Lục Diệp Phong Bạo Cung",
+      "Thanh Mộc Trường Sinh Trượng",
+      "Phỉ Thúy Linh Tê Nhẫn",
+      "Đằng Mạn Triền Nhiễu Tác",
+      "Thúy Trúc Thanh Phong Phiến",
+      "Sinh Mệnh Chi Tuyền Hồ",
+      "Lục Dã Tiên Tung Địch",
+      "Tâm La Vạn Tượng Luân",
+    ];
+    const names_c = [
+      "Hàn Băng Phá Hiểu Kiếm",
+      "Bích Hải Triều Sinh Địch",
+      "Lam Ngọc Băng Phách Cung",
+      "Thương Khung Lam Long Thương",
+      "Băng Phách Hàn Quang Kiếm",
+      "Giao Nhân Chức Mộng Phiến",
+      "Thâm Hải Chi Nộ Kích",
+      "Bích Ba Lăng Tiêu Trượng",
+      "U Lam Điệp Vũ Tiên",
+      "Ngân Hà Lạc Sương Nhẫn",
+    ];
+    const names_d = [
+      "Tử Tiêu Long Ngâm Kiếm",
+      "U Minh Tử Điệp Nhẫn",
+      "Tinh Hà Tử Điện Thương",
+      "Tử Ngọc Hàn Băng Cung",
+      "Tử Diệm Phượng Hoàng Cầm",
+      "Thương Khung Tử Lôi Chùy",
+      "Tử Liên U Quang Phiến",
+      "Tử Tinh Phá Hiểu Kích",
+      "U Minh Tử Ảnh Tiên",
+      "Tử Tiêu Lăng Hư Trượng",
+    ];
+    const names_e = [
+      "Kim Hoàng Kiếm",
+      "Xích Diệm Trường Thương",
+      "Hổ Phách Lưu Quang Cung",
+      "Long Lân Kim Phủ",
+      "Phá Hiểu Hoàng Ngọc Chùy",
+      "Viêm Dương Tiên",
+      "Lưu Quang Phiến",
+      "Chiến Thần Kim Kích",
+      "Hoàng Mang Thiểm Điện Nhẫn",
+      "Nhật Diệu Càn Khôn Luân",
+    ];
+    const names_f = [
+      "Xích Diệm Phượng Hoàng Kiếm",
+      "Huyết Ngọc Hồng Liên Thương",
+      "Liệt Diệm Phần Thiên Cung",
+      "Xích Tiêu Thần Hỏa Kích",
+      "Hỏa Vũ Lưu Vân Phiến",
+      "Chu Tước Viêm Dực Tiên",
+      "Xích Long Phần Thế Nhẫn",
+      "Viêm Ngục Ma Đồng Liêm",
+      "Xích Huyết Tinh Thần Trượng",
+      "Hồng Liên Nghiệp Hỏa Luân",
+    ];
+    return this.drawPrize(
+      lv,
+      "weapon",
+      names_a,
+      names_b,
+      names_c,
+      names_d,
+      names_e,
+      names_f,
+      isNewbie
+    );
+  },
+  equip_Armors(lv, isNewbie = false) {
+    const names_a = [
+      "Diêu Trì Tiên Tiêu Vũ Y",
+      "Quảng Hàn Ngọc Thố Sương Giáp",
+      "Côn Lôn Ngọc Bích Chiến Bào",
+      "Bạch Long Thổ Châu Vân Thường",
+      "Cửu Thiên Huyền Nữ Tố Lăng",
+      "Diêu Quang Tinh Thần Chức Cẩm",
+      "Băng Phách Ngân Ti Chiến Y",
+      "Lăng Tiêu Quỳnh Hoa Bảo Y",
+      "Tuyết Vực Thần Nữ Tuyết Nhung",
+      "Vân Ẩn Long Lân Khinh Giáp",
+    ];
+    const names_b = [
+      "Thúy Trúc U Lan Khinh Sam",
+      "Bích Lạc Thanh Đằng Vân Thường",
+      "Bích Nhãn Kỳ Lân Chiến Y",
+      "Thanh Loan Tường Dực Chức Cẩm",
+      "Thương Ngô Cổ Mộc Linh Bào",
+      "Lục Dã Tiên Tung Vũ Y",
+      "Linh Xà Thúy Mạn Nhu Giáp",
+      "Phỉ Thúy Lưu Ly Trường Quần",
+      "Tùng Phong Trúc Ảnh Khinh Cừu",
+      "Xuân Thủy Bích Vu Thiên Y",
+    ];
+    const names_c = [
+      "Hàn Băng Hộ Giáp Y",
+      "Bích Ba Thủ Hộ Khải",
+      "Lam Ngọc Băng Tâm Liên Giáp",
+      "Thương Khung Lam Linh Phi Phong",
+      "Thâm Hải Giao Long Lân Giáp",
+      "Băng Phách U Quang Chiến Khải",
+      "Lam Điệp Khinh Vũ Hộ Uyển",
+      "Ngân Hà Chi Thuẫn Hung Giáp",
+      "Giao Nhân Chức Mộng Hộ Thối",
+      "Bích Ba Lăng Ba Ngoa",
+    ];
+    const names_d = [
+      "Tử Vân Chức Cẩm Bào",
+      "U Minh Tử Sương Giáp",
+      "Tinh Hà Tử Hà Y",
+      "Tử Ngọc Băng Tâm Liên Giáp",
+      "Tử Diệm Phượng Hoàng Phi Phong",
+      "Thương Khung Tử Lôi Chiến Khải",
+      "Tử Liên U Quang Hộ Uyển",
+      "Tử Tinh Lăng Tiêu Chiến Quần",
+      "U Minh Tử Ảnh Hộ Thối",
+      "Tử Tiêu Trục Phong Ngoa",
+    ];
+    const names_e = [
+      "Kim Huy Lưu Quang Cẩm Bào",
+      "Hổ Phách Lưu Quang Chiến Y",
+      "Hoàng Thổ Long Văn Trường Bào",
+      "Nhật Viêm Kim Lân Khải Giáp",
+      "Thu Cúc Kim Toạn Hoa Phục",
+      "Mật Sáp Hoàng Tù Vân Thường",
+      "Phượng Hoàng Niết Bàn Hoàng Sam",
+      "Hoàng Sa Mạn Thiên Phi Phong",
+      "Kim Tuy Lưu Quang Sa Quần",
+      "Huy Hoàng Kim Vũ Chiến Bào",
+    ];
+    const names_f = [
+      "Liệt Diệm Hồng Liên Chiến Giáp",
+      "Xích Tiêu Hỏa Phượng Vân Thường",
+      "Chu Tước Phần Thiên Chức Cẩm",
+      "Xích Diệm Long Lân Bảo Y",
+      "Huyết Sắc Tường Vi Hoa Phục",
+      "Đan Hà Lưu Quang Trường Bào",
+      "Viêm Dương Xích Liệt Chiến Bào",
+      "Xích Hỏa Hồng Liên Phi Phong",
+      "Hỏa Vũ Phượng Hoàng Vũ Y",
+      "Hồng Liên Nghiệp Hỏa Cẩm Y",
+    ];
+    return this.drawPrize(
+      lv,
+      "armor",
+      names_a,
+      names_b,
+      names_c,
+      names_d,
+      names_e,
+      names_f,
+      isNewbie
+    );
+  },
+  equip_Accessorys(lv, isNewbie = false) {
+    const names_a = [
+      "Diêu Trì Bạch Ngọc Trâm",
+      "Nguyệt Hoa Lưu Quang Trụy",
+      "Hàn Sương Ngưng Lộ Liên",
+      "Cửu Thiên Huyền Nữ Ngọc Bội",
+      "Vân Cẩm Chức Mộng Trạc",
+      "Long Diên Nhuận Tuyết Hoàn",
+      "Bạch Hạc Hàm Châu Bội",
+      "Tiên Sơn Tuyết Liên Hoa Liên",
+      "Diêu Đài Tiên Lộ Nhĩ Hoàn",
+      "Ngân Hà Chức Mộng Hạng Liên",
+    ];
+    const names_b = [
+      "Thúy Trúc Ngưng Lộ Trâm",
+      "Bích Tuyền U Lan Liên",
+      "Thanh Đằng Nhiễu Mộng Trạc",
+      "Phỉ Thúy Linh Diệp Nhĩ Hoàn",
+      "Linh Sơn Tiên Thảo Ngọc Bội",
+      "Tùng Bách Trường Thanh Giới",
+      "Thúy Ảnh Khinh Vũ Hạng Liên",
+      "Lục Dã Tiên Tung Thủ Hoàn",
+      "Bích Ba Đãng Dạng Châu Liên",
+      "Xuân Hồi Đại Địa Ngọc Bội",
+    ];
+    const names_c = [
+      "Bích Hải San Hô Trâm",
+      "Băng Phách U Lam Liên",
+      "Thâm Hải Trân Châu Nhĩ Hoàn",
+      "Lam Điền Ngọc Tủy Trạc",
+      "Thương Khung Lam Bảo Trụy",
+      "Giao Nhân Lệ Tích Châu",
+      "Bích Ba Đãng Dạng Giới",
+      "Ngân Hà Chi Tâm Hạng Liên",
+      "Lam Điệp Phi Vũ Thủ Hoàn",
+      "Thâm Hải Long Lân Bội",
+    ];
+    const names_d = [
+      "Tử Tiêu Lưu Quang Giới",
+      "U Minh Tử Điệp Hạng Liên",
+      "Tinh Hà Tử Ngọc Nhĩ Hoàn",
+      "Tử Ngọc Băng Tâm Thủ Liên",
+      "Tử Diệm Phượng Hoàng Trâm",
+      "Thương Khung Tử Lôi Điếu Trụy",
+      "Tử Liên U Quang Phát Đái",
+      "Tử Tinh Phá Hiểu Hộ Phù",
+      "U Minh Tử Ảnh Chỉ Hoàn",
+      "Tử Tiêu Lăng Hư Ngọc Bội",
+    ];
+    const names_e = [
+      "Kim Huy Nhật Miện Trâm",
+      "Hổ Phách Lưu Quang Liên",
+      "Hoàng Lương Nhất Mộng Trạc",
+      "Hoàng Thiên Hậu Thổ Ngọc Bội",
+      "Mật Sáp Phúc Thụy Giới",
+      "Thu Thâu Vạn Hạt Hạng Liên",
+      "Noãn Dương Chiếu Diệu Nhĩ Hoàn",
+      "Viêm Hoàng Tử Tôn Ngọc Bội",
+      "Kim Sắc Mạch Điền Thủ Hoàn",
+      "Thịnh Thế Phồn Hoa Châu Liên",
+    ];
+    const names_f = [
+      "Xích Diệm Phượng Hoàng Linh",
+      "Huyết Phách Lưu Ly Trụy",
+      "Liệt Diệm Hồng Bảo Thạch Liên",
+      "Chu Tước Chi Dực Nhĩ Hoàn",
+      "Hồng Liên Nghiệp Hỏa Trạc",
+      "Đan Tiêu Hỏa Phượng Giới",
+      "Mã Não Xích Diệm Hạng Liên",
+      "Xích Thiên Sứ Chi Lệ Bội",
+      "Phỉ Hồng Chức Cẩm Thủ Hoàn",
+      "Hỏa Phượng Niết Bàn Châu Liên",
+    ];
+    return this.drawPrize(
+      lv,
+      "accessory",
+      names_a,
+      names_b,
+      names_c,
+      names_d,
+      names_e,
+      names_f,
+      isNewbie
+    );
+  },
+  equip_Sutras(lv, isNewbie = false) {
+    const names_a = [
+      "Bạch Ngọc Tịnh Bình",
+      "Hàn Sương Lưu Ly Kính",
+      "Diêu Trì Tuyết Liên Châu",
+      "Cửu Thiên Huyền Băng Xích",
+      "Nguyệt Hoa Bảo Liên Đăng",
+      "Bạch Vân Ẩn Long Địch",
+      "Ngọc Thanh Côn Lôn Phiến",
+      "Tịnh Thế Bạch Liên Tọa",
+      "Ngân Hà Lạc Tuyết Cầm",
+      "Bích Lạc Diêu Quang Bàn",
+    ];
+    const names_b = [
+      "Thúy Ngọc Hồ Lô",
+      "Thanh Mộc Trường Sinh Trượng",
+      "Bích Lạc Linh Châu",
+      "U Minh Quỷ Đằng Tiên",
+      "Vạn Mộc Hồi Xuân Đồ",
+      "Lục Kỳ Cầm Âm Địch",
+      "Thanh Loan Hỏa Phượng Vũ Phiến",
+      "Thúy Ảnh Truy Hồn Kiếm",
+      "Thảo Mộc Giai Binh Phù",
+      "Bích Tuyền Linh Tuyền Hồ",
+    ];
+    const names_c = [
+      "Bích Ba Thần Châu",
+      "Băng Phách Hàn Ngọc Hồ",
+      "Thâm Hải Long Tức Châu",
+      "Thương Khung Lam Linh Châu",
+      "Giao Nhân Chức Mộng Đăng",
+      "Ngân Hà Lạc Sương Bình",
+      "Lam Ngọc Băng Tâm Kính",
+      "Hàn Băng Tịnh Thế Liên",
+      "Bích Ba U Lan Địch",
+      "Thâm Hải Long Ngâm Bội",
+    ];
+    const names_d = [
+      "Tử Tiêu Thần Lôi Châu",
+      "U Minh Tử Điệp Dực",
+      "Tinh Hà Tử Ngọc Hồ",
+      "Tử Ngọc Băng Tâm Kính",
+      "Tử Diệm Phượng Hoàng Linh",
+      "Thương Khung Tử Lôi Đỉnh",
+      "Tử Liên U Quang Luân",
+      "Tử Tinh Phá Hiểu Cầm",
+      "U Minh Tử Ảnh Phiên",
+      "Tử Tiêu Lăng Hư Ấn",
+    ];
+    const names_e = [
+      "Kim Giao Tiễn",
+      "Càn Khôn Quyển",
+      "Hoàng Kim Linh Lung Tháp",
+      "Mậu Kỷ Hạnh Hoàng Kỳ",
+      "Hiên Viên Hoàng Đế Đỉnh",
+      "Trấn Yêu Phục Ma Kính",
+      "Lạc Nhật Dung Kim Luân",
+      "Vạn Thọ Vô Cương Hồ Lô",
+      "Kim Sí Đại Bằng Vũ Phiến",
+      "Địa Hoàng Huyền Ngọc Châu",
+    ];
+    const names_f = [
+      "Xích Diệm Linh Châu Trận Đồ",
+      "Hỏa Phượng Niết Bàn Lô Đỉnh",
+      "Hồng Liên Nghiệp Hỏa Tịnh Thế Bi",
+      "Huyết Ngọc Luân Hồi Bàn",
+      "Chu Tước Tường Thiên Dực",
+      "Liệt Diệm Phần Thiên Lô",
+      "Đan Tiêu Hỏa Vực Đồ",
+      "Xích Long Luyện Hồn Châu",
+      "Hỏa Linh Xích Tâm Kính",
+      "Cửu Chuyển Viêm Linh Tế Đàn",
+    ];
+    return this.drawPrize(
+      lv,
+      "sutra",
+      names_a,
+      names_b,
+      names_c,
+      names_d,
+      names_e,
+      names_f,
+      isNewbie
+    );
+  },
+  equip_Attack(lv) {
+    return this.getRandomInt(10, 50) * lv;
+  },
+  equip_Health(lv) {
+    return this.getRandomInt(100, 500) * lv;
+  },
+  equip_Criticalhitrate() {
+    return this.getRandomFloatInRange(0.01, 0.05);
+  },
+  // equip_Defense(lv, isNewbie = true) {
+  //     if (lv >= 1 && lv <= 5) {
+  //         return this.getRandomInt(15, 150) * lv;
+  //     } else if (lv >= 6 && lv <= 10) {
+  //         return this.getRandomInt(150, 300) * lv;
+  //     } else {
+  //         return this.getRandomInt(300, 500) * lv;
+  //     }
+  // },
+  getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  },
+  getRandomFloatInRange(min, max) {
+    return Math.random() * (max - min) + min;
+  },
+  // Tính điểm số trang bị
+  calculateEquipmentScore(
+    dodge = 0,
+    attack = 0,
+    health = 0,
+    critical = 0,
+    defense = 0
+  ) {
+    // Trọng số điểm số
+    const weights = {
+      attack: 1.5, // Công kích
+      health: 1.0, // Khí huyết
+      defense: 1.2, // Phòng thủ
+      critRate: 1.8, // Bạo kích
+      dodgeRate: 1.6, // Né tránh
+    };
+    // Tính điểm số
+    const score =
+      dodge * weights.dodgeRate * 100 +
+      attack * weights.attack +
+      (health / 100) * weights.health +
+      defense * weights.defense +
+      critical * weights.critRate * 100;
+    return Math.floor(score);
+  },
 };
 export default equips;

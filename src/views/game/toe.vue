@@ -23,11 +23,11 @@
     />
     <el-button
       @click="resetGame"
-      v-text="'重新开始'"
+      v-text="'Bắt đầu lại'"
       v-if="canPlay && !gameEnded"
     />
     <el-countdown
-      :title="hasEnoughMoney ? '冷却中' : '灵石不足'"
+      :title="hasEnoughMoney ? 'Đang hồi chiêu' : 'Không đủ linh thạch'"
       :value="nextGameTime"
       @finish="finish"
       v-else
@@ -36,133 +36,142 @@
 </template>
 
 <script>
-    // 定义获胜组合
-    const WINNING_LINES = [
-        [[0, 0], [0, 1], [0, 2]],
-        [[1, 0], [1, 1], [1, 2]],
-        [[2, 0], [2, 1], [2, 2]],
-        [[0, 0], [1, 0], [2, 0]],
-        [[0, 1], [1, 1], [2, 1]],
-        [[0, 2], [1, 2], [2, 2]],
-        [[0, 0], [1, 1], [2, 2]],
-        [[0, 2], [1, 1], [2, 0]]
-    ];
+// Định nghĩa các tổ hợp chiến thắng
+const WINNING_LINES = [
+    [[0, 0], [0, 1], [0, 2]],
+    [[1, 0], [1, 1], [1, 2]],
+    [[2, 0], [2, 1], [2, 2]],
+    [[0, 0], [1, 0], [2, 0]],
+    [[0, 1], [1, 1], [2, 1]],
+    [[0, 2], [1, 2], [2, 2]],
+    [[0, 0], [1, 1], [2, 2]],
+    [[0, 2], [1, 1], [2, 0]]
+];
 
-    export default {
-        name: 'TicTacToe',
-        data () {
-            return {
-                // 游戏棋盘，3x3阵列，初始填充为空格
-                board: [
-                    [' ', ' ', ' '],
-                    [' ', ' ', ' '],
-                    [' ', ' ', ' ']
-                ],
-                canPlay: false,
-                // 当前玩家，'X' 或 'O'
-                currentPlayer: 'X',
-                // 游戏是否已经结束
-                gameEnded: false
-            }
+export default {
+    name: 'TicTacToe',
+    data() {
+        return {
+            // Bàn cờ trò chơi, mảng 3x3, ban đầu được điền bằng khoảng trắng
+            board: [
+                [' ', ' ', ' '],
+                [' ', ' ', ' '],
+                [' ', ' ', ' ']
+            ],
+            canPlay: false,
+            // Người chơi hiện tại, 'X' hoặc 'O'
+            currentPlayer: 'X',
+            // Trò chơi đã kết thúc chưa
+            gameEnded: false
+        }
+    },
+    computed: {
+        // Lấy thông tin người chơi từ Vuex store
+        player() {
+            return this.$store.player;
         },
-        computed: {
-            // 从 Vuex store 获取玩家信息
-            player () {
-                return this.$store.player;
-            },
-            // 检查是否有玩家获胜
-            checkWinner () {
-                return WINNING_LINES.some(line =>
-                    line.every(([row, col]) => this.board[row][col] === this.currentPlayer)
-                );
-            },
-            // 检查棋盘是否已满
-            isBoardFull () {
-                return this.board.flat().every(cell => cell !== ' ');
-            },
-            // 计算下次游戏可用时间
-            nextGameTime () {
-                return this.player.nextGameTimes?.ticTacToe || 0;
-            },
-            // 判断玩家是否有足够的钱
-            hasEnoughMoney () {
-                return this.player.props.money >= 1000;
-            }
+        // Kiểm tra xem có người chơi nào chiến thắng không
+        checkWinner() {
+            return WINNING_LINES.some(line =>
+                line.every(([row, col]) => this.board[row][col] === this.currentPlayer)
+            );
         },
-        created () {
-            // 判断玩家是否可以进行游戏
-            this.canPlay = Date.now() >= this.nextGameTime && this.hasEnoughMoney;
-            this.gameStatus = `${this.player.name}的轮次`;
+        // Kiểm tra xem bàn cờ đã đầy chưa
+        isBoardFull() {
+            return this.board.flat().every(cell => cell !== ' ');
         },
-        methods: {
-            finish () {
-                this.canPlay = true;
-                this.gameEnded = false;
+        // Tính thời gian có thể chơi trò chơi tiếp theo
+        nextGameTime() {
+            return this.player.nextGameTimes?.ticTacToe || 0;
+        },
+        // Kiểm tra xem người chơi có đủ linh thạch không
+        hasEnoughMoney() {
+            return this.player.props.money >= 1000;
+        },
+        // Trạng thái trò chơi
+        gameStatus: {
+            get() {
+                return this._gameStatus || `${this.player.name} lượt đi`;
             },
-            // 处理玩家的移动
-            makeMove (row, col) {
-                // 检查单元格是否为空，游戏是否未结束，以及玩家是否可以进行游戏
-                if (this.board[row][col] === ' ' && !this.gameEnded && this.canPlay) {
-                    // 更新棋盘并检查游戏状态
-                    this.updateBoard(row, col, this.currentPlayer);
-                    if (this.checkWinner) {
-                        this.endGame(`恭喜${this.player.name}胜利！`, true);
-                    } else if (this.isBoardFull) {
-                        this.endGame('平局！', false);
-                    } else {
-                        // 切换玩家并进行天道的行动
-                        this.switchPlayer();
-                        this.computerMove();
-                    }
-                }
-            },
-            // 处理天道的行动
-            computerMove () {
-                if (!this.gameEnded) {
-                    setTimeout(() => {
-                        let row, col;
-                        const emptyCells = [];
-                        this.board.forEach((r, i) => r.forEach((c, j) => c === ' ' && emptyCells.push([i, j])));
-                        [row, col] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                        this.updateBoard(row, col, this.currentPlayer);
-                        if (this.checkWinner) this.endGame(`恭喜天道胜利！`, false);
-                        else if (this.isBoardFull) this.endGame('平局！', false);
-                        else this.switchPlayer();
-                    }, 500);
-                }
-            },
-            // 更新棋盘数据
-            updateBoard (row, col, player) {
-                this.board[row][col] = player;
-            },
-            // 切换当前玩家
-            switchPlayer () {
-                this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-                this.gameStatus = `${this.currentPlayer === 'X' ? this.player.name : '天道'}的轮次`;
-            },
-            // 重置游戏状态
-            resetGame () {
-                this.board = [
-                    [' ', ' ', ' '],
-                    [' ', ' ', ' '],
-                    [' ', ' ', ' ']
-                ];
-                this.currentPlayer = 'X';
-                this.gameEnded = false;
-                this.gameStatus = `${this.player.name}的轮次`;
-            },
-            // 结束游戏并处理结果
-            endGame (status, playerWon) {
-                this.gameStatus = status;
-                this.gameEnded = true;
-                const reward = playerWon ? 1000 : -1000;
-                this.$emit('game-result', { success: playerWon, reward });
-                const newNextGameTime = Date.now() + 10 * 60 * 1000;
-                this.player.nextGameTimes.ticTacToe = newNextGameTime;
-                this.$emit('update-next-game-time', { game: 'ticTacToe', time: newNextGameTime });
+            set(value) {
+                this._gameStatus = value;
             }
         }
+    },
+    created() {
+        // Kiểm tra xem người chơi có thể chơi trò chơi không
+        this.canPlay = Date.now() >= this.nextGameTime && this.hasEnoughMoney;
+        this.gameStatus = `${this.player.name} lượt đi`;
+    },
+    methods: {
+        finish() {
+            this.canPlay = true;
+            this.gameEnded = false;
+        },
+        // Xử lý nước đi của người chơi
+        makeMove(row, col) {
+            // Kiểm tra xem ô có trống không, trò chơi chưa kết thúc và người chơi có thể chơi
+            if (this.board[row][col] === ' ' && !this.gameEnded && this.canPlay) {
+                // Cập nhật bàn cờ và kiểm tra trạng thái trò chơi
+                this.updateBoard(row, col, this.currentPlayer);
+                if (this.checkWinner) {
+                    this.endGame(`Chúc mừng ${this.player.name} chiến thắng!`, true);
+                } else if (this.isBoardFull) {
+                    this.endGame('Hòa!', false);
+                } else {
+                    // Chuyển người chơi và thực hiện nước đi của Thiên Đạo
+                    this.switchPlayer();
+                    this.computerMove();
+                }
+            }
+        },
+        // Xử lý nước đi của Thiên Đạo
+        computerMove() {
+            if (!this.gameEnded) {
+                setTimeout(() => {
+                    let row, col;
+                    const emptyCells = [];
+                    this.board.forEach((r, i) => r.forEach((c, j) => c === ' ' && emptyCells.push([i, j])));
+                    [row, col] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                    this.updateBoard(row, col, this.currentPlayer);
+                    if (this.checkWinner) this.endGame(`Chúc mừng Thiên Đạo chiến thắng!`, false);
+                    else if (this.isBoardFull) this.endGame('Hòa!', false);
+                    else this.switchPlayer();
+                }, 500);
+            }
+        },
+        // Cập nhật dữ liệu bàn cờ
+        updateBoard(row, col, player) {
+            this.board[row][col] = player;
+        },
+        // Chuyển đổi người chơi hiện tại
+        switchPlayer() {
+            this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+            this.gameStatus = `${this.currentPlayer === 'X' ? this.player.name : 'Thiên Đạo'} lượt đi`;
+        },
+        // Đặt lại trạng thái trò chơi
+        resetGame() {
+            this.board = [
+                [' ', ' ', ' '],
+                [' ', ' ', ' '],
+                [' ', ' ', ' ']
+            ];
+            this.currentPlayer = 'X';
+            this.gameEnded = false;
+            this.gameStatus = `${this.player.name} lượt đi`;
+        },
+        // Kết thúc trò chơi và xử lý kết quả
+        endGame(status, playerWon) {
+            this.gameStatus = status;
+            this.gameEnded = true;
+            const reward = playerWon ? 1000 : -1000;
+            this.$emit('game-result', { success: playerWon, reward });
+            const newNextGameTime = Date.now() + 10 * 60 * 1000;
+            this.player.nextGameTimes.ticTacToe = newNextGameTime;
+            this.$emit('update-next-game-time', { game: 'ticTacToe', time: newNextGameTime });
+        }
     }
+}
 </script>
 
 <style scoped>

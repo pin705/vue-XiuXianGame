@@ -1,15 +1,15 @@
 const boss = {
-    drawPrize (lv) {
+    drawPrize(lv) {
         const bossInfo = this.boss_Names();
-        // 血量
+        // Máu
         const health = this.getRandomInt(50000, 100000) * lv;
-        // 攻击
+        // Tấn công
         const attack = this.getRandomInt(5000, 10000) * lv;
-        // 防御
+        // Phòng thủ
         const defense = this.getRandomInt(1000, 10000) * lv;
-        // 闪避
+        // Né tránh
         const dodge = this.getRandomFloatInRange(0.1, 0.8);
-        // 暴击
+        // Chí mạng
         const critical = this.getRandomFloatInRange(0.1, 1);
         return {
             name: bossInfo.name,
@@ -26,23 +26,23 @@ const boss = {
             maxhealth: health
         };
     },
-    // boss掉落
-    boss_Equip (lv) {
+    // Rơi đồ từ boss
+    boss_Equip(lv) {
         const weapon = [
-            '赤焰凤凰剑', '血玉红莲枪', '烈焰焚天弓', '赤霄神火戟', '火舞流云扇',
-            '朱雀炎翼鞭', '赤龙焚世刃', '炎狱魔瞳镰', '炽血星辰杖', '红莲业火轮'
+            'Kiếm Phượng Hoàng Lửa', 'Thương Liên Hoa Ngọc Máu', 'Cung Thiêu Đốt Thiên Đình', 'Kích Xích Tiêu Thần Hỏa', 'Quạt Lưu Vân Vũ Hỏa',
+            'Roi Cánh Chu Tước', 'Đao Nhận Xích Long', 'Liềm Ma Đồng Viêm Ngục', 'Trượng Tinh Thần Huyết Dịch', 'Luân Xích Liên Nghiệp Hỏa'
         ];
         const armor = [
-            '烈焰红莲战甲', '赤霄火凤云裳', '朱雀焚天织锦', '赤焰龙鳞宝衣', '血色蔷薇华服',
-            '丹霞流光长袍', '炎阳炽烈战袍', '炽火红莲披风', '火舞凤凰羽衣', '红莲业火锦衣'
+            'Chiến Giáp Liên Hoa Lửa', 'Vân Thường Phượng Hoàng Xích Tiêu', 'Gấm Thêu Chu Tước Thiêu Đốt', 'Bảo Y Long Lân Lửa Đỏ', 'Hoa Phục Hồng Tường Vi',
+            'Trường Bào Lưu Quang Đan Hà', 'Chiến Bào Viêm Dương', 'Áo Choàng Xích Liên', 'Vũ Y Phượng Hoàng', 'Cẩm Y Nghiệp Hỏa Liên Hoa'
         ];
         const accessory = [
-            '赤焰凤凰翎', '血珀琉璃坠', '烈焰红宝石链', '朱雀之翼耳环', '红莲业火镯',
-            '丹霄火凤戒', '玛瑙赤焰项链', '炽天使之泪珮', '绯红织锦手环', '火凤涅槃珠链'
+            'Lông Phượng Hoàng Lửa', 'Ngọc Bội Lưu Ly Huyết Phách', 'Dây Chuyền Hồng Ngọc Rực Lửa', 'Hoa Tai Cánh Chu Tước', 'Vòng Tay Nghiệp Hỏa Liên Hoa',
+            'Nhẫn Phượng Hoàng Đan Tiêu', 'Dây Chuyền Hỏa Diệm Mã Não', 'Ngọc Bội Thiên Thần Lệ', 'Vòng Tay Cẩm Hồng', 'Chuỗi Ngọc Phượng Hoàng Tái Sinh'
         ];
         const sutra = [
-            '炽焰灵珠阵图', '火凤涅槃炉鼎', '红莲业火净世碑', '血玉轮回盘', '朱雀翔天翼',
-            '烈焰焚天炉', '丹霄火域图', '赤龙炼魂珠', '火灵炽心镜', '九转炎灵祭坛'
+            'Trận Đồ Linh Châu Hỏa Diệm', 'Lò Đỉnh Phượng Hoàng Tái Sinh', 'Bia Nghiệp Hỏa Tịnh Thế', 'Bàn Luân Hồi Ngọc Máu', 'Cánh Chu Tước Vút Trời',
+            'Lò Luyện Thiêu Đốt', 'Bản Đồ Hỏa Vực Đan Tiêu', 'Ngọc Luyện Hồn Xích Long', 'Gương Tâm Hỏa Linh', 'Đàn Tế Cửu Chuyển Viêm Linh'
         ];
         const weaponTypes = {
             weapon: { names: weapon, probability: 25 },
@@ -62,89 +62,89 @@ const boss = {
                 const defense = this.getRandomInt(500, 1000) * lv * 10;
                 const Criticalhitrate = this.getRandomFloatInRange(0.05, 0.1);
                 return {
-                    id: Date.now(), // 装备ID
-                    name: names[Math.floor(Math.random() * names.length)], //装备名字
-                    type: quality, // 装备类型
-                    level: lv, // 装备等级
-                    score: this.calculateEquipmentScore(dodge, Attack, Health, Criticalhitrate, defense), // 装备评分
-                    dodge: ['accessory', 'sutra'].includes(quality) ? dodge : 0, // 闪避率
-                    attack: ['weapon', 'accessory', 'sutra'].includes(quality) ? Attack : 0, // 攻击力
-                    health: ['armor', 'accessory', 'sutra'].includes(quality) ? Health : 0, // 血量
-                    quality: 'danger', // 装备品质
-                    // 初始数据
+                    id: Date.now(), // ID trang bị
+                    name: names[Math.floor(Math.random() * names.length)], // Tên trang bị
+                    type: quality, // Loại trang bị
+                    level: lv, // Cấp độ trang bị
+                    score: this.calculateEquipmentScore(dodge, Attack, Health, Criticalhitrate, defense), // Điểm trang bị
+                    dodge: ['accessory', 'sutra'].includes(quality) ? dodge : 0, // Tỉ lệ né tránh
+                    attack: ['weapon', 'accessory', 'sutra'].includes(quality) ? Attack : 0, // Tấn công
+                    health: ['armor', 'accessory', 'sutra'].includes(quality) ? Health : 0, // Máu
+                    quality: 'danger', // Chất lượng trang bị
+                    // Dữ liệu ban đầu
                     initial: {
-                        dodge: ['accessory', 'sutra'].includes(quality) ? dodge : 0, // 闪避率
-                        attack: ['weapon', 'accessory', 'sutra'].includes(quality) ? Attack : 0, // 攻击力
-                        health: ['armor', 'accessory', 'sutra'].includes(quality) ? Health : 0, // 血量
-                        defense: ['accessory', 'sutra'].includes(quality) ? defense : 0, // 装备防御
-                        critical: ['weapon', 'accessory', 'sutra'].includes(quality) ? Criticalhitrate : 0, // 暴击率
+                        dodge: ['accessory', 'sutra'].includes(quality) ? dodge : 0, // Tỉ lệ né tránh
+                        attack: ['weapon', 'accessory', 'sutra'].includes(quality) ? Attack : 0, // Tấn công
+                        health: ['armor', 'accessory', 'sutra'].includes(quality) ? Health : 0, // Máu
+                        defense: ['accessory', 'sutra'].includes(quality) ? defense : 0, // Phòng thủ
+                        critical: ['weapon', 'accessory', 'sutra'].includes(quality) ? Criticalhitrate : 0, // Tỉ lệ chí mạng
                     },
-                    defense: ['armor', 'accessory', 'sutra'].includes(quality) ? defense : 0, // 装备防御
-                    critical: ['weapon', 'accessory', 'sutra'].includes(quality) ? Criticalhitrate : 0 // 暴击率
+                    defense: ['armor', 'accessory', 'sutra'].includes(quality) ? defense : 0, // Phòng thủ
+                    critical: ['weapon', 'accessory', 'sutra'].includes(quality) ? Criticalhitrate : 0 // Tỉ lệ chí mạng
                 };
             }
         }
     },
-    // boss语录
-    boss_Text () {
+    // Ngôn ngữ boss
+    boss_Text() {
         const text = [
-            '你的时代已经结束，现在，是我主宰一切的时候了。',
-            '你的努力，终究只是为我铺就了通往胜利的道路。',
-            '战胜你，对我来说不过是举手之劳，你的实力，不过如此。',
-            '你的生命，在我的手中如蝼蚁般脆弱，你的死亡，只是我计划中的一环。',
-            '你的失败，证明了我的智慧与力量无可匹敌，而你，只是我的垫脚石。',
-            '你的存在，曾让我感到一丝威胁，但现在，你已成为我脚下的尘埃。',
-            '你的勇气可嘉，但可惜，勇气并不能改变结果，你最终还是败在了我的脚下。',
-            '你的死，将是我传奇中的一笔，而你，将永远被我踩在脚下。',
-            '你的挣扎与反抗，不过是徒劳无功，你的命运，早已注定。',
-            '你的终结，是我迈向更高峰的开始，你的存在，对我来说已无任何意义。',
-            '你的死亡，将证明我的强大与不可战胜，而你，将永远成为我的手下败将。',
-            '你的遗言，对我来说毫无意义，因为你已经无法再影响我的计划。',
-            '你的逝去，只是宇宙间的一次微小波动，而我，将继续书写我的传奇。',
-            '你的失败，是我成功路上的一个注脚，而你，将永远无法摆脱这个污点。',
-            '你的生命之火已经熄灭，而我，将继续燃烧，照亮整个世界。',
-            '你的死亡，让我更加坚信自己的道路是正确的，而你，只是我路上的一个过客。',
-            '你的存在，曾让我有过一丝犹豫，但现在，我已经没有任何顾虑，因为我已经彻底战胜了你。',
-            '你的终结，是我力量的证明，而你，将永远无法逃脱这个宿命。',
-            '你的死亡，将是我成就伟大事业的基石，而你，将永远被世人遗忘。',
-            '你的挑战，虽然激烈，但终究无法撼动我的地位，你的死亡，只是我辉煌人生中的一个注脚。'
+            'Thời đại của ngươi đã kết thúc, giờ đây, ta là kẻ thống trị tất cả.',
+            'Nỗ lực của ngươi rốt cuộc chỉ là con đường dẫn ta tới chiến thắng.',
+            'Đánh bại ngươi, với ta chỉ là chuyện nhỏ, sức mạnh của ngươi chỉ có vậy.',
+            'Sinh mệnh ngươi trong tay ta mong manh như kiến, cái chết của ngươi chỉ là một mắt xích trong kế hoạch của ta.',
+            'Thất bại của ngươi chứng minh trí tuệ và sức mạnh của ta vô địch, còn ngươi chỉ là bậc thang cho ta.',
+            'Sự tồn tại của ngươi từng khiến ta cảm thấy đe dọa, nhưng giờ ngươi đã trở thành hạt bụi dưới chân ta.',
+            'Dũng khí của ngươi đáng khen, nhưng tiếc thay, dũng khí không thể thay đổi kết quả, rốt cuộc ngươi vẫn thất bại.',
+            'Cái chết của ngươi sẽ là một nét trong huyền thoại của ta, còn ngươi sẽ mãi bị ta đạp dưới chân.',
+            'Sự chống cự của ngươi chỉ là vô ích, số phận ngươi đã được định đoạt.',
+            'Kết thúc của ngươi là khởi đầu cho đỉnh cao mới của ta, sự tồn tại của ngươi với ta đã vô nghĩa.',
+            'Cái chết của ngươi sẽ chứng minh sức mạnh bất khả chiến bại của ta, còn ngươi mãi là kẻ thua cuộc.',
+            'Lời trăn trối của ngươi với ta vô nghĩa, vì ngươi không còn ảnh hưởng đến kế hoạch của ta.',
+            'Sự biến mất của ngươi chỉ là gợn sóng nhỏ trong vũ trụ, còn ta sẽ tiếp tục viết nên huyền thoại.',
+            'Thất bại của ngươi chỉ là chú thích trên con đường thành công của ta, còn ngươi mãi không thoát khỏi vết nhơ này.',
+            'Ngọn lửa sinh mệnh của ngươi đã tắt, còn ta sẽ tiếp tục cháy sáng, soi rọi thế giới.',
+            'Cái chết của ngươi khiến ta thêm tin vào con đường của mình, còn ngươi chỉ là kẻ qua đường.',
+            'Sự tồn tại của ngươi từng khiến ta do dự, nhưng giờ ta đã không còn bận tâm, vì ta đã hoàn toàn đánh bại ngươi.',
+            'Kết thúc của ngươi là minh chứng cho sức mạnh của ta, còn ngươi mãi không thoát khỏi định mệnh.',
+            'Cái chết của ngươi sẽ là nền tảng cho sự nghiệp vĩ đại của ta, còn ngươi sẽ bị lãng quên.',
+            'Thách thức của ngươi dù mãnh liệt, nhưng không thể lay chuyển vị thế của ta, cái chết của ngươi chỉ là chú thích trong cuộc đời rực rỡ của ta.'
         ];
         return text[Math.floor(Math.random() * text.length)];
     },
-    boss_Names () {
+    boss_Names() {
         const boss = [
-            { name: '烛龙神尊', description: '乃钟山之神，睁眼为昼，闭眼为夜，呼吸间风云变幻，掌控着时间的流转。' },
-            { name: '幽冥鬼帝', description: '传说中幽冥界的至高统治者，掌管生死轮回，其力量深不可测，能召唤万千亡灵为其所用。' },
-            { name: '苍穹魔尊', description: '诞生于九天之上，因贪恋凡间情感而堕入魔道，拥有操控天地元素、撕裂虚空的能力。' },
-            { name: '龙皇傲天', description: '龙族中的至尊，身披璀璨龙鳞，掌握着古老龙族的所有秘辛与力量，其威严令万兽臣服。' },
-            { name: '凤舞九天', description: '凤凰一族的女王，拥有不死之身与涅槃重生的能力，其羽翼轻挥，即可掀起滔天火焰，焚尽一切。' },
-            { name: '雷神天尊', description: '天界雷神转世，手持雷神锤，能召唤九天神雷，一击之下，山河破碎，万物寂灭。' },
-            { name: '幽冥血皇', description: '幽冥界中的古老存在，以鲜血为食，其力量源自于无尽的杀戮与怨念，令人闻风丧胆。' },
-            { name: '玄冰龙神', description: '来自极北之地的神秘生物，融合了龙与冰元素的力量，其身躯坚不可摧，能冻结世间万物。' },
-            { name: '金翅大鹏王', description: '大鹏一族中的王者，拥有遮天蔽日的双翼，速度之快，可瞬息万里，其利爪足以撕裂空间。' },
-            { name: '混沌魔君', description: '诞生于混沌之初的古老魔物，其力量源自于宇宙的本源，能够扭曲现实，吞噬万物，是天地间最可怕的存在之一。' }
+            { name: 'Chúc Long Thần Tôn', description: 'Thần núi Chung Sơn, mở mắt là ban ngày, nhắm mắt là đêm tối, trong hơi thở làm biến đổi phong vân, khống chế dòng chảy thời gian.' },
+            { name: 'U Minh Quỷ Đế', description: 'Bậc thống trị tối cao cõi U Minh, nắm giữ luân hồi sinh tử, sức mạnh thâm bất khả trắc, có thể triệu hồi vạn thiên oan hồn.' },
+            { name: 'Thương Khung Ma Tôn', description: 'Sinh ra từ chín tầng trời, vì đam mê tình cảm phàm trần mà sa vào ma đạo, có khả năng thao túng nguyên tố trời đất, xé rách hư không.' },
+            { name: 'Long Hoàng Ngạo Thiên', description: 'Tôn quý nhất trong tộc Long, khoác long lân lấp lánh, nắm giữ tất cả bí mật và sức mạnh cổ xưa của tộc Long, uy nghi khiến vạn thú quy phục.' },
+            { name: 'Phượng Vũ Cửu Thiên', description: 'Nữ vương tộc Phượng Hoàng, sở hữu thân thể bất tử cùng khả năng tái sinh từ tro tàn, mỗi vẫy cánh có thể tạo ra biển lửa thiêu rụi vạn vật.' },
+            { name: 'Lôi Thần Thiên Tôn', description: 'Chuyển thế của Lôi Thần thiên giới, tay cầm Lôi Thần chùy, có thể triệu hồi cửu thiên thần lôi, một kích phá núi sông, vạn vật tịch diệt.' },
+            { name: 'U Minh Huyết Hoàng', description: 'Tồn tại cổ xưa nơi U Minh giới, lấy máu tươi làm thức ăn, sức mạnh bắt nguồn từ sát khí và oán niệm vô tận, khiến người nghe kinh hồn bạt vía.' },
+            { name: 'Huyền Băng Long Thần', description: 'Sinh vật thần bí từ vùng cực bắc, kết hợp sức mạnh của Long và nguyên tố băng, thân thể bất khả xâm phạm, có thể đóng băng vạn vật.' },
+            { name: 'Kim Sí Đại Bằng Vương', description: 'Vua của tộc Đại Bằng, sở hữu đôi cánh che kín bầu trời, tốc độ nhanh như chớp, móng vuốt đủ sức xé rách không gian.' },
+            { name: 'Hỗn Độn Ma Quân', description: 'Ma vật cổ xưa sinh ra từ hỗn độn nguyên sơ, sức mạnh bắt nguồn từ bản nguyên vũ trụ, có thể bẻ cong hiện thực, nuốt chửng vạn vật, là một trong những tồn tại đáng sợ nhất.' }
         ];
         return boss[Math.floor(Math.random() * boss.length)];
     },
-    getRandomInt (min, max) {
+    getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
     },
-    getRandomFloatInRange (min, max) {
+    getRandomFloatInRange(min, max) {
         return Math.random() * (max - min) + min;
     },
-    // 计算装备评分
-    calculateEquipmentScore (dodge = 0, attack = 0, health = 0, critical = 0, defense = 0) {
-        // 评分权重
+    // Tính điểm trang bị
+    calculateEquipmentScore(dodge = 0, attack = 0, health = 0, critical = 0, defense = 0) {
+        // Trọng số điểm
         const weights = {
-            attack: 1.5, // 攻击
-            health: 1.0, // 气血
-            defense: 1.2, // 防御
-            critRate: 1.8, // 暴击
-            dodgeRate: 1.6 //闪避
+            attack: 1.5, // Tấn công
+            health: 1.0, // Khí huyết
+            defense: 1.2, // Phòng thủ
+            critRate: 1.8, // Chí mạng
+            dodgeRate: 1.6 // Né tránh
         };
-        // 计算评分
+        // Tính điểm
         const score = (
             dodge * weights.dodgeRate +
             attack * weights.attack +
@@ -155,4 +155,5 @@ const boss = {
         return Math.floor(score);
     }
 };
+
 export default boss;

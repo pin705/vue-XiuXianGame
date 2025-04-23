@@ -1,7 +1,10 @@
 <template>
-    <el-tag :disable-transitions="true" :class="customTypeClass">
-        <slot></slot>
-    </el-tag>
+  <el-tag
+    :disable-transitions="true"
+    :class="customTypeClass"
+  >
+    <slot />
+  </el-tag>
 </template>
 
 <script>

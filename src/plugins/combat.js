@@ -1,29 +1,32 @@
 export default {
-    calculateDamage (attacker, defender) {
-        // 基础伤害计算
-        let damage = Math.max(0, Math.floor(attacker.attack - defender.defense));
-        damage = damage <= 1 ? 1 : damage; // 伤害最小为1
-        // 闪避判定
-        const isHit = Math.random() > defender.dodge;
-        if (!isHit) return { damage: 0, isCritical: false, isHit: false };
-        // 暴击判定
-        let isCritical = false;
-        if (Math.random() < attacker.critical) {
-            damage *= 1.5;
-            isCritical = true;
-        }
-        // 返回计算结果，包括伤害值，暴击状态和命中状态 
-        return { damage, isCritical, isHit: true };
-    },
-    executeCombatRound (attacker, defender) {
-        const attackResult = this.calculateDamage(attacker, defender);
-        if (attackResult.isHit) defender.health = Math.max(0, defender.health - attackResult.damage);
-        // 返回本轮攻击的结果，包括伤害值，暴击状态，命中状态及防御者剩余生命值
-        return {
-            damage: attackResult.damage,
-            isCritical: attackResult.isCritical,
-            isHit: attackResult.isHit,
-            remainingHealth: defender.health
-        };
+  // Tính toán sát thương
+  calculateDamage(attacker, defender) {
+    // Tính sát thương cơ bản
+    let damage = Math.max(0, Math.floor(attacker.attack - defender.defense));
+    damage = damage <= 1 ? 1 : damage; // Sát thương tối thiểu là 1
+    // Xác định né tránh
+    const isHit = Math.random() > defender.dodge;
+    if (!isHit) return { damage: 0, isCritical: false, isHit: false };
+    // Xác định bạo kích
+    let isCritical = false;
+    if (Math.random() < attacker.critical) {
+      damage *= 1.5;
+      isCritical = true;
     }
+    // Trả về kết quả tính toán, bao gồm giá trị sát thương, trạng thái bạo kích và trạng thái trúng
+    return { damage, isCritical, isHit: true };
+  },
+  // Thực hiện một hiệp chiến đấu
+  executeCombatRound(attacker, defender) {
+    const attackResult = this.calculateDamage(attacker, defender);
+    if (attackResult.isHit)
+      defender.health = Math.max(0, defender.health - attackResult.damage);
+    // Trả về kết quả của hiệp tấn công này, bao gồm giá trị sát thương, trạng thái bạo kích, trạng thái trúng và lượng khí huyết còn lại của mục tiêu
+    return {
+      damage: attackResult.damage,
+      isCritical: attackResult.isCritical,
+      isHit: attackResult.isHit,
+      remainingHealth: defender.health,
+    };
+  },
 };

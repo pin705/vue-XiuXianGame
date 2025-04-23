@@ -2,42 +2,52 @@
   <div class="attributes">
     <div class="attribute-box">
       <div class="tag attribute">
-        气血: {{ $formatNumberToChineseUnit(strengthenInfo.health) }}
+        Sinh lực: {{ $formatNumberToChineseUnit(strengthenInfo.health) }}
       </div>
       <div class="tag attribute">
-        攻击: {{ $formatNumberToChineseUnit(strengthenInfo.attack) }}
+        Tấn công: {{ $formatNumberToChineseUnit(strengthenInfo.attack) }}
       </div>
       <div class="tag attribute">
-        防御: {{ $formatNumberToChineseUnit(strengthenInfo.defense) }}
+        Phòng thủ: {{ $formatNumberToChineseUnit(strengthenInfo.defense) }}
       </div>
       <div class="tag attribute">
-        暴击率: {{ strengthenInfo?.critical > 0 ? (strengthenInfo?.critical * 100 > 100 ? 100 : (strengthenInfo?.critical * 100).toFixed(2)) : 0  }}%
+        Tỉ lệ chí mạng: {{ strengthenInfo?.critical > 0 ? (strengthenInfo?.critical * 100 > 100 ? 100 : (strengthenInfo?.critical * 100).toFixed(2)) : 0 }}%
       </div>
       <div class="tag attribute">
-        闪避率: {{ strengthenInfo.dodge > 0 ? (strengthenInfo.dodge * 100 > 100 ? 100 : (strengthenInfo.dodge * 100).toFixed(2)) : 0 }}%
+        Tỉ lệ né tránh: {{ strengthenInfo.dodge > 0 ? (strengthenInfo.dodge * 100 > 100 ? 100 : (strengthenInfo.dodge * 100).toFixed(2)) : 0 }}%
       </div>
       <div class="tag attribute">
-        炼器等级: {{ strengthenInfo.strengthen ?? 0 }}
+        Cấp luyện khí: {{ strengthenInfo.strengthen ?? 0 }}
       </div>
       <div class="tag attribute">
-        装备评分: {{ $formatNumberToChineseUnit(strengthenInfo.score) }}
+        Điểm trang bị: {{ $formatNumberToChineseUnit(strengthenInfo.score) }}
       </div>
-      <div class="tag attribute"
-           @click="$notifys({title: '获得方式', message: '分解装备可获取', position: 'top-left'})" v-if="calculateCost">
-        拥有炼器石: {{ $formatNumberToChineseUnit(player.props.strengtheningStone) }}
+      <div
+        class="tag attribute"
+        @click="$notifys({title: 'Cách nhận', message: 'Phân giải trang bị có thể nhận được', position: 'top-left'})"
+        v-if="calculateCost"
+      >
+        Đá luyện khí sở hữu: {{ $formatNumberToChineseUnit(player.props.strengtheningStone) }}
       </div>
-      <div class="tag attribute" v-if="calculateCost">
-        炼器消耗: {{ calculateCost }}
+      <div
+        class="tag attribute"
+        v-if="calculateCost"
+      >
+        Tiêu hao luyện khí: {{ calculateCost }}
       </div>
-      <div class="tag attribute" v-if="calculateEnhanceSuccessRate">
-        成功率: {{ (calculateEnhanceSuccessRate * 100).toFixed(2) }}%
+      <div
+        class="tag attribute"
+        v-if="calculateEnhanceSuccessRate"
+      >
+        Tỉ lệ thành công: {{ (calculateEnhanceSuccessRate * 100).toFixed(2) }}%
       </div>
     </div>
   </div>
 </template>
+
 <script>
 export default {
-  name: 'weapon-tooltip',
+  name: 'WeaponTooltip',
   props: {
     calculateCost: {},
     calculateEnhanceSuccessRate: {},
@@ -46,8 +56,8 @@ export default {
   }
 }
 </script>
-<style scoped>
 
+<style scoped>
 .attribute {
   width: calc(50% - 8px);
   margin: 4px;
@@ -59,25 +69,25 @@ export default {
   flex-wrap: wrap;
 }
 
-/* 炼器弹窗 */
+/* Luyện khí popup */
 
 .click-box button {
   margin-top: 10px;
   width: 100%;
 }
 
-/* 装备信息 */
+/* Thông tin trang bị */
 
 .collapse p,
 .monsterinfo-box p {
   display: contents;
 }
 
-/* 基础属性对比 */
+/* So sánh thuộc tính cơ bản */
 
-/* 属性对比 */
+/* So sánh thuộc tính */
 
-/* 新手弹窗 */
+/* Popup người mới */
 
 .newbieinfo-box p {
   margin-bottom: 10px;
@@ -87,12 +97,12 @@ export default {
 
 }
 </style>
-<style>
 
+<style>
 @media only screen and (max-width: 768px) {
 
-  /* 新手弹窗 */
+  /* Popup người mới */
 }
 
-/* 上传按钮 */
+/* Nút tải lên */
 </style>
