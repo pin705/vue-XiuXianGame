@@ -58,7 +58,7 @@ export default defineConfig({
                 ],
                 short_name: 'Tu tiên gõ phím!',
                 description: 'Không thiên phú, không sư phụ, chỉ có cái bàn phím là bạn tu hành!',
-                theme_color: '#4d4d4d'
+                theme_color: '#141414'
             },
             devOptions: {
                 enabled: true

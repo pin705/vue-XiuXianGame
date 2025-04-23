@@ -153,6 +153,7 @@
           <span class="equip">
             <span>Thần binh: </span>
             <tag
+              class="w-[30%] !whitespace-break-spaces"
               v-if="player.equipment.weapon?.name"
               :type="player.equipment.weapon?.quality"
               :closable="player.equipment.weapon?.name ? true : false"
@@ -169,46 +170,14 @@
                   : ""
               }}
             </tag>
-            <!-- <el-popover
-              placement="top-start"
-              :title="player.equipment.weapon?.name"
-              :width="300"
-              trigger="hover"
-              content="this is content, this is content, this is content"
-            >
-              <template #reference>
-                <tag
-                  v-if="player.equipment.weapon?.name"
-                  :type="player.equipment.weapon?.quality"
-                  :closable="player.equipment.weapon?.name ? true : false"
-                  @close="equipmentClose('weapon')"
-                  @click="equipmentInfo(player.equipment[type].id, 'weapon')"
-                  @mouseenter="
-                    getEquipmentInfo(player.equipment['weapon']?.id, 'weapon')
-                  "
-                >
-                  {{ player.equipment.weapon?.name
-                  }}{{
-                    player.equipment.weapon?.strengthen
-                      ? "+" + player.equipment.weapon?.strengthen
-                      : ""
-                  }}
-                </tag>
-                <span v-else>Không có</span>
-              </template>
-              <template #default>
-                <div>
-                  <equip-tooltip
-                    :player="player"
-                    :strengthen-info="strengthenInfo"
-                  />
-                </div>
-              </template>
-            </el-popover> -->
+            <!-- <span v-else>
+              Không có
+            </span> -->
           </span>
           <span class="equip">
             <span>Hộ giáp: </span>
             <tag
+              class="w-[30%] !whitespace-break-spaces"
               v-if="player.equipment.armor?.name"
               :type="player.equipment.armor?.quality"
               :closable="player.equipment.armor?.name ? true : false"
@@ -225,48 +194,16 @@
                   : ""
               }}
             </tag>
-            <!-- <el-popover
-              placement="top-start"
-              :title="player.equipment.armor?.name"
-              :width="300"
-              trigger="hover"
-              content="this is content, this is content, this is content"
-            >
-              <template #reference>
-                <tag
-                  v-if="player.equipment.armor?.name"
-                  :type="player.equipment.armor?.quality"
-                  :closable="player.equipment.armor?.name ? true : false"
-                  @close="equipmentClose('armor')"
-                  @click="equipmentInfo(player.equipment['armor']?.id, 'armor')"
-                  @mouseenter="
-                    getEquipmentInfo(player.equipment['armor']?.id, 'armor')
-                  "
-                >
-                  {{ player.equipment.armor?.name
-                  }}{{
-                    player.equipment.armor?.strengthen
-                      ? "+" + player.equipment.armor?.strengthen
-                      : ""
-                  }}
-                </tag>
-                <span v-else>Không có</span>
-              </template>
-              <template #default>
-                <div>
-                  <equip-tooltip
-                    :player="player"
-                    :strengthen-info="strengthenInfo"
-                  />
-                </div>
-              </template>
-            </el-popover> -->
+            <span v-else>
+              Không có
+            </span>
           </span>
         </div>
         <div class="tag equip-item">
           <span class="equip">
             <span>Linh bảo: </span>
             <tag
+              class="w-[30%] !whitespace-break-spaces"
               v-if="player.equipment.accessory?.name"
               :type="player.equipment.accessory?.quality"
               :closable="!!player.equipment.accessory?.name"
@@ -285,54 +222,14 @@
                   : ""
               }}
             </tag>
-            <!-- <el-popover
-              placement="top-start"
-              :title="player.equipment.accessory?.name"
-              :width="300"
-              trigger="hover"
-              content="this is content, this is content, this is content"
-            >
-              <template #reference>
-                <tag
-                  v-if="player.equipment.accessory?.name"
-                  :type="player.equipment.accessory?.quality"
-                  :closable="!!player.equipment.accessory?.name"
-                  @close="equipmentClose('accessory')"
-                  @click="
-                    equipmentInfo(
-                      player.equipment['accessory']?.id,
-                      'accessory'
-                    )
-                  "
-                  @mouseenter="
-                    getEquipmentInfo(
-                      player.equipment['accessory']?.id,
-                      'accessory'
-                    )
-                  "
-                >
-                  {{ player.equipment.accessory?.name
-                  }}{{
-                    player.equipment.accessory?.strengthen
-                      ? "+" + player.equipment.accessory?.strengthen
-                      : ""
-                  }}
-                </tag>
-                <span v-else>Không có</span>
-              </template>
-              <template #default>
-                <div>
-                  <equip-tooltip
-                    :player="player"
-                    :strengthen-info="strengthenInfo"
-                  />
-                </div>
-              </template>
-            </el-popover> -->
+            <span v-else>
+              Không có
+            </span>
           </span>
           <span class="equip">
             <span>Pháp khí: </span>
             <tag
+              class="w-[30%] !whitespace-break-spaces"
               v-if="player.equipment.sutra?.name"
               :type="player.equipment.sutra?.quality"
               :closable="!!player.equipment.sutra?.name"
@@ -349,44 +246,10 @@
                   : ""
               }}
             </tag>
-            <!-- <el-popover
-              placement="top-start"
-              :title="player.equipment.sutra?.name"
-              :width="300"
-              trigger="hover"
-              content="this is content, this is content, this is content"
-            >
-              <template #reference>
-                <tag
-                  v-if="player.equipment.sutra?.name"
-                  :type="player.equipment.sutra?.quality"
-                  :closable="!!player.equipment.sutra?.name"
-                  @close="
-                    equipmentClose(player.equipment['sutra']?.id, 'sutra')
-                  "
-                  @click="equipmentInfo(player.equipment['sutra']?.id, 'sutra')"
-                  @mouseenter="
-                    getEquipmentInfo(player.equipment['sutra']?.id, 'sutra')
-                  "
-                >
-                  {{ player.equipment.sutra?.name
-                  }}{{
-                    player.equipment.sutra?.strengthen
-                      ? "+" + player.equipment.sutra?.strengthen
-                      : ""
-                  }}
-                </tag>
-                <span v-else>Không có</span>
-              </template>
-              <template #default>
-                <div>
-                  <equip-tooltip
-                    :player="player"
-                    :strengthen-info="strengthenInfo"
-                  />
-                </div>
-              </template>
-            </el-popover> -->
+            <span v-else>
+              Không có
+            </span>
+        
           </span>
         </div>
         <div class="tag equip-item">
@@ -401,6 +264,9 @@
             >
               {{ player.wife?.name }}
             </tag>
+            <span v-else>
+              Không có
+            </span>
           </span>
           <span class="equip">
             <span>Linh sủng: </span>
@@ -414,6 +280,9 @@
             >
               {{ player.pet?.name }}({{ $levelNames(player.pet.level) }})
             </tag>
+            <span v-else>
+              Không có
+            </span>
           </span>
         </div>
         <div class="tag inventory-box">
@@ -2041,7 +1910,7 @@ export default {
         meta.setAttribute("content", color);
       };
 
-      setThemeColor(val ? "#18181c" : "#ffffff");
+      setThemeColor(val ? "#141414" : "#ffffff");
     },
     "player.attack": function (val) {
       if (isNaN(val)) this.reset();
