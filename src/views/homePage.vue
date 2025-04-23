@@ -1458,11 +1458,10 @@
       <div class="dialog-footer">
         <el-divider>Liên quan đến lưu trữ</el-divider>
         <el-button
-          type="info"
           class="dialog-footer-button"
           @click="exportData"
         >
-          Xuất lưu trữ
+          Lưu dữ liệu
         </el-button>
         <el-upload
           action="#"
@@ -1472,7 +1471,6 @@
           accept="application/json"
         >
           <el-button
-            type="warning"
             class="dialog-footer-button"
           >
             Nhập lưu trữ
@@ -2114,8 +2112,8 @@ export default {
     // Đặt lại
     reset() {
       this.storyText =
-        'Thuộc tính lỗi, vui lòng tham gia nhóm QQ: 920930589, tải lên "lưu trữ" và liên hệ tác giả để giải quyết';
-      this.$confirm("Bạn có muốn xuất lưu trữ không?", "Gợi ý xuất lưu trữ", {
+        'Thuộc tính lỗi, vui lòng tham gia nhóm, tải lên "lưu trữ" và liên hệ tác giả để giải quyết';
+      this.$confirm("Bạn có muốn Lưu dữ liệu không?", "Gợi ý lưu trữ", {
         center: true,
         confirmButtonText: "Xác nhận",
       })
