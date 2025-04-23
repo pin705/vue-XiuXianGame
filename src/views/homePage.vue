@@ -149,20 +149,23 @@
         </div>
       </div>
       <div class="equip-box">
-        <div class="tag equip-item">
-          <span class="equip">
-            <span>Thần binh: </span>
+        <div class="tag !h-12 !flex items-center justify-center gap-2">
+          <span class="w-1/2 flex flex-col items-start justify-center">
             <tag
-              class="w-[32%] overflow-auto"
+              class="!whitespace-normal text-left"
               v-if="player.equipment.weapon?.name"
               :type="player.equipment.weapon?.quality"
               :closable="player.equipment.weapon?.name ? true : false"
               @close="equipmentClose('weapon')"
+              size="large"
               @click="equipmentInfo(player.equipment['weapon']?.id, 'weapon')"
               @mouseenter="
                 getEquipmentInfo(player.equipment['weapon']?.id, 'weapon')
               "
             >
+              <el-text size="small">
+                [Thần binh]
+              </el-text>
               {{ player.equipment.weapon?.name
               }}{{
                 player.equipment.weapon?.strengthen
@@ -170,14 +173,16 @@
                   : ""
               }}
             </tag>
-            <!-- <span v-else>
-              Không có
-            </span> -->
+            <span v-else>
+              <el-text size="small">
+                [Thần binh]
+              </el-text> Chưa trang bị
+            </span>
           </span>
-          <span class="equip">
-            <span>Hộ giáp: </span>
+          <span class="w-1/2 flex flex-col items-start justify-center">
             <tag
-              class="w-[32%] overflow-auto"
+              class="!whitespace-normal text-left"
+              size="large"
               v-if="player.equipment.armor?.name"
               :type="player.equipment.armor?.quality"
               :closable="player.equipment.armor?.name ? true : false"
@@ -187,6 +192,9 @@
                 getEquipmentInfo(player.equipment['armor']?.id, 'armor')
               "
             >
+              <el-text size="small">
+                [Hộ giáp]
+              </el-text>
               {{ player.equipment.armor?.name
               }}{{
                 player.equipment.armor?.strengthen
@@ -195,15 +203,17 @@
               }}
             </tag>
             <span v-else>
-              Không có
+              <el-text size="small">
+                [Hộ giáp]
+              </el-text> Chưa trang bị
             </span>
           </span>
         </div>
-        <div class="tag equip-item">
-          <span class="equip">
-            <span>Linh bảo: </span>
+        <div class="tag !h-12 !flex  flex-auto items-center justify-center gap-2 mt-2">
+          <span class="w-1/2 flex flex-col items-start justify-center">
             <tag
-              class="w-[32%] overflow-auto"
+              size="large"
+              class="!whitespace-normal text-left"
               v-if="player.equipment.accessory?.name"
               :type="player.equipment.accessory?.quality"
               :closable="!!player.equipment.accessory?.name"
@@ -215,6 +225,9 @@
                 getEquipmentInfo(player.equipment['accessory']?.id, 'accessory')
               "
             >
+              <el-text size="small">
+                [Pháp khí]
+              </el-text>
               {{ player.equipment.accessory?.name
               }}{{
                 player.equipment.accessory?.strengthen
@@ -223,13 +236,15 @@
               }}
             </tag>
             <span v-else>
-              Không có
+              <el-text size="small">
+                [Pháp khí]
+              </el-text> Chưa trang bị
             </span>
           </span>
-          <span class="equip">
-            <span>Pháp khí: </span>
+          <span class="w-1/2 flex flex-col items-start justify-center">
             <tag
-              class="w-[32%] overflow-auto"
+              size="large"
+              class="!whitespace-normal text-left"
               v-if="player.equipment.sutra?.name"
               :type="player.equipment.sutra?.quality"
               :closable="!!player.equipment.sutra?.name"
@@ -239,6 +254,9 @@
                 getEquipmentInfo(player.equipment['sutra']?.id, 'sutra')
               "
             >
+              <el-text size="small">
+                [Pháp khi]
+              </el-text>
               {{ player.equipment.sutra?.name
               }}{{
                 player.equipment.sutra?.strengthen
@@ -247,41 +265,53 @@
               }}
             </tag>
             <span v-else>
-              Không có
+              <el-text size="small">
+                [Pháp khi]
+              </el-text> Chưa trang bị
             </span>
         
           </span>
         </div>
-        <div class="tag equip-item">
-          <span class="equip">
-            <span>Đạo lữ: </span>
+        <div class="tag !h-12 !flex items-center justify-center gap-2 my-2">
+          <span class="w-1/2 flex flex-col items-start justify-center">
             <tag
-              class="pet w-[32%] overflow-auto"
+              class="!whitespace-normal text-left"
               v-if="player.wife?.name"
               closable
               @close="wifeRevoke"
               @click="wifeItemShow = true"
+              size="large"
             >
+              <el-text size="small">
+                [Đạo lữ]
+              </el-text>
               {{ player.wife?.name }}
             </tag>
             <span v-else>
-              Không có
+              <el-text size="small">
+                [Đạo lữ]
+              </el-text> Chưa trang bị
             </span>
           </span>
-          <span class="equip">
-            <span>Linh sủng: </span>
+          <span class="w-1/2 flex flex-col items-start justify-center">
             <tag
-              class="pet w-[32%] overflow-auto"
+              size="large"
+              class="!whitespace-normal text-left"
               v-if="player.pet?.name"
               :type="computePetsLevel(player.pet?.level)"
               closable
               @close="petRetract"
               @click="petItemShow = true"
             >
+              <el-text size="small">
+                [Linh sủng]
+              </el-text>
               {{ player.pet?.name }}({{ $levelNames(player.pet.level) }})
             </tag>
             <span v-else>
-              Không có
+              <el-text size="small">
+                [Linh sủng]
+              </el-text> Chưa trang bị
             </span>
           </span>
         </div>
@@ -1775,7 +1805,6 @@ import equipAll from "@/plugins/equipAll";
 // Thành tựu
 import equipTooltip from "@/components/tooltip/equipTooltip.vue";
 import achievement from "@/plugins/achievement";
-
 export default {
   data() {
     return {
@@ -2185,7 +2214,7 @@ export default {
       if (!selling.length) {
         this.$notifys({
           title: "Gợi ý phân giải trang bị trong túi",
-          message: "Không có trang bị nào trong túi để bán",
+          message: "Chưa trang bị trang bị nào trong túi để bán",
         });
         return;
       }
