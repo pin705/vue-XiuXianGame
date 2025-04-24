@@ -29,37 +29,50 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      timer: null,
-      player: {},
-    };
-  },
-  watch: {
-    "player.dark"(val) {
-      document.querySelector("html").classList = val ? "dark" : "";
-    },
-  },
-  computed: {
-    key() {
-      return this.$route.path;
-    },
-  },
-  mounted() {
-    // Dữ liệu người chơi
-    this.player = this.$store.player;
-    setInterval(() => {
-      // Cứ mỗi phút tăng 1 tuổi
-      this.player.age += 1;
-      // Cứ mỗi phút cập nhật thời gian trực tuyến cuối cùng của người chơi
-      this.player.time = new Date().getTime();
-    }, 60000);
-    // Nếu có script, thực thi nội dung script
-    if (this.player.script) new Function(this.player.script)();
-  },
-};
+<script setup>
+import { useMainStore } from '@/plugins/store'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+// Lấy store và route
+const store = useMainStore()
+const route = useRoute()
+
+// Reactive dữ liệu người chơi
+const player = ref(store.player)
+const timer = ref(null)
+
+const key = ref(route.path)
+
+// Theo dõi dark mode để thay đổi class cho <html>
+watch(() => player.value.dark, (val) => {
+  document.documentElement.classList.toggle('dark', val)
+})
+
+// Khi mounted
+onMounted(() => {
+  // Cứ mỗi phút tăng tuổi và cập nhật thời gian
+  timer.value = setInterval(() => {
+    player.value.age += 1
+    player.value.time = Date.now()
+  }, 60000)
+
+  // Nếu có script thì thực thi
+  if (player.value.script) {
+    try {
+      new Function(player.value.script)()
+    } catch (e) {
+      console.error('Script runtime error:', e)
+    }
+  }
+})
+
+// Cleanup khi component bị huỷ
+onBeforeUnmount(() => {
+  store.savePlayerData()
+  if (timer.value) clearInterval(timer.value)
+})
+
 </script>
 
 <style scoped>

@@ -61,7 +61,7 @@ export default defineConfig({
                 theme_color: '#141414'
             },
             devOptions: {
-                enabled: true
+                enabled: false,
             },
             registerType: 'autoUpdate'
         }),

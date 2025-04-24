@@ -1,8 +1,12 @@
 import crypto from "@/plugins/crypto";
+import { auth, db, onAuthStateChanged, signInAnonymously } from "@/plugins/firebase";
+import { saveAs } from "file-saver";
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { defineStore } from "pinia";
 
 export const useMainStore = defineStore("main", {
   state: () => ({
+    isReady: false, // Trạng thái sẵn sàng
     // Thuộc tính của boss
     boss: {
       name: "",
@@ -20,6 +24,7 @@ export const useMainStore = defineStore("main", {
     },
     // Thuộc tính của người chơi
     player: {
+      id: null, // ID người chơi
       zc: false, // Trạng thái chưa rõ (có thể là trạng thái đặc biệt)
       age: 1, // Tuổi
       pet: {}, // Thú cưng hiện tại
@@ -105,6 +110,90 @@ export const useMainStore = defineStore("main", {
     mapScroll: 0, // Vị trí cuộn bản đồ
     fishingMap: [], // Bản đồ câu cá
   }),
+  actions: {
+    async init() {
+      return new Promise((resolve) => {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            this.player.id = user.uid
+          } else {
+            const result = await signInAnonymously(auth)
+            this.player.id = result.user.uid
+          }
+          this.isReady = true
+          resolve()
+        })
+      })
+    },
+    // Nhập lưu trữ từ máy tính
+    importData(data) {
+      const file = data.file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          // Nhập lưu trữ
+          localStorage.setItem("vuex", e.target.result);
+          // Làm mới trang
+          location.reload(1);
+        } catch (err) {
+          this.err = err;
+          this.errBox = true;
+          this.$notifys({
+            title: "Nhập script thất bại",
+            message: "Sao chép thông tin lỗi vào nhóm hỗ trợ để được giúp đỡ",
+          });
+        }
+      };
+      reader.readAsText(file);
+    },
+    exportData() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      const hours = String(today.getHours()).padStart(2, "0");
+      const minutes = String(today.getMinutes()).padStart(2, "0");
+      const seconds = String(today.getSeconds()).padStart(2, "0");
+      const blob = new Blob([localStorage.getItem("vuex")], {
+        type: "application/json;charset=utf-8",
+      });
+      const name = `Tu Tiên Văn Tự Của Tôi Toàn Dựa Vào Cày-[Thời gian xuất lưu trữ ${year}${month}${day}${hours}${minutes}${seconds}]-[Phiên bản trò chơi ${this.ver}].json`;
+      saveAs(blob, name);
+    },
+    async savePlayerData() {
+      if (!this.isReady) return;
+      try {
+        await setDoc(doc(db, "players", this.player.id), {
+          data: crypto.encryption(this.player), // Mã hóa dữ liệu người chơi
+        });
+      } catch (error) {
+        console.error("Lỗi khi lưu:", error);
+      }
+    },
+    async getAllPlayerItems() {
+      try {
+        const colRef = collection(db, "players");
+        const querySnapshot = await getDocs(colRef);
+        const items = [];
+    
+        querySnapshot.forEach((doc) => {
+          items.push({ id: doc.id, ...doc.data() });
+        });
+    
+        const players = items.map((item) => {
+          const decryptedData = crypto.decryption(item.data); 
+          return { id: item.id, ...decryptedData };
+        }).sort((a, b) => {
+          return b.player.level - a.player.level; // Sắp xếp theo cấp độ
+        })
+
+        return items;
+      } catch (error) {
+        console.error("Error fetching items:", error);
+        return [];
+      }
+    }
+  },
   persist: {
     key: "vuex", // Khóa lưu trữ
     paths: ["boss", "player"], // Các thuộc tính được lưu trữ

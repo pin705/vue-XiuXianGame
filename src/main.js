@@ -17,6 +17,7 @@ app.use(pinia);
 
 const store = useMainStore();
 
+
 app.config.productionTip = false;
 app.config.globalProperties.$store = store;
 
@@ -105,7 +106,7 @@ app.config.globalProperties.$formatNumberToChineseUnit = (number) => {
             unitIndex = 0;
         }
     }
-    return num.toString() + units[unitIndex] + additionalUnits;
+    return `${num.toString()} ${units[unitIndex]} ${additionalUnits}`;
 };
 
 app.config.globalProperties.$smoothScrollToBottom = (element) => {
@@ -130,4 +131,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(router);
 app.use(ElementPlus);
-app.mount('#app');
+
+(async () => {
+    await store.init()
+  
+    app.mount('#app')
+  })()
