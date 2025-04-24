@@ -1855,7 +1855,6 @@ watch(
 watch(
   () => state.player.dark,
   (val) => {
-    console.log('val', val);
     const setThemeColor = (color) => {
       let meta = document.querySelector('meta[name="theme-color"]');
       if (!meta) {
