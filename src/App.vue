@@ -45,8 +45,10 @@ const timer = ref(null)
 const key = ref(route.path)
 
 // Theo dõi dark mode để thay đổi class cho <html>
-watch(() => player.value.dark, (val) => {
+watch(() => store.player.dark, (val) => {
   document.documentElement.classList.toggle('dark', val)
+}, {
+  immediate: true,
 })
 
 // Khi mounted
