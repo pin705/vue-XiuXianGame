@@ -525,7 +525,7 @@
         <div class="action">
           <el-button
             class="item"
-            @click="state.show = true"
+            @click="state.showRanking = true"
           >
             Vạn Tiên Bảng
           </el-button>
@@ -735,6 +735,7 @@
       </div>
     </el-drawer>
     <el-dialog
+      v-if="state.petShow"
       :title="petInfo.name"
       v-model="state.petShow"
       center
@@ -1026,6 +1027,7 @@
       </div>
     </el-dialog>
     <el-dialog
+      v-if="state.inventoryShow"
       :title="inventoryInfo.name"
       v-model="state.inventoryShow"
       center
@@ -1386,6 +1388,7 @@
       </div>
     </el-dialog>
     <el-dialog
+      v-if="state.sellingEquipmentShow"
       title="Xử lý hàng loạt"
       v-model="state.sellingEquipmentShow"
       width="600px"
@@ -1427,6 +1430,7 @@
       </div>
     </el-dialog>
     <el-dialog
+      v-if="state.show"
       v-model="state.show"
       title="Cài đặt trò chơi"
       width="350px"
@@ -1667,6 +1671,7 @@
       </div>
     </el-drawer>
     <el-dialog
+      v-if="state.newBieInfoBox"
       v-model="state.newBieInfoBox"
       :title="newBieItem.name"
       width="420px"
@@ -1713,6 +1718,7 @@
       </div>
     </el-dialog>
     <el-dialog
+      v-if="state.errBox"
       v-model="state.errBox"
       title="Thông tin lỗi"
       width="420px"
@@ -1732,10 +1738,18 @@
         </el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      v-if="state.showRanking"
+      v-model="state.showRanking"
+      title="Vạn tiên bảng"
+    >
+      <GameRanking />
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
+import GameRanking from '@/components/GameRanking.vue';
 import tag from '@/components/tag.vue';
 import equipTooltip from '@/components/tooltip/equipTooltip.vue';
 import achievement from '@/plugins/achievement';
@@ -1750,13 +1764,14 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const instance = getCurrentInstance()
 const globalProperties = instance.appContext.config.globalProperties
-const { $maxLv, $levelNames, $formatNumberToChineseUnit, $propItemNames, $levels, $genre, $dropdownTypeObject, $dropdownType } = globalProperties
+const { $maxLv, $levelNames, $formatNumberToChineseUnit, $propItemNames, $levels, $genre, $dropdownType } = globalProperties
 
 // State (thay thế data)
 const state = reactive({
   ver: 0.9,
   err: '',
   show: false,
+  showRanking: false,
   errBox: false,
   player: {},
   actions: [],

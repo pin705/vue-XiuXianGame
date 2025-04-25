@@ -184,11 +184,9 @@ export const useMainStore = defineStore("main", {
         const players = items.map((item) => {
           const decryptedData = crypto.decryption(item.data); 
           return { id: item.id, ...decryptedData };
-        }).sort((a, b) => {
-          return b.player.level - a.player.level; // Sắp xếp theo cấp độ
         })
 
-        return items;
+        return players;
       } catch (error) {
         console.error("Error fetching items:", error);
         return [];
