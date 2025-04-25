@@ -161,6 +161,7 @@ export const useMainStore = defineStore("main", {
       saveAs(blob, name);
     },
     async savePlayerData() {
+      console.log('this.isReady', this.isReady)
       if (!this.isReady) return;
       try {
         await setDoc(doc(db, "players", this.player.id), {
