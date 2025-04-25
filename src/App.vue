@@ -1,4 +1,5 @@
 <template>
+  <Analytics />
   <div
     class="game-container-wrapper"
     draggable="true"
@@ -30,9 +31,10 @@
 </template>
 
 <script setup>
-import { useMainStore } from '@/plugins/store'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useMainStore } from '@/plugins/store';
+import { Analytics } from '@vercel/analytics/vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 // Lấy store và route
 const store = useMainStore()
