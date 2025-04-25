@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-4xl">
-    <div class="overflow-x-auto shadow-lg rounded-lg overflow-auto h-[calc(100vh_-_180px)]">
+    <div class="overflow-x-auto rounded-lg overflow-auto h-[calc(100vh_-_180px)]">
       <table class="w-full table-auto">
         <thead>
           <tr class="text-white">
