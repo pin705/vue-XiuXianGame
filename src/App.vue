@@ -52,7 +52,8 @@ watch(() => store.player.dark, (val) => {
 })
 
 // Khi mounted
-onMounted(() => {
+onMounted(async () => {
+  await store.savePlayerData()
   // Cứ mỗi phút tăng tuổi và cập nhật thời gian
   timer.value = setInterval(() => {
     player.value.age += 1
@@ -70,8 +71,7 @@ onMounted(() => {
 })
 
 // Cleanup khi component bị huỷ
-onBeforeUnmount(() => {
-  store.savePlayerData()
+onBeforeUnmount(async () => {
   if (timer.value) clearInterval(timer.value)
 })
 
