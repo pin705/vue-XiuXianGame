@@ -527,7 +527,7 @@
             class="item"
             @click="state.show = true"
           >
-            Vạn Tiên Bản
+            Vạn Tiên Bảng
           </el-button>
         </div>
         <div class="action">
