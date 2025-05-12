@@ -1,12 +1,13 @@
-import map from '../views/mapExploration.vue';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import boss from '../views/bossPage.vue';
+import cultivate from '../views/cultivatePage.vue';
+import endlesstower from '../views/endlessPage.vue';
+import explore from '../views/explorePage.vue';
+import game from '../views/game/game.vue';
 import home from '../views/homePage.vue';
 import index from '../views/indexPage.vue';
-import explore from '../views/explorePage.vue';
-import cultivate from '../views/cultivatePage.vue';
-import endlesstower from '../views/endlessPage.vue'
-import game from '../views/game/game.vue'
-import { createRouter, createWebHashHistory } from 'vue-router';
+import map from '../views/map.vue';
+import mapExploration from '../views/mapExploration.vue';
 
 const routes = [
     {
@@ -39,7 +40,7 @@ const routes = [
         meta: {
             keepAlive: false
         },
-        component: map
+        component: mapExploration
     },
     {
         path: '/explore',
@@ -72,6 +73,14 @@ const routes = [
             keepAlive: false
         },
         component: game
+    },
+    {
+        path: '/xia-map',
+        name: 'xia-map',
+        meta: {
+            keepAlive: false
+        },
+        component: map
     },
 ];
 const router = createRouter({

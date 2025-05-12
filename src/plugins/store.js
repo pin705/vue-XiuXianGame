@@ -1,7 +1,12 @@
 import crypto from "@/plugins/crypto";
-import { auth, db, onAuthStateChanged, signInAnonymously } from "@/plugins/firebase";
+import {
+  auth,
+  db,
+  onAuthStateChanged,
+  signInAnonymously,
+} from "@/plugins/firebase";
 import { saveAs } from "file-saver";
-import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { defineStore } from "pinia";
 
 export const useMainStore = defineStore("main", {
@@ -52,6 +57,7 @@ export const useMainStore = defineStore("main", {
       health: 100, // Khí huyết
       critical: 0, // Tỷ lệ bạo kích
       defense: 10, // Phòng thủ
+      mana: 0, // Năng lượng
       taskNum: 0, // Số lượng nhiệm vụ
       version: 0.8, // Phiên bản trò chơi
       currency: 0, // Tiền tệ (trùng lặp với props.currency, có thể là lỗi)
@@ -92,6 +98,40 @@ export const useMainStore = defineStore("main", {
       checkinStreak: 0, // Chuỗi điểm danh liên tục
       lastCheckinDate: null, // Ngày điểm danh cuối cùng
       fortuneTellingDate: null, // Ngày xem bói cuối cùng
+      statusEffects: [], // 
+      cultivationPath: {
+        // Tiên đạo
+        path: null,
+        pathLevel: 0,
+        pathExp: 0,
+        maxPathExp: 100,
+        skills: [],
+        artifacts: [],
+        bonuses: {
+          attackPower: 0,
+          defensePower: 0,
+          criticalChance: 0,
+          dodgeChance: 0,
+          manaGainRate: 0,
+          craftingSuccessRate: 0,
+        },
+      },
+      map: {
+        currentArea: null,
+        playerPosition: { x: 50, y: 50 },
+        beasts: [],
+        path: [],
+        detectionRadius: 5,
+        baseMovementSpeed: 10,
+        maxMovementSpeed: 15,
+        autoBattle: {
+          isActive: false,
+          lastMoveTime: null,
+          lastPathUpdate: null,
+          accumulatedRewards: { spiritualEnergy: 0, money: 0, items: [] },
+        },
+        visualEffects: { auraOpacity: 0, glow: false },
+      },
     },
     // Thông tin quái vật
     monster: {
@@ -115,15 +155,15 @@ export const useMainStore = defineStore("main", {
       return new Promise((resolve) => {
         onAuthStateChanged(auth, async (user) => {
           if (user) {
-            this.player.id = user.uid
+            this.player.id = user.uid;
           } else {
-            const result = await signInAnonymously(auth)
-            this.player.id = result.user.uid
+            const result = await signInAnonymously(auth);
+            this.player.id = result.user.uid;
           }
-          this.isReady = true
-          resolve()
-        })
-      })
+          this.isReady = true;
+          resolve();
+        });
+      });
     },
     // Nhập lưu trữ từ máy tính
     importData(data) {
@@ -161,7 +201,6 @@ export const useMainStore = defineStore("main", {
       saveAs(blob, name);
     },
     async savePlayerData() {
-      console.log('this.isReady', this.isReady)
       if (!this.isReady) return;
       try {
         await setDoc(doc(db, "players", this.player.id), {
@@ -176,22 +215,23 @@ export const useMainStore = defineStore("main", {
         const colRef = collection(db, "players");
         const querySnapshot = await getDocs(colRef);
         const items = [];
-    
+
         querySnapshot.forEach((doc) => {
           items.push({ id: doc.id, ...doc.data() });
         });
-    
+
         const players = items.map((item) => {
-          const decryptedData = crypto.decryption(item.data); 
+          const decryptedData = crypto.decryption(item.data);
           return { id: item.id, ...decryptedData };
-        })
+        });
 
         return players;
       } catch (error) {
         console.error("Error fetching items:", error);
         return [];
       }
-    }
+    },
+
   },
   persist: {
     key: "vuex", // Khóa lưu trữ

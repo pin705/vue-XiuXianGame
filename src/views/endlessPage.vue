@@ -75,553 +75,497 @@
       :texts="battleLogs"
       ref="scrollbar"
     />
-    <!-- <el-scrollbar
-      class="battle-log"
-      height="300px"
-      ref="scrollbar"
-      always
-    >
-      <p
-        v-for="(log, index) in battleLogs"
-        :key="index"
-        v-html="log"
-      />
-    </el-scrollbar> -->
   </div>
 </template>
 
-<script>
-// Thành phần thẻ
-import tag from '@/components/tag.vue';
-// Boss
-import boss from '@/plugins/boss';
-// Trang bị
-import equip from '@/plugins/equip';
-// Quái vật
-import LogPanel from '@/components/LogPanel.vue';
-import { checkAchievements } from '@/plugins/achievementChecker';
-import combatSystem from '@/plugins/combat';
-import monsters from '@/plugins/monster';
+<script setup>
+import LogPanel from "@/components/LogPanel.vue";
+import tag from "@/components/tag.vue";
+import { checkAchievements } from "@/plugins/achievementChecker";
+import boss from "@/plugins/boss";
+import { Combat } from "@/plugins/combat";
+import equip from "@/plugins/equip";
+import monsters from "@/plugins/monster";
+import { useMainStore } from "@/plugins/store";
+import {
+    computed,
+    getCurrentInstance,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    watch,
+} from "vue";
+import { useRouter } from "vue-router";
 
-export default {
-    components: {
-        LogPanel
-    },
-    data() {
-        return {
-            // Dữ liệu người chơi
-            player: {},
-            // Dữ liệu quái vật
-            monster: null,
-            observer: null,
-            // Thời gian càn quét
-            sweepTime: 0,
-            // Nhật ký chiến đấu
-            battleLogs: [],
-            // Tầng hiện tại
-            currentFloor: 1,
-            // Đang càn quét
-            isSweeping: false,
-            // Kết quả càn quét
-            sweepResults: {
-                // Tu vi nhận được
-                expGain: 0,
-                // Linh thạch nhận được
-                moneyGain: 0,
-                // Số lượng trang bị nhận được
-                equipmentGained: 0
-            },
-            // Trạng thái khí huyết người chơi
-            playerStatus: 'success',
-            // Trạng thái khí huyết quái vật
-            monsterStatus: 'success',
-            // Khoảng thời gian càn quét
-            sweepInterval: null,
-            // Đang chiến đấu tự động
-            isAutoFighting: false,
-            // Khoảng thời gian chiến đấu tự động
-            autoFightInterval: null,
-            // Khoảng thời gian chiến đấu càn quét
-            sweepFightInterval: null
-        }
-    },
-    created() {
-        // Dữ liệu người chơi
-        this.player = this.$store.player;
-        // Kiểm tra thành tựu
-        const newAchievements = checkAchievements(this.player, 'monster');
-        newAchievements.forEach(achievement => {
-            this.$notifys({
-                title: 'Gợi ý nhận thành tựu',
-                message: `Chúc mừng bạn đã hoàn thành thành tựu ${achievement.name}`
-            });
-        });
-        // Tầng hiện tại
-        this.currentFloor = this.player.highestTowerFloor > 1 ? this.player.highestTowerFloor - 1 : 1
-    },
-    mounted() {
-        // Tạo nhật ký
-        this.battleLogs.push({
-            message: `Chào mừng đến với Vô Tận Tháp, đây là tầng ${this.currentFloor} của Vô Tận Tháp, kỷ lục leo tháp cao nhất của bạn là ${this.player.highestTowerFloor} tầng`,
-            time: new Date().toLocaleTimeString()
-        });
-        // Tạo quái vật
-        this.generateMonster();
-    },
-    beforeUnmount() {
-        // Dừng chiến đấu tự động
-        this.stopAutoFight();
-        // Dừng càn quét
-        this.stopSweep();
-        // this.stopObserving();
-    },
-    watch: {
-        // battleLogs: {
-        //     deep: true,
-        //     handler() {
-        //         // this.setupObserver();
-        //     }
-        // },
-        'player.health': function(val) {
-            const { health, maxHealth } = this.player;
-            this.playerStatus = this.getStatus(health, maxHealth);
-        },
-        'monster.health': function(val) {
-            const { health, maxHealth } = this.monster;
-            this.monsterStatus = this.getStatus(health, maxHealth);
-        }
-    },
-    components: {
-        tag
-    },
-    computed: {
-        // Thông tin liên quan đến càn quét
-        sweepData() {
-            return [
-                { name: 'Thời gian càn quét', suffix: this.formatTime(this.sweepTime) },
-                { name: 'Tu vi nhận được', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.expGain)} điểm` },
-                { name: 'Linh thạch nhận được', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.moneyGain)} khối` },
-                { name: 'Trang bị nhận được', suffix: `${this.$formatNumberToChineseUnit(this.sweepResults.equipmentGained)} món` },
-            ];
-        },
-        // Nút
-        buttonData() {
-            return [
-                { text: this.isAutoFighting ? 'Dừng đối chiến' : 'Chiến đấu tự động', click: () => this.toggleAutoFight(), disabled: this.isSweeping || this.player.health <= 0 },
-                { text: 'Tiến hành đối chiến', click: () => this.fight(), disabled: this.isSweeping || this.isAutoFighting || !this.monster || this.player.health <= 0 },
-                { text: this.isSweeping ? 'Dừng càn quét' : 'Bắt đầu càn quét', click: () => this.toggleSweep(), disabled: this.isAutoFighting || this.player.health <= 0 },
-                { text: 'Rút lui động phủ', click: () => this.retreat(), disabled: false }
-            ];
-        },
-        // Thanh tiến độ khí huyết người chơi
-        playerProgress() {
-            return (this.player.health / this.player.maxHealth) * 100;
-        },
-        // Thanh tiến độ khí huyết quái vật
-        monsterProgress() {
-            return (this.monster.health / this.monster.maxHealth) * 100;
-        }
-    },
-    methods: {
-        // Khí huyết người chơi
-        playerHealth() {
-            const { health, maxHealth } = this.player;
-            return `${Math.max(0, health)} / ${Math.max(0, maxHealth)}`;
-        },
-        // Khí huyết quái vật
-        monsterhealth() {
-            const { health, maxHealth } = this.monster;
-            return `${Math.max(0, health)} / ${Math.max(0, maxHealth)}`;
-        },
-        // Thay đổi trạng thái khí huyết động
-        getStatus(health, maxHealth) {
-            const num = (health / maxHealth) * 100;
-            return num >= 70 ? 'success' : (num >= 30 ? 'warning' : 'exception');
-        },
-        // Tạo quái vật của tầng hiện tại
-        generateMonster() {
-            // Tính cấp độ quái vật dựa trên tầng hiện tại
-            const level = this.currentFloor * 2;
-            console.log('level', level)
-            const health = monsters.monster_Health(level);
-            this.monster = {
-                // Tên
-                name: monsters.monster_Names(level),
-                // Cấp độ
-                level,
-                // Tỷ lệ né tránh
-                dodge: monsters.monster_Criticalhitrate(level),
-                // Công kích
-                attack: monsters.monster_Attack(level),
-                // Khí huyết
-                health: health,
-                // Phòng thủ
-                defense: monsters.monster_Defense(level),
-                // Khí huyết tối đa
-                maxHealth: health,
-                // Tỷ lệ bạo kích
-                critical: monsters.monster_Criticalhitrate(level)
-            };
-            console.log(this.monster);
-            // Nhật ký
-            this.battleLogs.push({
-                message: `Bạn đã gặp người thủ hộ tầng này <span class="text-red-400">${this.monster.name}</span>`,
-                time: new Date().toLocaleTimeString()
-            });
-        },
-        // Mở cửa sổ thông tin của cả hai bên
-        openInfo(type) {
-            const isPlayer = type == 'player';
-            const info = isPlayer ? this.player : this.monster;
-            this.$confirm('', isPlayer ? this.player.name : info.name, {
-                center: true,
-                message: `<div class="monsterinfo">
-                    <div class="monsterinfo-box">
-                        <p>Khí huyết: ${this.$formatNumberToChineseUnit(info.health)}</p>
-                        <p>Công kích: ${this.$formatNumberToChineseUnit(info.attack)}</p>
-                        <p>Phòng thủ: ${this.$formatNumberToChineseUnit(info.defense)}</p>
-                        <p>Tỷ lệ né tránh: ${info.dodge > 0 ? (info.dodge * 100 > 100 ? 100 : (info.dodge * 100).toFixed(2)) : 0}%</p>
-                        <p>Tỷ lệ bạo kích: ${info.critical > 0 ? (info.critical * 100 > 100 ? 100 : (info.critical * 100).toFixed(2)) : 0}%</p>
-                    </div>
-                </div>`,
-                showCancelButton: false,
-                confirmButtonText: 'Đã hiểu',
-                dangerouslyUseHTMLString: true
-            }).catch(() => {});
-        },
-        // Tiến hành chiến đấu
-        fight() {
-            // Bị đánh bại
-            if (this.player.health <= 0) {
-                this.handlePlayerDefeat();
-                return;
-            }
-            // Tạo quái vật mới
-            if (!this.monster || this.monster.health <= 0) {
-                this.generateMonster();
-                return;
-            }
-            // Người chơi tấn công quái vật
-            const playerAttackResult = combatSystem.executeCombatRound(this.player, this.monster);
-            this.generateCombatLog(this.player.name, this.monster.name, playerAttackResult);
-            // Kiểm tra quái vật có bị đánh bại không
-            if (this.monster.health <= 0) {
-                this.handleMonsterDefeat();
-                return;
-            }
-            // Quái vật tấn công người chơi
-            const monsterAttackResult = combatSystem.executeCombatRound(this.monster, this.player);
-            this.generateCombatLog(this.monster.name, this.player.name, monsterAttackResult);
-            // Kiểm tra người chơi có bị đánh bại không
-            if (this.player.health <= 0) {
-                this.handlePlayerDefeat();
-            }
-        },
-        generateCombatLog(attackerName, defenderName, result) {
-            if (!result.isHit) {
-                this.battleLogs.push({
-                    message: `Tấn công của ${attackerName} bị ${defenderName} né tránh.`,
-                    time: new Date().toLocaleTimeString()
-                });
-            } else {
-                let logMessage = `<span class="text-green-400">${attackerName}</span> gây <span class="text-yellow-400">${result.damage} sát thương</span> cho <span class="text-red-400">${defenderName}</span>`;
-                if (result.isCritical) logMessage += ' (bạo kích!)';
-                logMessage += `, ${defenderName} còn ${result.remainingHealth} khí huyết.`;
-                this.battleLogs.push({
-                    message: logMessage,
-                    time: new Date().toLocaleTimeString()
-                });
-            }
-        },
-        // Xử lý khi quái vật bị đánh bại
-        handleMonsterDefeat() {
-            // Tu vi
-            const expGain = Math.floor(this.monster.level * 100);
-            // Linh thạch
-            const moneyGain = Math.floor(this.monster.level * 2);
-            // Tăng tu vi
-            this.player.cultivation += expGain;
-            // Tăng linh thạch
-            this.player.props.money += moneyGain;
-            // Nhật ký
-            this.battleLogs.push({
-                message: `Bạn đã đánh bại ${this.monster.name}!`,
-                time: new Date().toLocaleTimeString()
-            });
-            this.battleLogs.push({
-                message: `Nhận được ${expGain} điểm tu vi và ${moneyGain} linh thạch`,
-                time: new Date().toLocaleTimeString()
-            });
-            // Nhận trang bị ngẫu nhiên
-            this.getRandomEquipment();
-            // Tăng tầng
-            this.currentFloor++;
-            // Kiểm tra tầng chia hết cho 5 và chưa nhận thưởng tầng đó
-            if (this.currentFloor % 5 === 0 && !this.player.rewardedTowerFloors.includes(this.currentFloor)) {
-                this.player.props.cultivateDan += 500;
-                this.player.rewardedTowerFloors.push(this.currentFloor);
-                this.battleLogs.push({
-                    message: `Chúc mừng bạn đã vượt qua tầng ${this.currentFloor}, nhận thêm phần thưởng: 500 đan bồi dưỡng!`,
-                    time: new Date().toLocaleTimeString()
-                });
-            }
-            // Nếu tầng hiện tại vượt kỷ lục cao nhất
-            if (this.currentFloor > this.player.highestTowerFloor) this.player.highestTowerFloor = this.currentFloor;
-            // Nhật ký
-            this.battleLogs.push({
-                message: `Vượt qua tầng ${this.currentFloor - 1} thành công, tự động tiến đến tầng ${this.currentFloor}`,
-                time: new Date().toLocaleTimeString()   
-            });
-            // Tạo quái vật mới (tầng tiếp theo)
-            this.generateMonster();
-        },
-        // Xử lý khi người chơi bị đánh bại
-        handlePlayerDefeat() {
-            // Nhật ký
-            this.battleLogs.push({
-                message: 'Bạn đã bị đánh bại! Thử thách kết thúc.',
-                time: new Date().toLocaleTimeString()
-            });
-            this.battleLogs.push({
-                message: `${this.monster.name}: ${boss.drawPrize(this.monster.level).text}`,
-                time: new Date().toLocaleTimeString()
-            });
-            // Tắt chiến đấu tự động
-            this.isAutoFighting = false;
-            // Tắt càn quét
-            this.isSweeping = false;
-            // Dừng chiến đấu tự động
-            this.stopAutoFight();
-            // Dừng càn quét
-            this.stopSweep();
-        },
-        // Chuyển đổi trạng thái chiến đấu tự động
-        toggleAutoFight() {
-            // Chuyển đổi trạng thái chiến đấu tự động
-            this.isAutoFighting = !this.isAutoFighting;
-            // Bắt đầu chiến đấu tự động
-            if (this.isAutoFighting) this.autoFightInterval = setInterval(this.fight, 1000);
-            // Dừng chiến đấu tự động
-            else this.stopAutoFight();
-        },
-        // Dừng chiến đấu tự động
-        stopAutoFight() {
-            clearInterval(this.autoFightInterval);
-            this.autoFightInterval = null;
-        },
-        // Rút lui
-        retreat() {
-            // Tắt chiến đấu tự động
-            this.isAutoFighting = false;
-            // Tắt càn quét
-            this.isSweeping = false;
-            // Dừng chiến đấu tự động
-            this.stopAutoFight();
-            // Dừng càn quét
-            this.stopSweep();
-            this.$router.push('/home');
-        },
-        // Nhận trang bị ngẫu nhiên
-        getRandomEquipment() {
-            let equipItem = {};
-            let exp = Math.floor(this.player.maxCultivation / 100);
-            exp = exp ? exp : 1;
-            // Chiến thắng
-            this.victory = true;
-            const randomInt = equip.getRandomInt(1, 4);
-            // Thần binh
-            if (randomInt == 1) equipItem = equip.equip_Weapons(this.player.level);
-            // Hộ giáp
-            else if (randomInt == 2) equipItem = equip.equip_Armors(this.player.level);
-            // Linh bảo
-            else if (randomInt == 3) equipItem = equip.equip_Accessorys(this.player.level);
-            // Pháp khí
-            else if (randomInt == 4) equipItem = equip.equip_Sutras(this.player.level);
-            this.battleLogs.push({
-                message: `Bạn phát hiện một rương báu, mở ra nhận được ${this.$levels[equipItem.quality]} ${equipItem.name} (${this.$genre[equipItem.type]})`,
-                time: new Date().toLocaleTimeString()
-            });
-            // Thông tin trang bị
-            this.openEquipItemInfo = equipItem;
-            // Nếu túi đầy thì không thêm trang bị
-            if (this.player.inventory.length >= this.player.backpackCapacity) {
-                this.battleLogs.push({
-                    message: `Dung lượng túi trang bị hiện tại đã đầy, trang bị này tự động bị bỏ, chuyển sinh có thể tăng dung lượng túi`,
-                    time: new Date().toLocaleTimeString()
-                });
-            } else this.player.inventory.push(equipItem);
-        },
-        // Chuyển đổi trạng thái càn quét
-        toggleSweep() {
-            // Trạng thái càn quét
-            this.isSweeping = !this.isSweeping;
-            if (this.isSweeping) {
-                // Đặt lại thời gian càn quét
-                this.sweepTime = 0;
-                // Đặt lại kết quả càn quét
-                this.sweepResults = { expGain: 0, moneyGain: 0, equipmentGained: 0 };
-                // Cập nhật thời gian càn quét mỗi giây
-                this.sweepInterval = setInterval(this.sweep, 1000);
-                // Tiến hành chiến đấu càn quét mỗi 30 giây
-                this.sweepFightInterval = setInterval(this.sweepFight, 30000);
-            } else {
-                // Dừng càn quét
-                this.stopSweep();
-            }
-        },
-        // Dừng càn quét
-        stopSweep() {
-            clearInterval(this.sweepInterval);
-            clearInterval(this.sweepFightInterval);
-            this.sweepInterval = null;
-            this.sweepFightInterval = null;
-        },
-        // Tiến hành càn quét
-        sweep() {
-            // Tăng thời gian càn quét
-            this.sweepTime++;
-            // Cập nhật nhật ký mỗi 60 giây
-            if (this.sweepTime % 60 === 0) this.battleLogs.push({
-                message: `Kết quả càn quét: Hiện đã càn quét ${this.formatTime(this.sweepTime)}, chúc mừng bạn nhận được ${this.sweepResults.expGain} điểm tu vi, ${this.sweepResults.moneyGain} linh thạch và ${this.sweepResults.equipmentGained} món trang bị.`,
-                time: new Date().toLocaleTimeString()
-            });
-        },
-        // Chiến đấu càn quét
-        sweepFight() {
-            // Tính tu vi nhận được dựa trên tầng hiện tại
-            const expGain = Math.floor(this.currentFloor * 10);
-            // Tính linh thạch nhận được dựa trên tầng hiện tại
-            const moneyGain = Math.floor(this.currentFloor * 10);
-            // Tăng tu vi người chơi
-            this.player.cultivation += expGain;
-            // Tăng linh thạch người chơi
-            this.player.props.money += moneyGain;
-            // Tăng số lượng tiêu diệt
-            this.player.jishaNum++;
-            // Cập nhật tu vi trong kết quả càn quét
-            this.sweepResults.expGain += expGain;
-            // Cập nhật linh thạch trong kết quả càn quét
-            this.sweepResults.moneyGain += moneyGain;
-            // 10% xác suất nhận trang bị
-            const equipmentGained = Math.random() < 0.1;
-            if (equipmentGained) {
-                this.getRandomEquipment();
-                this.sweepResults.equipmentGained++;
-            }
-            // Nhật ký
-            this.battleLogs.push({
-                message: `Kết quả càn quét: Chúc mừng bạn nhận được ${expGain} điểm tu vi, ${moneyGain} khối linh thạch${equipmentGained ? ' và 1 món trang bị' : '.'}`,
-                time: new Date().toLocaleTimeString()
-            });
-        },
-        // async setupObserver() {
-        //     await this.$nextTick();
-        //     const element = this.$refs.scrollbar.scrollbarRef
-        //     if (element) {
-        //         this.observer = new MutationObserver(() => this.$smoothScrollToBottom(element));
-        //         this.observer.observe(element, { subtree: true, childList: true });
-        //     }
-        // },
-        // stopObserving() {
-        //     if (this.observer) {
-        //         this.observer.disconnect();
-        //         this.observer = null;
-        //     }
-        // },
-        formatTime(seconds) {
-            if (seconds < 60) {
-                return `${seconds} giây`;
-            } else if (seconds < 3600) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = seconds % 60;
-                return `${minutes} phút ${remainingSeconds} giây`;
-            } else {
-                const hours = Math.floor(seconds / 3600);
-                seconds %= 3600;
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = seconds % 60;
-                return `${hours} giờ ${minutes} phút ${remainingSeconds} giây`;
-            }
-        }
+// Store and router
+const store = useMainStore();
+const router = useRouter();
+
+const instance = getCurrentInstance();
+const globalProperties = instance.appContext.config.globalProperties;
+const { $formatNumberToChineseUnit, $levels, $genre, $confirm, $notifys } =
+  globalProperties;
+
+// Reactive state
+const player = ref(store.player);
+const monster = ref(null);
+const sweepTime = ref(0);
+const battleLogs = ref([]);
+const currentFloor = ref(
+  player.value.highestTowerFloor > 1 ? player.value.highestTowerFloor - 1 : 1
+);
+const isSweeping = ref(false);
+const sweepResults = ref({
+  expGain: 0,
+  moneyGain: 0,
+  equipmentGained: 0,
+});
+const playerStatus = ref("success");
+const monsterStatus = ref("success");
+const sweepInterval = ref(null);
+const isAutoFighting = ref(false);
+const autoFightInterval = ref(null);
+const sweepFightInterval = ref(null);
+
+// Computed properties
+const sweepData = computed(() => [
+  { name: "Thời gian càn quét", suffix: formatTime(sweepTime.value) },
+  {
+    name: "Tu vi nhận được",
+    suffix: `${$formatNumberToChineseUnit(sweepResults.value.expGain)} điểm`,
+  },
+  {
+    name: "Linh thạch nhận được",
+    suffix: `${$formatNumberToChineseUnit(sweepResults.value.moneyGain)} khối`,
+  },
+  {
+    name: "Trang bị nhận được",
+    suffix: `${$formatNumberToChineseUnit(
+      sweepResults.value.equipmentGained
+    )} món`,
+  },
+]);
+
+const buttonData = computed(() => [
+  {
+    text: isAutoFighting.value ? "Dừng đối chiến" : "Chiến đấu tự động",
+    click: toggleAutoFight,
+    disabled: isSweeping.value || player.value.health <= 0,
+  },
+  {
+    text: "Tiến hành đối chiến",
+    click: fight,
+    disabled:
+      isSweeping.value ||
+      isAutoFighting.value ||
+      !monster.value ||
+      player.value.health <= 0,
+  },
+  {
+    text: isSweeping.value ? "Dừng càn quét" : "Bắt đầu càn quét",
+    click: toggleSweep,
+    disabled: isAutoFighting.value || player.value.health <= 0,
+  },
+  { text: "Rút lui động phủ", click: retreat, disabled: false },
+]);
+
+const playerProgress = computed(
+  () => (player.value.health / player.value.maxHealth) * 100
+);
+const monsterProgress = computed(() =>
+  monster.value ? (monster.value.health / monster.value.maxHealth) * 100 : 0
+);
+
+// Methods
+const playerHealth = () => {
+  const { health, maxHealth } = player.value;
+  return `${Math.max(0, health)} / ${Math.max(0, maxHealth)}`;
+};
+
+const monsterhealth = () => {
+  if (!monster.value) return "0 / 0";
+  const { health, maxHealth } = monster.value;
+  return `${Math.max(0, health)} / ${Math.max(0, maxHealth)}`;
+};
+
+const getStatus = (health, maxHealth) => {
+  const num = (health / maxHealth) * 100;
+  return num >= 70 ? "success" : num >= 30 ? "warning" : "exception";
+};
+
+const generateMonster = () => {
+  const level = currentFloor.value * 2;
+  const health = monsters.monster_Health(level);
+  monster.value = {
+    name: monsters.monster_Names(level),
+    level,
+    dodge: monsters.monster_Criticalhitrate(level),
+    attack: monsters.monster_Attack(level),
+    health,
+    defense: monsters.monster_Defense(level),
+    maxHealth: health,
+    critical: monsters.monster_Criticalhitrate(level),
+  };
+  battleLogs.value.push({
+    message: `Bạn đã gặp người thủ hộ tầng này <span class="text-red-400">${monster.value.name}</span>`,
+    time: new Date().toLocaleTimeString(),
+  });
+};
+
+const openInfo = (type) => {
+  const isPlayer = type === "player";
+  const info = isPlayer ? player.value : monster.value;
+  $confirm("", isPlayer ? player.value.name : info.name, {
+    center: true,
+    message: `<div class="monsterinfo">
+        <div class="monsterinfo-box">
+          <p>Khí huyết: ${$formatNumberToChineseUnit(info.health)}</p>
+          <p>Công kích: ${$formatNumberToChineseUnit(info.attack)}</p>
+          <p>Phòng thủ: ${$formatNumberToChineseUnit(info.defense)}</p>
+          <p>Tỷ lệ né tránh: ${
+            info.dodge > 0
+              ? info.dodge * 100 > 100
+                ? 100
+                : (info.dodge * 100).toFixed(2)
+              : 0
+          }%</p>
+          <p>Tỷ lệ bạo kích: ${
+            info.critical > 0
+              ? info.critical * 100 > 100
+                ? 100
+                : (info.critical * 100).toFixed(2)
+              : 0
+          }%</p>
+        </div>
+      </div>`,
+    showCancelButton: false,
+    confirmButtonText: "Đã hiểu",
+    dangerouslyUseHTMLString: true,
+  }).catch(() => {});
+};
+
+const fight = () => {
+  if (player.value.health <= 0) {
+    handlePlayerDefeat();
+    return;
+  }
+  if (!monster.value || monster.value.health <= 0) {
+    generateMonster();
+    return;
+  }
+
+  const playerAttacker = new Combat(store.player, monster.value);
+  const playerAttackerResult = playerAttacker.autoCombatRound();
+  battleLogs.value.push(...playerAttackerResult.message)
+  if (monster.value.health <= 0) {
+    handleMonsterDefeat();
+    return;
+  }
+
+  const monsterAttacker = new Combat(store.player, monster.value);
+  const monsterAttackerResult = monsterAttacker.autoCombatRound();
+  battleLogs.value.push(...monsterAttackerResult.message);
+
+  if (player.value.health <= 0) {
+    handlePlayerDefeat();
+  }
+};
+
+const handleMonsterDefeat = () => {
+  const expGain = Math.floor(monster.value.level * 100);
+  const moneyGain = Math.floor(monster.value.level * 2);
+  player.value.cultivation += expGain;
+  player.value.props.money += moneyGain;
+  battleLogs.value.push({
+    message: `Bạn đã đánh bại ${monster.value.name}!`,
+    time: new Date().toLocaleTimeString(),
+  });
+  battleLogs.value.push({
+    message: `Nhận được ${expGain} điểm tu vi và ${moneyGain} linh thạch`,
+    time: new Date().toLocaleTimeString(),
+  });
+  getRandomEquipment();
+  currentFloor.value++;
+  if (
+    currentFloor.value % 5 === 0 &&
+    !player.value.rewardedTowerFloors.includes(currentFloor.value)
+  ) {
+    player.value.props.cultivateDan += 500;
+    player.value.rewardedTowerFloors.push(currentFloor.value);
+    battleLogs.value.push({
+      message: `Chúc mừng bạn đã vượt qua tầng ${currentFloor.value}, nhận thêm phần thưởng: 500 đan bồi dưỡng!`,
+      time: new Date().toLocaleTimeString(),
+    });
+  }
+  if (currentFloor.value > player.value.highestTowerFloor) {
+    player.value.highestTowerFloor = currentFloor.value;
+  }
+  battleLogs.value.push({
+    message: `Vượt qua tầng ${
+      currentFloor.value - 1
+    } thành công, tự động tiến đến tầng ${currentFloor.value}`,
+    time: new Date().toLocaleTimeString(),
+  });
+  generateMonster();
+};
+
+const handlePlayerDefeat = () => {
+  battleLogs.value.push({
+    message: "Bạn đã bị đánh bại! Thử thách kết thúc.",
+    time: new Date().toLocaleTimeString(),
+  });
+  battleLogs.value.push({
+    message: `${monster.value.name}: ${
+      boss.drawPrize(monster.value.level).text
+    }`,
+    time: new Date().toLocaleTimeString(),
+  });
+  isAutoFighting.value = false;
+  isSweeping.value = false;
+  stopAutoFight();
+  stopSweep();
+};
+
+const toggleAutoFight = () => {
+  isAutoFighting.value = !isAutoFighting.value;
+  if (isAutoFighting.value) {
+    autoFightInterval.value = setInterval(fight, 1000);
+  } else {
+    stopAutoFight();
+  }
+};
+
+const stopAutoFight = () => {
+  clearInterval(autoFightInterval.value);
+  autoFightInterval.value = null;
+};
+
+const retreat = () => {
+  isAutoFighting.value = false;
+  isSweeping.value = false;
+  stopAutoFight();
+  stopSweep();
+  router.push("/home");
+};
+
+const getRandomEquipment = () => {
+  let equipItem = {};
+  let exp = Math.floor(player.value.maxCultivation / 100);
+  exp = exp ? exp : 1;
+  const randomInt = equip.getRandomInt(1, 4);
+  if (randomInt === 1) equipItem = equip.equip_Weapons(player.value.level);
+  else if (randomInt === 2) equipItem = equip.equip_Armors(player.value.level);
+  else if (randomInt === 3)
+    equipItem = equip.equip_Accessorys(player.value.level);
+  else if (randomInt === 4) equipItem = equip.equip_Sutras(player.value.level);
+  battleLogs.value.push({
+    message: `Bạn phát hiện một rương báu, mở ra nhận được ${
+      $levels[equipItem.quality]
+    } ${equipItem.name} (${$genre[equipItem.type]})`,
+    time: new Date().toLocaleTimeString(),
+  });
+  if (player.value.inventory.length >= player.value.backpackCapacity) {
+    battleLogs.value.push({
+      message: `Dung lượng túi trang bị hiện tại đã đầy, trang bị này tự động bị bỏ, chuyển sinh có thể tăng dung lượng túi`,
+      time: new Date().toLocaleTimeString(),
+    });
+  } else {
+    player.value.inventory.push(equipItem);
+  }
+};
+
+const toggleSweep = () => {
+  isSweeping.value = !isSweeping.value;
+  if (isSweeping.value) {
+    sweepTime.value = 0;
+    sweepResults.value = { expGain: 0, moneyGain: 0, equipmentGained: 0 };
+    sweepInterval.value = setInterval(sweep, 1000);
+    sweepFightInterval.value = setInterval(sweepFight, 30000);
+  } else {
+    stopSweep();
+  }
+};
+
+const stopSweep = () => {
+  clearInterval(sweepInterval.value);
+  clearInterval(sweepFightInterval.value);
+  sweepInterval.value = null;
+  sweepFightInterval.value = null;
+};
+
+const sweep = () => {
+  sweepTime.value++;
+  if (sweepTime.value % 60 === 0) {
+    battleLogs.value.push({
+      message: `Kết quả càn quét: Hiện đã càn quét ${formatTime(
+        sweepTime.value
+      )}, chúc mừng bạn nhận được ${sweepResults.value.expGain} điểm tu vi, ${
+        sweepResults.value.moneyGain
+      } linh thạch và ${sweepResults.value.equipmentGained} món trang bị.`,
+      time: new Date().toLocaleTimeString(),
+    });
+  }
+};
+
+const sweepFight = () => {
+  const expGain = Math.floor(currentFloor.value * 10);
+  const moneyGain = Math.floor(currentFloor.value * 10);
+  player.value.cultivation += expGain;
+  player.value.props.money += moneyGain;
+  player.value.jishaNum++;
+  sweepResults.value.expGain += expGain;
+  sweepResults.value.moneyGain += moneyGain;
+  const equipmentGained = Math.random() < 0.1;
+  if (equipmentGained) {
+    getRandomEquipment();
+    sweepResults.value.equipmentGained++;
+  }
+  battleLogs.value.push({
+    message: `Kết quả càn quét: Chúc mừng bạn nhận được ${expGain} điểm tu vi, ${moneyGain} khối linh thạch${
+      equipmentGained ? " và 1 món trang bị" : "."
+    }`,
+    time: new Date().toLocaleTimeString(),
+  });
+};
+
+const formatTime = (seconds) => {
+  if (seconds < 60) {
+    return `${seconds} giây`;
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes} phút ${remainingSeconds} giây`;
+  } else {
+    const hours = Math.floor(seconds / 3600);
+    seconds %= 3600;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${hours} giờ ${minutes} phút ${remainingSeconds} giây`;
+  }
+};
+
+// Lifecycle hooks
+onMounted(() => {
+  // Initialize player data
+  player.value = store.player;
+  // Check achievements
+  const newAchievements = checkAchievements(player.value, "monster");
+  newAchievements.forEach((achievement) => {
+    $notifys({
+      title: "Gợi ý nhận thành tựu",
+      message: `Chúc mừng bạn đã hoàn thành thành tựu ${achievement.name}`,
+    });
+  });
+  // Initialize current floor
+  currentFloor.value =
+    player.value.highestTowerFloor > 1 ? player.value.highestTowerFloor - 1 : 1;
+  // Initialize battle log
+  battleLogs.value.push({
+    message: `Chào mừng đến với Vô Tận Tháp, đây là tầng ${currentFloor.value} của Vô Tận Tháp, kỷ lục leo tháp cao nhất của bạn là ${player.value.highestTowerFloor} tầng`,
+    time: new Date().toLocaleTimeString(),
+  });
+  // Generate initial monster
+  generateMonster();
+});
+
+onBeforeUnmount(() => {
+  stopAutoFight();
+  stopSweep();
+});
+
+// Watchers
+watch(
+  () => player.value.health,
+  (val) => {
+    const { health, maxHealth } = player.value;
+    playerStatus.value = getStatus(health, maxHealth);
+  }
+);
+
+watch(
+  () => monster.value?.health,
+  (val) => {
+    if (monster.value) {
+      const { health, maxHealth } = monster.value;
+      monsterStatus.value = getStatus(health, maxHealth);
     }
-}
+  }
+);
 </script>
 
-
 <style scoped>
-    .battle-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+.battle-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
 
-    .player-info,
-    .monster-info {
-        width: 45%;
-    }
+.player-info,
+.monster-info {
+  width: 45%;
+}
 
-    .name {
-        margin-bottom: 10px;
-    }
+.name {
+  margin-bottom: 10px;
+}
 
-    .vs {
-        font-size: 24px;
-        font-weight: bold;
-        color: var(--el-color-info);
-    }
+.vs {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--el-color-info);
+}
 
-    .actions {
-        display: flex;
-        justify-content: space-between;
-        margin: 20px 0;
-    }
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
 
-    .actions .el-button {
-        flex: 1;
-        margin: 0 5px;
-    }
+.actions .el-button {
+  flex: 1;
+  margin: 0 5px;
+}
 
-    .sweep-info {
-        margin: 20px 0;
-    }
+.sweep-info {
+  margin: 20px 0;
+}
 
-    .sweep-info p {
-        margin: 5px 0;
-        font-size: 14px;
-    }
+.sweep-info p {
+  margin: 5px 0;
+  font-size: 14px;
+}
 
-    .battle-log {
-        border: 1px solid #ddd;
-        padding: 10px;
-        border-radius: 5px;
-    }
+.battle-log {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+}
 
-    .battle-log p {
-        margin: 5px 0;
-        font-size: 14px;
-        color: var(--el-color-info);
-    }
+.battle-log p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: var(--el-color-info);
+}
 
-    @media (max-width: 768px) {
+@media (max-width: 768px) {
+  .player-info,
+  .monster-info {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 
-        .player-info,
-        .monster-info {
-            width: 100%;
-            margin-bottom: 20px;
-        }
+  .vs {
+    margin: 0 10px;
+  }
 
-        .vs {
-            margin: 0 10px;
-        }
+  .actions {
+    flex-wrap: wrap;
+  }
 
-        .actions {
-            flex-wrap: wrap;
-        }
-
-        .actions .el-button {
-            flex: 1 0 40%;
-            margin: 5px;
-        }
-    }
+  .actions .el-button {
+    flex: 1 0 40%;
+    margin: 5px;
+  }
+}
 </style>

@@ -1,9 +1,9 @@
 <template>
   <div class="index">
     <div class="index-box">
-      <div class="story mb-2">
+      <!-- <div class="story mb-2">
         <p v-html="state.storyText" />
-      </div>
+      </div> -->
       <div class="attributes">
         <div class="attribute-box">
           <div
@@ -297,6 +297,12 @@
             v-model="state.inventoryActive"
             :stretch="true"
           >
+            <el-tab-pane
+              label="Tiên Đạo"
+              name="tien_dao"
+            >
+              <CultivationPath />
+            </el-tab-pane>
             <el-tab-pane
               label="Trang bị"
               name="equipment"
@@ -1749,6 +1755,7 @@
 </template>
 
 <script setup>
+import CultivationPath from '@/components/CultivationPath.vue';
 import GameRanking from '@/components/GameRanking.vue';
 import tag from '@/components/tag.vue';
 import equipTooltip from '@/components/tooltip/equipTooltip.vue';
