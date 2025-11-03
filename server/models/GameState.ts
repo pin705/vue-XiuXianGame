@@ -42,7 +42,6 @@ export const GameState = defineMongooseModel({
       mana: { type: Number, default: 0 },
       taskNum: { type: Number, default: 0 },
       version: { type: Number, default: 1.0 },
-      currency: { type: Number, default: 0 },
       maxHealth: { type: Number, default: 100 },
       inventory: { type: Array, default: [] },
       isNewbie: { type: Boolean, default: false },
