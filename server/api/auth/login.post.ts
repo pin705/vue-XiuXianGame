@@ -1,5 +1,4 @@
 import { User } from '~/server/models/User'
-import { verifyPassword } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
   try {

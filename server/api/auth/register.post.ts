@@ -1,6 +1,5 @@
 import { User } from '~/server/models/User'
 import { GameState } from '~/server/models/GameState'
-import { hashPassword } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
   try {
