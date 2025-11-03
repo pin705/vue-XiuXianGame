@@ -73,6 +73,7 @@ export default defineNuxtConfig({
     'normalize.css/normalize.css',
     'element-plus/dist/index.css',
     '~/assets/css/styles.css',
+    '~/assets/css/game-styles.css',
   ],
 
   // Vite configuration
