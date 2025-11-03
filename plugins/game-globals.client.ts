@@ -1,6 +1,16 @@
 import { ElNotification, ElMessageBox } from 'element-plus'
+import { useMainStore } from '~/stores/main'
 
 export default defineNuxtPlugin((nuxtApp) => {
+  // Initialize and expose the store
+  const store = useMainStore()
+  
+  // Initialize store
+  store.init()
+  
+  // Make store available as $store
+  nuxtApp.vueApp.config.globalProperties.$store = store
+  
   // Add global properties that the old game uses
   const maxLv = 144
 
