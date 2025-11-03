@@ -1,4 +1,5 @@
 import { GameState } from '~/server/models/GameState'
+import { createInitialGameState } from '~/server/utils/gameState'
 
 /**
  * Main game action endpoint
@@ -25,14 +26,14 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Get user's game state
+    // Get user's game state, create if not exists
     let gameState = await GameState.findOne({ userId })
     
     if (!gameState) {
-      throw createError({
-        statusCode: 404,
-        message: 'Game state not found',
-      })
+      // Auto-create game state if it doesn't exist
+      gameState = await GameState.create(
+        createInitialGameState(userId, session.user.username || 'Người chơi')
+      )
     }
 
     // Handle different actions
