@@ -51,18 +51,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
-const user = ref<any>(null)
-
-onMounted(async () => {
-  try {
-    const { data } = await useFetch('/api/auth/session')
-    if (data.value && data.value.user) {
-      user.value = data.value.user
-    }
-  } catch (error) {
-    console.error('Failed to load session:', error)
-  }
-})
+const { data: user } = await useFetch('/api/auth/session')
 
 const handleLogout = async () => {
   try {

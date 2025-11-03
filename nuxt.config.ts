@@ -17,6 +17,8 @@ export default defineNuxtConfig({
     storesDirs: ['./stores/**'],
   },
 
+  ssr: false,
+
   // Mongoose configuration
   mongoose: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/xiuxian-game',
@@ -74,16 +76,16 @@ export default defineNuxtConfig({
   ],
 
   // Vite configuration
-  vite: {
-    resolve: {
-      alias: {
-        '@': '/src',
-      },
-    },
-  },
+  // vite: {
+  //   resolve: {
+  //     alias: {
+  //       '@': '/src',
+  //     },
+  //   },
+  // },
 
   // Nitro server configuration
-  nitro: {
-    preset: 'node-server',
-  },
+  // nitro: {
+  //   preset: 'node-server',
+  // },
 });
