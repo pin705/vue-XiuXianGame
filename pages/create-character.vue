@@ -79,7 +79,7 @@ const checkGameState = async () => {
     const { data, error } = await useFetch('/api/gamestate/check')
     
     if (error.value) {
-      throw new Error('Không thể kiểm tra trạng thái nhân vật')
+      throw new Error(error.value.data?.message || 'Không thể kiểm tra trạng thái nhân vật')
     }
 
     hasGameState.value = data.value?.exists || false

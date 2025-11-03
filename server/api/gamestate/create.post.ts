@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     if (existingGameState) {
       throw createError({
         statusCode: 409,
-        message: 'Game state đã tồn tại. Sử dụng endpoint reset nếu muốn tạo lại.',
+        message: 'Game state đã tồn tại. Bạn không thể tạo nhân vật mới.',
       })
     }
 
