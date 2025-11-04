@@ -8,8 +8,8 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@element-plus/nuxt',
     '@pinia/nuxt',
-    'nuxt-mongoose',
-    'nuxt-auth-utils',
+    // 'nuxt-mongoose', // Disabled for now - old game uses localStorage
+    // 'nuxt-auth-utils', // Disabled for now - old game uses localStorage
   ],
 
   // Pinia configuration
@@ -19,19 +19,19 @@ export default defineNuxtConfig({
 
   ssr: false,
 
-  // Mongoose configuration
-  mongoose: {
-    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/xiuxian-game',
-    options: {},
-    modelsDir: 'models',
-    devtools: true,
-  },
+  // Mongoose configuration (disabled for old game version)
+  // mongoose: {
+  //   uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/xiuxian-game',
+  //   options: {},
+  //   modelsDir: 'models',
+  //   devtools: true,
+  // },
 
   // Runtime config for environment variables
   runtimeConfig: {
     // Private keys (server-only)
-    mongodbUri: process.env.MONGODB_URI,
-    authSecret: process.env.AUTH_SECRET || 'default-secret-change-in-production',
+    // mongodbUri: process.env.MONGODB_URI,
+    // authSecret: process.env.AUTH_SECRET || 'default-secret-change-in-production',
     
     // Public keys (exposed to client)
     public: {
@@ -73,6 +73,7 @@ export default defineNuxtConfig({
     'normalize.css/normalize.css',
     'element-plus/dist/index.css',
     '~/assets/css/styles.css',
+    '~/assets/css/game-styles.css',
   ],
 
   // Vite configuration

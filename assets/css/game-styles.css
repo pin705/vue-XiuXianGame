@@ -1,0 +1,23 @@
+body {
+  zoom: 0.9;
+  overflow: hidden;
+}
+
+.el-button span {
+  white-space: normal;
+  font-size: 14px;
+  /* word-break: break-word;
+  overflow-wrap: break-word;
+  overflow: hidden; */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  overflow: auto;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow: auto;
+}
