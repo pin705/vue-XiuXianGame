@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { usePlayerStore } from './player';
 import { useAuthStore } from './auth';
+import gameActions from '@/utils/gameActions';
 
 // Wrapper store để tương thích với code cũ
 export const useMainStore = defineStore('main', {
@@ -176,10 +177,44 @@ export const useMainStore = defineStore('main', {
 
     // Wrapper methods để tương thích với code cũ
     async savePlayerData() {
-      const playerStore = usePlayerStore();
-      if (playerStore.playerData) {
-        await playerStore.updatePlayer(playerStore.playerData);
-      }
+      return await gameActions.saveToServer();
+    },
+
+    // Game action wrappers
+    async updateCultivation(amount) {
+      return await gameActions.updateCultivation(amount);
+    },
+
+    async breakthrough() {
+      return await gameActions.breakthrough();
+    },
+
+    async fightMonster(monsterData) {
+      return await gameActions.fightMonster(monsterData);
+    },
+
+    async updateProps(updates) {
+      return await gameActions.updateProps(updates);
+    },
+
+    async addToInventory(item) {
+      return await gameActions.addToInventory(item);
+    },
+
+    async removeFromInventory(itemId, quantity) {
+      return await gameActions.removeFromInventory(itemId, quantity);
+    },
+
+    async equipItem(equipment, slot) {
+      return await gameActions.equipItem(equipment, slot);
+    },
+
+    async updatePlayerLevel(level) {
+      return await gameActions.updateLevel(level);
+    },
+
+    async updatePlayerScore(points) {
+      return await gameActions.updateScore(points);
     },
 
     // Import/Export vẫn dùng local (backup)

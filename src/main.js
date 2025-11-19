@@ -2,6 +2,7 @@ import router from '@/plugins/router';
 import { useMainStore } from '@/stores/mainStore';
 import { useAuthStore } from '@/stores/auth';
 import { usePlayerStore } from '@/stores/player';
+import { setupAutoSave } from '@/utils/autoSave';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import ElementPlus, { ElNotification } from 'element-plus';
 import 'element-plus/dist/index.css';
@@ -140,7 +141,10 @@ app.use(router);
 app.use(ElementPlus);
 
 (async () => {
-    await store.init()
-  
-    app.mount('#app')
-  })()
+    await store.init();
+    
+    // Setup auto-save sau khi init xong
+    setupAutoSave();
+    
+    app.mount('#app');
+})()
