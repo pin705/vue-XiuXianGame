@@ -10,54 +10,19 @@
 
 ## 我的文字修仙全靠刷
 
-### 🎮 Phiên bản Nuxt 3 - Online Game (Mới!)
-
-Dự án đã được nâng cấp lên **Nuxt 3** với các tính năng mới:
-
-- ✨ **Nuxt 3** - Full-stack framework hiện đại
-- 🔐 **Hệ thống đăng nhập/đăng ký** - Authentication với nuxt-auth-utils
-- 🗄️ **MongoDB** - Database với nuxt-mongoose
-- 🎯 **Server-side Logic** - Tất cả game logic chạy trên server
-- 🌐 **Online Game** - Chơi game trực tuyến với nhiều người
-- 🔒 **Bảo mật** - Dữ liệu game được bảo vệ trên server
-
-**Xem hướng dẫn cài đặt:** [NUXT3_SETUP.md](./NUXT3_SETUP.md)
-
-### 📦 Phiên bản cũ (Vue 3 + Vite)
-
-Phiên bản cũ vẫn có thể sử dụng:
 - 项目框架 [Vue.js](https://cn.vuejs.org)
 - 项目UI [Element Plus](https://element-plus.org/zh-CN)
 - 状态管理库 [Pinia](https://pinia.vuejs.org/zh)
-
-Chạy với: `npm run dev:old` và `npm run build:old`
-
-### 🙏 Đóng góp
-
+  
 Docker贡献者：
+
 - wuchenchina [无尘](https://github.com/wuchenchina)
 - CoolXiTech [酷曦科技](https://github.com/CoolXiTech)
-
+  
 鸣谢以上开源项目及贡献者，排名不分先后.
 
 ## 项目安装
 
-### Nuxt 3 (Khuyến nghị)
-```bash
-# Cài đặt dependencies
-npm install
-
-# Cấu hình MongoDB
-cp .env.example .env
-# Chỉnh sửa .env với thông tin MongoDB của bạn
-
-# Chạy development server
-npm run dev
-```
-
-Xem chi tiết: [NUXT3_SETUP.md](./NUXT3_SETUP.md)
-
-### Phiên bản cũ
 - [安装](https://github.com/setube/vue-XiuXianGame/wiki/install)
 - [Docker安装](https://github.com/setube/vue-XiuXianGame/wiki/docker_install)
 

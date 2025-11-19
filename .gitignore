@@ -3,10 +3,6 @@ pnpm-lock.yaml
 node_modules
 /dist
 
-# Nuxt 3
-.nuxt
-.output
-.env
 
 # local env files
 .env.local
