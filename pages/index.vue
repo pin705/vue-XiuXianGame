@@ -34,13 +34,6 @@
         <el-button
           v-if="user"
           size="large"
-          @click="navigateTo('/create-character')"
-        >
-          Tạo nhân vật
-        </el-button>
-        <el-button
-          v-if="user"
-          size="large"
           @click="handleLogout"
         >
           Đăng xuất

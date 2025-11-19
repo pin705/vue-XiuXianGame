@@ -1,6 +1,5 @@
 import { User } from '~/server/models/User'
 import { GameState } from '~/server/models/GameState'
-import { createInitialGameState } from '~/server/utils/gameState'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -51,7 +50,93 @@ export default defineEventHandler(async (event) => {
     })
 
     // Create initial game state for user
-    await GameState.create(createInitialGameState(user._id.toString(), username))
+    await GameState.create({
+      userId: user._id,
+      player: {
+        id: user._id.toString(),
+        name: username,
+        time: Date.now(),
+        age: 1,
+        level: 0,
+        score: 0,
+        attack: 10,
+        defense: 10,
+        health: 100,
+        maxHealth: 100,
+        dodge: 0,
+        critical: 0,
+        mana: 0,
+        points: 0,
+        cultivation: 0,
+        maxCultivation: 100,
+        reincarnation: 0,
+        version: 1.0,
+        isNewbie: true,
+        dark: false,
+        zc: false,
+        taskNum: 0,
+        backpackCapacity: 50,
+        highestTowerFloor: 1,
+        gameWins: 0,
+        gameLosses: 0,
+        checkinDays: 0,
+        checkinStreak: 0,
+        currentTitle: null,
+        script: '',
+        pet: {},
+        wife: {},
+        pets: [],
+        wifes: [],
+        npcs: [],
+        inventory: [],
+        shopData: [],
+        sellingEquipmentData: [],
+        rewardedTowerFloors: [],
+        props: {
+          money: 0,
+          flying: 0,
+          qingyuan: 0,
+          rootBone: 0,
+          currency: 0,
+          cultivateDan: 0,
+          strengtheningStone: 0,
+        },
+        equipment: {
+          sutra: {},
+          armor: {},
+          weapon: {},
+          accessory: {},
+        },
+        achievement: {
+          pet: [],
+          monster: [],
+          equipment: [],
+        },
+        nextGameTimes: {
+          rps: null,
+          dice: null,
+          fortune: null,
+          secretrealm: 0,
+          gamblingStone: null,
+        },
+        lastCheckinDate: null,
+        fortuneTellingDate: null,
+      },
+      boss: {
+        name: '',
+        text: '',
+        desc: '',
+        time: 0,
+        level: 0,
+        attack: 0,
+        defense: 0,
+        health: 0,
+        maxhealth: 0,
+        dodge: 0,
+        critical: 0,
+        conquer: false,
+      },
+    })
 
     return {
       success: true,
