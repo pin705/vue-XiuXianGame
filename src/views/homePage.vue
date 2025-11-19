@@ -153,7 +153,7 @@
           <span class="w-1/2 flex flex-col items-start justify-center">
             <tag
               class="!whitespace-normal text-left"
-              v-if="player.equipment.weapon?.name"
+              v-if="player.equipment?.weapon?.name"
               :type="player.equipment.weapon?.quality"
               :closable="player.equipment.weapon?.name ? true : false"
               @close="equipmentClose('weapon')"
@@ -179,7 +179,7 @@
             <tag
               class="!whitespace-normal text-left"
               size="large"
-              v-if="player.equipment.armor?.name"
+              v-if="player.equipment?.armor?.name"
               :type="player.equipment.armor?.quality"
               :closable="player.equipment.armor?.name ? true : false"
               @close="equipmentClose('armor')"
@@ -208,7 +208,7 @@
             <tag
               size="large"
               class="!whitespace-normal text-left"
-              v-if="player.equipment.accessory?.name"
+              v-if="player.equipment?.accessory?.name"
               :type="player.equipment.accessory?.quality"
               :closable="!!player.equipment.accessory?.name"
               @close="equipmentClose('accessory')"
@@ -235,7 +235,7 @@
             <tag
               size="large"
               class="!whitespace-normal text-left"
-              v-if="player.equipment.sutra?.name"
+              v-if="player.equipment?.sutra?.name"
               :type="player.equipment.sutra?.quality"
               :closable="!!player.equipment.sutra?.name"
               @close="equipmentClose(player.equipment['sutra']?.id, 'sutra')"
@@ -568,7 +568,7 @@
       </tag>
     </el-drawer>
     <el-drawer
-      :title="player.wife.name"
+      :title="player.wife?.name"
       v-model="state.wifeItemShow"
       direction="rtl"
       class="strengthen"
@@ -622,7 +622,7 @@
       </div>
     </el-drawer>
     <el-drawer
-      :title="player.pet.name"
+      :title="player.pet?.name"
       v-model="state.petItemShow"
       direction="rtl"
       class="strengthen"

@@ -1,5 +1,7 @@
 import router from '@/plugins/router';
-import { useMainStore } from '@/plugins/store';
+import { useMainStore } from '@/stores/mainStore';
+import { useAuthStore } from '@/stores/auth';
+import { usePlayerStore } from '@/stores/player';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import ElementPlus, { ElNotification } from 'element-plus';
 import 'element-plus/dist/index.css';
@@ -15,11 +17,16 @@ const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 app.use(pinia);
 
+// Initialize stores
 const store = useMainStore();
+const authStore = useAuthStore();
+const playerStore = usePlayerStore();
 
-
+// Make stores available globally
 app.config.productionTip = false;
 app.config.globalProperties.$store = store;
+app.config.globalProperties.$authStore = authStore;
+app.config.globalProperties.$playerStore = playerStore;
 
 app.config.globalProperties.$notifys = (data) => {
     ElNotification.closeAll();
